@@ -109,8 +109,8 @@ class Settings(BaseSettings):
     TOKEN_EXTRA_INFO_REDIS_PREFIX: str = 'fs:token_extra_info'  # token 存储在 Redis 附带的额外信息
     TOKEN_ONLINE_REDIS_PREFIX: str = 'fs:token_online'  # 在线用户存储在 Redis 的前缀
     TOKEN_REQUEST_PATH_EXCLUDE: list[str] = [
-        '/auth/login',  # JWT / RBAC 白名单
-    ]
+        f'{API_ROUTE_PREFIX}/auth/login',
+    ]  # JWT / RBAC 白名单
 
     # ============== Cookies ==============
     COOKIE_REFRESH_TOKEN_KEY: str = 'fs_refresh_token'  # cookie 中存放 refresh_token 的名字
