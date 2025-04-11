@@ -1,6 +1,6 @@
 [project]
 name = "fastapi-service"
-version = "0.1.0"
+version = "0.0.1"
 description = "FastAPI Service"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -11,10 +11,13 @@ dependencies = [
   "asyncmy>=0.2.10",
   "bcrypt>=4.3.0",
   "celery>=5.5.0",
+  "cryptography>=44.0.2",
+  "fast-captcha>=0.3.2",
   "fastapi-limiter>=0.1.6",
   "fastapi-pagination>=0.12.34",
   "fastapi[standard]>=0.115.12",
   "httpx>=0.28.1",
+  "ip2loc>=1.0.0",
   "loguru>=0.7.3",
   "msgspec>=0.19.0",
   "path>=17.1.0",
@@ -25,7 +28,8 @@ dependencies = [
   "python-jose>=3.4.0",
   "python-socketio>=5.12.1",
   "redis[hiredis]>=5.2.1",
-  "sqlmodel>=0.0.24",
+  "sqlalchemy-crud-plus>=1.6.0",
+  "sqlalchemy[asyncio]>=2.0.40",
   "user-agents>=2.2.0",
 ]
 
