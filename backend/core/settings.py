@@ -10,8 +10,8 @@ from pathlib import Path
 from typing import Literal
 
 from pydantic import SecretStr, model_validator
-from pydantic.networks import MySQLDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from sqlalchemy import URL
 
 from backend.core.paths import ENV_DIR
 
@@ -75,16 +75,15 @@ class Settings(BaseSettings):
 
     # @computed_field
     @property
-    def MYSQL_DATABASE_URI(self) -> str:
-        return str(
-            MySQLDsn.build(
-                scheme='mysql+asyncmy',
-                username=self.DB_USER,
-                password=self.DB_PASSWORD.get_secret_value(),
-                host=self.DB_HOST,
-                port=self.DB_PORT,
-                path=f'{self.DB_DATABASE}?charset={self.DB_CHARSET}',
-            )
+    def MYSQL_DATABASE_URL(self):
+        return URL.create(
+            drivername='mysql+asyncmy',
+            username=self.DB_USER,
+            password=self.DB_PASSWORD.get_secret_value(),
+            host=self.DB_HOST,
+            port=self.DB_PORT,
+            database=self.DB_DATABASE if self.ENVIRONMENT == 'production' else f'{self.DB_DATABASE}_test',
+            query={'charset': self.DB_CHARSET},
         )
 
     # ============== Redis ==============
