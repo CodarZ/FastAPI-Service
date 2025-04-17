@@ -50,13 +50,13 @@ def parse_user_agent(request: Request) -> UserAgentInfo:
 
 
 async def parse_ip_info(request: Request) -> Optional[IpInfo]:
-    ip = __get_request_ip(request)
+    ip = _get_request_ip(request)
     location = await redis_client.get(f'{settings.IP_LOCATION_REDIS_PREFIX}:{ip}')
     if location:
         location_dict = json.loads(location.decode('utf-8'))
         return IpInfo(**location_dict)
 
-    online_location = await __get_location_online(ip, request.headers.get('User-Agent'))
+    online_location = await _get_location_online(ip, request.headers.get('User-Agent'))
     await redis_client.set(
         name=f'{settings.IP_LOCATION_REDIS_PREFIX}:{ip}',
         value=json.dumps(dataclasses.asdict(online_location)),
@@ -65,7 +65,7 @@ async def parse_ip_info(request: Request) -> Optional[IpInfo]:
     return online_location
 
 
-def __get_request_ip(request: Request):
+def _get_request_ip(request: Request):
     """获取请求的 IP 地址
 
     优先级：
@@ -87,7 +87,7 @@ def __get_request_ip(request: Request):
     return '0.0.0.0'
 
 
-async def __get_location_online(ip: str, user_agent: str | None) -> IpInfo:
+async def _get_location_online(ip: str, user_agent: str | None) -> IpInfo:
     """获取在线 IP 地址的地理位置"""
     ip_api_url = f'http://ip-api.com/json/{ip}?lang=zh-CN'
     headers = {'User-Agent': user_agent or 'unknown'}
