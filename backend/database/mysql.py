@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from backend.common.logger import log
 from backend.common.model import MappedBase
-from backend.core.settings import settings
+from backend.core.config import settings
 
 
 def create_async_engine_and_session(url):

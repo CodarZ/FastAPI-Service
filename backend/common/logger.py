@@ -12,7 +12,7 @@ from asgi_correlation_id import correlation_id
 from loguru import logger
 
 from backend.core import paths
-from backend.core.settings import settings
+from backend.core.config import settings
 
 
 class InterceptHandler(logging.Handler):

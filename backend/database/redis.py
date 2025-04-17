@@ -8,7 +8,7 @@ from redis.asyncio import Redis
 from redis.exceptions import AuthenticationError
 
 from backend.common.logger import log
-from backend.core.settings import settings
+from backend.core.config import settings
 
 
 class RedisClient(Redis):

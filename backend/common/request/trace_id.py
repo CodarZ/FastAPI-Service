@@ -3,7 +3,7 @@
 
 from fastapi import Request
 
-from backend.core.settings import settings
+from backend.core.config import settings
 
 
 def get_request_trace_id(request: Request) -> str:

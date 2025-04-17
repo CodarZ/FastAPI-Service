@@ -13,7 +13,7 @@ from user_agents import parse
 
 from backend.common.dataclasses import IpInfo, UserAgentInfo
 from backend.common.logger import log
-from backend.core.settings import settings
+from backend.core.config import settings
 from backend.database.redis import redis_client
 
 

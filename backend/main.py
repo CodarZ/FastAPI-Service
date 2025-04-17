@@ -3,7 +3,7 @@
 
 from fastapi import FastAPI
 
-from backend.core.settings import settings
+from backend.core.config import settings
 
 app = FastAPI()
 

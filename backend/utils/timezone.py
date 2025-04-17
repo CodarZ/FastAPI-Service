@@ -5,7 +5,7 @@ from datetime import datetime
 from datetime import timezone as dt_timezone
 from zoneinfo import ZoneInfo
 
-from backend.core.settings import settings
+from backend.core.config import settings
 
 
 class TimeZone:
