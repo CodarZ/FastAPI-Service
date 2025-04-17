@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from fastapi import Request, Response
-from starlette.middleware.base import RequestResponseEndpoint
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 
 from backend.common.logger import log
 from backend.utils.timezone import timezone
 
 
-class AccessMiddleware:
+class AccessMiddleware(BaseHTTPMiddleware):
     """请求日志中间件
 
     记录每个 HTTP 请求的关键信息，包括：
