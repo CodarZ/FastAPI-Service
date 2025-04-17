@@ -51,7 +51,7 @@ async def parse_ip_info(request: Request) -> IpInfo:
     ip = _get_request_ip(request)
     location = await redis_client.get(f'{settings.IP_LOCATION_REDIS_PREFIX}:{ip}')
     if location:
-        location_dict = json.loads(location.decode('utf-8'))
+        location_dict = json.loads(location)
         return IpInfo(**location_dict)
 
     online_location = await _get_location_online(ip, request.headers.get('User-Agent'))

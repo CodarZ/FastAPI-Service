@@ -12,14 +12,14 @@ class AccessMiddleware(BaseHTTPMiddleware):
     """请求日志中间件
 
     记录每个 HTTP 请求的关键信息，包括：
-      - 客户端 host
-      - HTTP 方法（如 GET、POST）
-      - 响应状态码（如 200、404）
-      - 请求路径（如 /api/v1/resource）
-      - 请求处理时间（毫秒级）
+        - 客户端 host
+        - HTTP 方法（如 GET、POST）
+        - 响应状态码（如 200、404）
+        - 请求路径（如 /api/v1/resource）
+        - 请求处理时间（毫秒级）
     """
 
-    async def dispath(
+    async def dispatch(
         self,
         request: Request,
         call_next: RequestResponseEndpoint,
