@@ -4,8 +4,6 @@
 import dataclasses
 import json
 
-from typing import Optional
-
 import httpx
 
 from fastapi import Request
@@ -49,7 +47,7 @@ def parse_user_agent(request: Request) -> UserAgentInfo:
     )
 
 
-async def parse_ip_info(request: Request) -> Optional[IpInfo]:
+async def parse_ip_info(request: Request) -> IpInfo:
     ip = _get_request_ip(request)
     location = await redis_client.get(f'{settings.IP_LOCATION_REDIS_PREFIX}:{ip}')
     if location:
