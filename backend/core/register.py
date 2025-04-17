@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+
+from asgi_correlation_id import CorrelationIdMiddleware
+from fastapi import FastAPI
+
+from backend.app.router import router
+from backend.common.logger import set_custom_logfile, setup_logging
+from backend.core.config import settings
+from backend.core.paths import STATIC_DIR
+from backend.middleware.state import StateMiddleware
+from backend.utils.check import ensure_unique_route_names
+from backend.utils.openapi_patch import simplify_operation_ids
+from backend.utils.serializers import MsgSpecJSONResponse
+
+
+def register_app() -> FastAPI:
+    app = FastAPI(
+        title=settings.TITLE,
+        version=settings.VERSION,
+        description=settings.DESCRIPTION,
+        openapi_url=settings.OPENAPI_URL,
+        docs_url=settings.DOCS_URL,
+        default_response_class=MsgSpecJSONResponse,
+    )
+
+    register_logger()
+    register_static_file(app)
+    register_middleware(app)
+    register_router(app)
+
+    return app
+
+
+def register_logger():
+    """注册日志"""
+    setup_logging()
+    set_custom_logfile()
+
+
+def register_static_file(app: FastAPI):
+    """注册静态资源服务"""
+    if settings.FASTAPI_STATIC_FILES:
+        from fastapi.staticfiles import StaticFiles
+
+        app.mount('/static', StaticFiles(directory=STATIC_DIR), name='static')  # 固有静态资源
+
+
+def register_middleware(app: FastAPI):
+    if settings.MIDDLEWARE_ACCESS:
+        from backend.middleware.access import AccessMiddleware
+
+        app.add_middleware(AccessMiddleware)
+
+    app.add_middleware(StateMiddleware)
+    app.add_middleware(CorrelationIdMiddleware, validator=lambda x: False)
+
+    # CORS（必须放在最下面）
+    if settings.MIDDLEWARE_CORS:
+        from fastapi.middleware.cors import CORSMiddleware
+
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=settings.CORS_ALLOWED_ORIGINS,
+            allow_credentials=True,
+            allow_methods=['*'],
+            allow_headers=['*'],
+            expose_headers=settings.CORS_EXPOSE_HEADERS,
+        )
+
+
+def register_router(app: FastAPI) -> None:
+    """
+    注册路由
+
+    :param app: FastAPI 应用实例
+    :return:
+    """
+
+    app.include_router(router)
+
+    # Extra
+    ensure_unique_route_names(app)
+    simplify_operation_ids(app)

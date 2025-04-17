@@ -1,13 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from fastapi import FastAPI
 
-from backend.core.config import settings
+from backend.core.register import register_app
 
-app = FastAPI()
-
-
-@app.get('/')
-def read_root():
-    return settings
+app = register_app()
