@@ -97,7 +97,7 @@ def set_custom_logfile() -> None:
     """设置自定义日志文件"""
     log_path = paths.LOG_DIR
     # 日志文件
-    log_stdout_file = path.join(log_path, settings.LOG_STDERR_FILENAME)
+    log_stdout_file = path.join(log_path, settings.LOG_STDOUT_FILENAME)
     log_stderr_file = path.join(log_path, settings.LOG_STDERR_FILENAME)
 
     # 配置 Loguru 日志文件处理器
