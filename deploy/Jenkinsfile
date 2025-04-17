@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        GIT_REPO = "git@github.com:CodarZ/fastapi-service.git"
+        GIT_REPO = "https://github.com/CodarZ/fastapi-service.git"
         IMAGE_NAME = "fs-image"
         DOCKERFILE_PATH = "deploy/Dockerfile"
     }
