@@ -73,6 +73,9 @@ pipeline {
                         --name ${env.CONTAINER_NAME} \
                         -p ${env.DOCKER_PORT}:8000 \
                         -e ENVIRONMENT=${env.ENVIRONMENT} \
+                        -v /home/ubuntu/docker/fs-service/log:/app/log \
+                        -v /home/ubuntu/docker/fs-service/env:/app/env \
+                        -v /home/ubuntu/docker/fs-service/static:/app/static \
                         ${env.IMAGE_TAG}
                     """
                 }
