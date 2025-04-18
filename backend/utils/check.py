@@ -15,7 +15,7 @@ def ensure_unique_route_names(app: FastAPI) -> None:
     for route in app.routes:
         if isinstance(route, APIRoute):
             if route.name in temp_routes:
-                raise ValueError(f'Non-unique route name: {route.name}')
+                raise ValueError(f'该路由名称重复: {route.name}')
             temp_routes.add(route.name)
 
 
