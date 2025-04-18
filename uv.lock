@@ -542,6 +542,7 @@ dependencies = [
     { name = "fastapi-pagination" },
     { name = "httpx" },
     { name = "ip2loc" },
+    { name = "itsdangerous" },
     { name = "loguru" },
     { name = "msgspec" },
     { name = "path" },
@@ -581,6 +582,7 @@ requires-dist = [
     { name = "fastapi-pagination", specifier = ">=0.12.34" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "ip2loc", specifier = ">=1.0.0" },
+    { name = "itsdangerous", specifier = ">=2.2.0" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "msgspec", specifier = ">=0.19.0" },
     { name = "path", specifier = ">=17.1.0" },
@@ -844,6 +846,15 @@ source = { registry = "https://mirrors.aliyun.com/pypi/simple" }
 sdist = { url = "https://mirrors.aliyun.com/pypi/packages/80/74/b6f68d92571a11274c2a9d68c1c434f82a6c48a362e03386d356d8f6535b/ip2loc-1.0.0.tar.gz", hash = "sha256:6707400f1f8580386708e6072c82293ccbad496368b9bf2fea13cfc274ab1ea7" }
 wheels = [
     { url = "https://mirrors.aliyun.com/pypi/packages/55/9f/dd1a683eb6c58fcd37cce62ef2c910948fd14bf5e6398f15c03c6f9308ad/ip2loc-1.0.0-py3-none-any.whl", hash = "sha256:8094e071acfb3ce65c588d61da50de0eb26b21d3dc068cee85ff01823c3bc947" },
+]
+
+[[package]]
+name = "itsdangerous"
+version = "2.2.0"
+source = { registry = "https://mirrors.aliyun.com/pypi/simple" }
+sdist = { url = "https://mirrors.aliyun.com/pypi/packages/9c/cb/8ac0172223afbccb63986cc25049b154ecfb5e85932587206f42317be31d/itsdangerous-2.2.0.tar.gz", hash = "sha256:e0050c0b7da1eea53ffaf149c0cfbb5c6e2e2b69c4bef22c81fa6eb73e5f6173" }
+wheels = [
+    { url = "https://mirrors.aliyun.com/pypi/packages/04/96/92447566d16df59b2a776c0fb82dbc4d9e07cd95062562af01e408583fc4/itsdangerous-2.2.0-py3-none-any.whl", hash = "sha256:c6242fc49e35958c8b15141343aa660db5fc54d4f13a1db01a3f5891b98700ef" },
 ]
 
 [[package]]
