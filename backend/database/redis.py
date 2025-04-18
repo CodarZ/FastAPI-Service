@@ -31,6 +31,7 @@ class RedisClient(Redis):
         """触发初始化连接"""
         try:
             await self.ping()
+            log.success('✅ Redis 连接成功')
         except TimeoutError:
             log.error('❌ 数据库 redis 连接超时')
             sys.exit()
