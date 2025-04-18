@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, Optional, TypeVar
 
 from pydantic import BaseModel, Field
 
@@ -39,9 +39,9 @@ class ResponseModel(BaseModel):
             return ResponseModel(code=res.code, msg=res.msg, data={'test': 'test'})
     """
 
-    code: int = Field(CustomResponseCode.HTTP_200.code, description='响应状态码')
-    msg: str = Field(CustomResponseCode.HTTP_200.msg, description='响应消息')
-    data: Any | None = Field(None, description='响应数据')
+    code: Optional[int] = Field(default=CustomResponseCode.HTTP_200.code, description='响应状态码')
+    msg: Optional[str] = Field(default=CustomResponseCode.HTTP_200.msg, description='响应消息')
+    data: Optional[Any] = Field(default=None, description='响应数据', examples=[None])
 
 
 class ResponseSchemaModel(ResponseModel, Generic[SchemaT]):
@@ -68,7 +68,7 @@ class ResponseSchemaModel(ResponseModel, Generic[SchemaT]):
             return ResponseSchemaModel[ApiDetail](code=res.code, msg=res.msg, data=GetApiDetail(...))
     """
 
-    data: SchemaT
+    data: Optional[SchemaT] = Field(default=None, description='响应数据', examples=[None])
 
 
 class ResponseBase:
