@@ -135,8 +135,8 @@ class Settings(BaseSettings):
     LOG_CID_UUID_LENGTH: int = 32
     LOG_STDOUT_LEVEL: str = 'INFO'
     LOG_STDERR_LEVEL: str = 'ERROR'
-    LOG_STDOUT_FILENAME: str = 'fs_access.log'
-    LOG_STDERR_FILENAME: str = 'fs_error.log'
+    LOG_STDOUT_FILENAME: str = f'fs_access_{ENVIRONMENT}.log'
+    LOG_STDERR_FILENAME: str = f'fs_error_{ENVIRONMENT}.log'
 
 
 @lru_cache
