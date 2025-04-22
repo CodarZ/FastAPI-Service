@@ -11,6 +11,8 @@ from backend.common.model import Base, id_key
 
 
 class Dept(Base):
+    """部门表"""
+
     @declared_attr.directive
     def __tablename__(cls):
         return 'sys_dept'

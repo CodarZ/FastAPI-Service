@@ -12,6 +12,8 @@ from backend.common.model import Base, id_key
 
 
 class Menu(Base):
+    """菜单表"""
+
     @declared_attr.directive
     def __tablename__(cls):
         return 'sys_menu'

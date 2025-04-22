@@ -9,6 +9,8 @@ from backend.common.model import Base, id_key
 
 
 class UserSocial(Base):
+    """用户auth2.0社交信息表"""
+
     @declared_attr.directive
     def __tablename__(cls):
         return 'sys_user_social'
