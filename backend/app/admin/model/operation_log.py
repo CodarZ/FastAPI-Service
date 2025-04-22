@@ -6,6 +6,7 @@ from datetime import datetime
 from sqlalchemy import JSON, LONGTEXT, DateTime, String
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column
 
+from backend.common.enum.custom import StatusEnum
 from backend.common.model import DataClassBase, id_key
 from backend.utils.timezone import timezone
 
@@ -20,8 +21,8 @@ class OperationLog(DataClassBase):
     id: Mapped[id_key] = mapped_column(init=False)
     username: Mapped[str | None] = mapped_column(String(20), comment='用户名')
 
-    title: Mapped[str] = mapped_column(String(255), comment='操作模块')
-    status: Mapped[int] = mapped_column(comment='操作状态（0异常 1正常）')
+    title: Mapped[str] = mapped_column(String(255), comment='操作标题')
+    status: Mapped[StatusEnum] = mapped_column(comment='操作状态（0异常 1正常）')
 
     path: Mapped[str] = mapped_column(String(500), comment='请求路径')
     trace_id: Mapped[str] = mapped_column(String(32), comment='请求跟踪 ID')
@@ -41,7 +42,7 @@ class OperationLog(DataClassBase):
     browser: Mapped[str | None] = mapped_column(String(50), comment='浏览器')
     device: Mapped[str | None] = mapped_column(String(50), comment='设备')
 
-    opera_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), comment='操作时间')
+    operate_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), comment='操作时间')
     created_time: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), init=False, default_factory=timezone.now, comment='创建时间'
     )

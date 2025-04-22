@@ -6,6 +6,7 @@ from datetime import datetime
 from sqlalchemy import LONGTEXT, DateTime, String
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column
 
+from backend.common.enum.custom import StatusEnum
 from backend.common.model import DataClassBase, id_key
 from backend.utils.timezone import timezone
 
@@ -20,7 +21,7 @@ class LoginLog(DataClassBase):
     id: Mapped[id_key] = mapped_column(init=False)
     user_uuid: Mapped[str] = mapped_column(String(50), comment='用户UUID')
     username: Mapped[str] = mapped_column(String(20), comment='用户名')
-    status: Mapped[int] = mapped_column(insert_default=0, comment='登录状态(0失败 1成功)')
+    status: Mapped[StatusEnum] = mapped_column(insert_default=StatusEnum.YES, comment='登录状态(0失败 1成功)')
     msg: Mapped[str] = mapped_column(LONGTEXT(), comment='提示消息')
 
     ip: Mapped[str] = mapped_column(String(50), comment='登录IP地址')
