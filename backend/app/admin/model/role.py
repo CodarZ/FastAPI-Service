@@ -6,6 +6,7 @@ from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
 from backend.app.admin.model import Menu, User
 from backend.app.admin.model.m2m import sys_role_menu, sys_user_role
+from backend.common.enum.custom import StatusEnum
 from backend.common.model import Base, id_key
 
 
@@ -20,8 +21,7 @@ class Role(Base):
 
     name: Mapped[str] = mapped_column(String(20), unique=True, comment='角色名称')
     code: Mapped[str] = mapped_column(String(20), unique=True, comment='角色编码')
-    status: Mapped[int] = mapped_column(INTEGER, default=1, comment='角色状态（0停用 1正常）')
-
+    status: Mapped[StatusEnum] = mapped_column(INTEGER, default=StatusEnum.YES, comment='角色状态（0停用 1正常）')
     remark: Mapped[str | None] = mapped_column(LONGTEXT(), default=None, comment='备注')
 
     # 用户-角色  多对多
