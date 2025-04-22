@@ -76,7 +76,7 @@ class User(Base):
     # 用户-社交  一对多
     socials: Mapped[list[UserSocial]] = relationship(init=False, back_populates='user')
 
-    # 用户-部门  一对多
+    # 用户-部门 一对一
     dept_id: Mapped[int | None] = mapped_column(
         ForeignKey('sys_dept.id', ondelete='SET NULL'), default=None, comment='关联部门 ID'
     )

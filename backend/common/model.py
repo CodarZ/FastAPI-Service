@@ -113,7 +113,7 @@ class DataClassBase(MappedAsDataclass, MappedBase):
     - 自动生成 `__init__()` 构造器；
     - 与 `Mapped[...]`、`mapped_column()` 配合使用；
     - 避免重复编写 ORM 映射模板代码；
-    - 仅用于继承，不映射为实际表结构（通过 `__abstract__ = True` 实现）。
+    - 继承的子类会映射为数据库表。
     """
 
     __abstract__ = True
