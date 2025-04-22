@@ -115,10 +115,6 @@ class Settings(BaseSettings):
     COOKIE_REFRESH_TOKEN_KEY: str = 'fs_refresh_token'  # cookie 中存放 refresh_token 的名字
     COOKIE_REFRESH_TOKEN_EXPIRE_SECONDS: int = TOKEN_REFRESH_EXPIRE_SECONDS
 
-    # ============== Captcha ==============
-    CAPTCHA_LOGIN_REDIS_PREFIX: str = 'fs:login:captcha'  # 登录验证码存储在 Redis 的前缀
-    CAPTCHA_LOGIN_EXPIRE_SECONDS: int = 300
-
     # ============== IP Location ==============
     IP_LOCATION_PARSE: Literal['online', 'offline', 'false'] = 'offline'
     IP_LOCATION_REDIS_PREFIX: str = 'fs:ip:location'
