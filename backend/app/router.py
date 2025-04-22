@@ -3,12 +3,9 @@
 
 from fastapi import APIRouter
 
-from backend.common.response.base import ResponseModel
-from backend.core.config import settings
+from backend.app.admin.api.router import admin_router
 
 router = APIRouter()
 
 
-@router.get('/', response_model=ResponseModel)
-def read_root():
-    return ResponseModel(data=settings)
+router.include_router(admin_router)

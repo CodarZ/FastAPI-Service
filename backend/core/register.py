@@ -101,7 +101,7 @@ def register_router(app: FastAPI) -> None:
     :return:
     """
 
-    app.include_router(router)
+    app.include_router(router, prefix=settings.API_ROUTE_PREFIX)
 
     # Extra
     ensure_unique_route_names(app)
