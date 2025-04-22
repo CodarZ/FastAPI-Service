@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import INTEGER, Boolean, ForeignKey, String
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
-from backend.app.admin.model import User
 from backend.common.enum.custom import StatusEnum
 from backend.common.model import Base, id_key
 from backend.common.schema import CustomEmailStr, CustomPhoneStr
+
+if TYPE_CHECKING:
+    from backend.app.admin.model import User
 
 
 class Dept(Base):
@@ -37,4 +39,4 @@ class Dept(Base):
     children: Mapped[Optional[list['Dept']]] = relationship(init=False, back_populates='parent')
 
     # 部门用户一对多
-    users: Mapped[list[User]] = relationship(init=False, back_populates='dept')
+    users: Mapped[list['User']] = relationship(init=False, back_populates='dept')

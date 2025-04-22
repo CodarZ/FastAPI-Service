@@ -2,16 +2,19 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import INTEGER, VARBINARY, Boolean, DateTime, ForeignKey, String
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
-from backend.app.admin.model import Dept, Role, UserSocial
 from backend.app.admin.model.m2m import sys_user_role
 from backend.common.model import Base, id_key
 from backend.common.schema import CustomEmailStr, CustomPhoneStr
 from backend.database.mysql import uuid4_str
 from backend.utils.timezone import timezone
+
+if TYPE_CHECKING:
+    from backend.app.admin.model import Dept, Role, UserSocial
 
 
 class User(Base):
@@ -74,13 +77,13 @@ class User(Base):
     )
 
     # 用户-社交  一对多
-    socials: Mapped[list[UserSocial]] = relationship(init=False, back_populates='user')
+    socials: Mapped[list['UserSocial']] = relationship(init=False, back_populates='user')
 
     # 用户-部门 一对一
     dept_id: Mapped[int | None] = mapped_column(
         ForeignKey('sys_dept.id', ondelete='SET NULL'), default=None, comment='关联部门 ID'
     )
-    dept: Mapped[Dept | None] = relationship(init=False, back_populates='users')
+    dept: Mapped['Dept'] | None = relationship(init=False, back_populates='users')
 
     # 用户-角色  多对多
-    roles: Mapped[list[Role]] = relationship(init=False, secondary=sys_user_role, back_populates='users')
+    roles: Mapped[list['Role']] = relationship(init=False, secondary=sys_user_role, back_populates='users')

@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import INTEGER, LONGTEXT, ForeignKey, String
+from sqlalchemy import INTEGER, ForeignKey, String
+from sqlalchemy.dialects.mysql import LONGTEXT
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
-from backend.app.admin.model import Role
 from backend.app.admin.model.m2m import sys_role_menu
 from backend.common.enum.custom import MenuEnum, StatusEnum
 from backend.common.model import Base, id_key
+
+if TYPE_CHECKING:
+    from backend.app.admin.model import Role
 
 
 class Menu(Base):
@@ -42,4 +45,4 @@ class Menu(Base):
     children: Mapped[Optional[list['Menu']]] = relationship(init=False, back_populates='parent')
 
     # 菜单角色多对多
-    roles: Mapped[list[Role]] = relationship(init=False, secondary=sys_role_menu, back_populates='menus')
+    roles: Mapped[list['Role']] = relationship(init=False, secondary=sys_role_menu, back_populates='menus')

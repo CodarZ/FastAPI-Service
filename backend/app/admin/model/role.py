@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from sqlalchemy import INTEGER, LONGTEXT, String
+from typing import TYPE_CHECKING
+
+from sqlalchemy import INTEGER, String
+from sqlalchemy.dialects.mysql import LONGTEXT
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
-from backend.app.admin.model import Menu, User
 from backend.app.admin.model.m2m import sys_role_menu, sys_user_role
 from backend.common.enum.custom import StatusEnum
 from backend.common.model import Base, id_key
+
+if TYPE_CHECKING:
+    from backend.app.admin.model import Menu, User
 
 
 class Role(Base):
@@ -25,7 +30,7 @@ class Role(Base):
     remark: Mapped[str | None] = mapped_column(LONGTEXT(), default=None, comment='备注')
 
     # 用户-角色  多对多
-    users: Mapped[list[User]] = relationship(init=False, secondary=sys_user_role, back_populates='roles')
+    users: Mapped[list['User']] = relationship(init=False, secondary=sys_user_role, back_populates='roles')
 
     # 角色菜单多对多
-    menus: Mapped[list[Menu]] = relationship(init=False, secondary=sys_role_menu, back_populates='roles')
+    menus: Mapped[list['Menu']] = relationship(init=False, secondary=sys_role_menu, back_populates='roles')

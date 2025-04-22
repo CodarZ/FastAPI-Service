@@ -3,7 +3,8 @@
 
 from datetime import datetime
 
-from sqlalchemy import LONGTEXT, DateTime, String
+from sqlalchemy import DateTime, String
+from sqlalchemy.dialects.mysql import LONGTEXT
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column
 
 from backend.common.enum.custom import StatusEnum

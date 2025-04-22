@@ -60,8 +60,10 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 async def create_table() -> None:
     """自动创建数据库表"""
+
     async with async_engine.begin() as coon:
         await coon.run_sync(MappedBase.metadata.create_all)  # 在事务中运行同步方法以创建表
+        log.success('✅ 数据表创建成功！')
 
 
 def uuid4_str() -> str:

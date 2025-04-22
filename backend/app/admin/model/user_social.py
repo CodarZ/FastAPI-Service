@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from typing import TYPE_CHECKING
+
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
-from backend.app.admin.model import User
 from backend.common.model import Base, id_key
+
+if TYPE_CHECKING:
+    from backend.app.admin.model import User
 
 
 class UserSocial(Base):
@@ -28,4 +32,4 @@ class UserSocial(Base):
     user_id: Mapped[int | None] = mapped_column(
         ForeignKey('sys_user.id', ondelete='SET NULL'), default=None, comment='用户关联ID'
     )
-    user: Mapped[User | None] = relationship(init=False, back_populates='socials')
+    user: Mapped['User'] | None = relationship(init=False, back_populates='socials')
