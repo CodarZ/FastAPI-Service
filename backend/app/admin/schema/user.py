@@ -63,7 +63,7 @@ class UserInfo(UserUpdate):
 
     model_config = ConfigDict(from_attributes=True)
 
-    # id: int = Field(description='用户 ID')
+    id: int = Field(description='用户 ID')
     uuid: str = Field(description='用户 UUID')
 
     join_time: datetime | None = Field(default=None, description='加入时间')

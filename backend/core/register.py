@@ -9,6 +9,7 @@ import socketio
 from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 from fastapi_limiter import FastAPILimiter
+from starlette.middleware.authentication import AuthenticationMiddleware
 
 from backend.app.router import router
 from backend.common.logger import set_custom_logfile, setup_logging
@@ -16,6 +17,7 @@ from backend.core.config import settings
 from backend.core.paths import STATIC_DIR
 from backend.database.mysql import create_table
 from backend.database.redis import redis_client
+from backend.middleware.jwt import JWTAuthMiddleware
 from backend.middleware.state import StateMiddleware
 from backend.utils.check import ensure_unique_route_names, http_limit_callback
 from backend.utils.openapi_patch import simplify_operation_ids
@@ -73,6 +75,13 @@ def register_static_file(app: FastAPI):
 
 
 def register_middleware(app: FastAPI):
+    # JWT auth (必须)
+    app.add_middleware(
+        AuthenticationMiddleware,
+        backend=JWTAuthMiddleware(),
+        on_error=JWTAuthMiddleware.auth_exception_handler,
+    )
+
     if settings.MIDDLEWARE_ACCESS:
         from backend.middleware.access import AccessMiddleware
 

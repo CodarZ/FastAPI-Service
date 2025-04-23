@@ -10,7 +10,6 @@
 from typing import Any
 
 from fastapi import HTTPException
-from starlette.authentication import AuthenticationError
 from starlette.background import BackgroundTask
 
 from backend.common.response.code import (  # 支持在异常处理时执行异步任务
@@ -29,18 +28,6 @@ class BaseExceptionMixin(Exception):
         self.msg = msg
         self.data = data
         self.background = background
-
-
-class InternalAuthError(AuthenticationError):
-    """重写内部认证错误类"""
-
-    def __init__(
-        self, *, code: int | None = None, msg: str | None = None, headers: dict[str, Any] | None = None
-    ) -> None:
-        """初始化认证错误"""
-        self.code = code
-        self.msg = msg
-        self.headers = headers
 
 
 class HTTPError(HTTPException):
