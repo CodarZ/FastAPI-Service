@@ -4,6 +4,8 @@
 
 from contextlib import asynccontextmanager
 
+import socketio
+
 from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 from fastapi_limiter import FastAPILimiter
@@ -30,7 +32,7 @@ def register_app() -> FastAPI:
         default_response_class=MsgSpecJSONResponse,
         lifespan=init,
     )
-
+    register_socket(app)
     register_logger()
     register_static_file(app)
     register_middleware(app)
@@ -106,3 +108,16 @@ def register_router(app: FastAPI) -> None:
     # Extra
     ensure_unique_route_names(app)
     simplify_operation_ids(app)
+
+
+def register_socket(app: FastAPI) -> None:
+    """注册 Socket.IO 应用"""
+    from backend.common.socketio.server import sio
+
+    socket_app = socketio.ASGIApp(
+        socketio_server=sio,
+        other_asgi_app=app,
+        # 切勿删除此配置：https://github.com/pyropy/fastapi-socketio/issues/51
+        socketio_path='/ws/socket.io',
+    )
+    app.mount('/ws', socket_app)
