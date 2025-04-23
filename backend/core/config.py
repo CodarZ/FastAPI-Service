@@ -15,6 +15,8 @@ from sqlalchemy import URL
 
 from backend.core.paths import ENV_DIR
 
+__all__ = ['settings']
+
 
 class Settings(BaseSettings):
     ENVIRONMENT: Literal['development', 'test', 'production'] = 'development'
@@ -98,6 +100,13 @@ class Settings(BaseSettings):
     JWT_USER_REDIS_PREFIX: str = 'fs:user'
     JWT_USER_REDIS_EXPIRE_SECONDS: int = 604800  # 过期时间 7 天，单位：秒
 
+    # ============== RBAC ================
+    RBAC_ROLE_MENU_MODE: bool = False
+    RBAC_ROLE_MENU_EXCLUDE: list[str] = [
+        'sys:monitor:redis',
+        'sys:monitor:server',
+    ]
+
     # ============== Token ==============
     TOKEN_SECRET_KEY: str = secrets.token_urlsafe(32)
     TOKEN_ALGORITHM: str = 'HS256'
@@ -139,6 +148,10 @@ class Settings(BaseSettings):
     # 密钥 os.urandom(32), 需使用 bytes.hex() 方法转换为 str
     OPERATION_LOG_ENCRYPT_SECRET_KEY: SecretStr = SecretStr(os.urandom(32).hex())
     OPERATION_LOG_PATH_EXCLUDE: list[str] = [
+        '/favicon.ico',
+        API_ROUTE_PREFIX,
+        DOCS_URL,
+        OPENAPI_URL,
         f'{API_ROUTE_PREFIX}/auth/login/swagger',
     ]
     OPERATION_LOG_ENCRYPT_KEY_INCLUDE: list[str] = [  # 需要脱敏处理的字段
