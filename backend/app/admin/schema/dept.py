@@ -6,7 +6,7 @@ from datetime import datetime
 from pydantic import ConfigDict, Field
 
 from backend.common.enum.custom import StatusEnum
-from backend.common.schema import CustomEmailStr, CustomPhoneStr, SchemaBase
+from backend.common.schema import CustomEmailStr, SchemaBase
 
 
 class DeptBase(SchemaBase):
@@ -15,7 +15,7 @@ class DeptBase(SchemaBase):
     name: str = Field(..., title='部门名称', max_length=50)
     sort: int = Field(0, title='排序', ge=0)
     leader: str | None = Field(None, title='负责人', max_length=20)
-    phone: CustomPhoneStr | None = Field(None, title='联系方式', max_length=11)
+    phone: str | None = Field(None, title='联系方式', max_length=11)
     email: CustomEmailStr | None = Field(None, title='邮箱', max_length=50)
     status: StatusEnum = Field(StatusEnum.YES, title='部门状态(0停用 1正常)')
 

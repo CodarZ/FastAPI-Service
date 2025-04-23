@@ -10,13 +10,13 @@ from pydantic import ConfigDict, EmailStr, Field, model_validator
 from backend.app.admin.schema.dept import DeptInfo
 from backend.app.admin.schema.role import RoleWithRelationInfo
 from backend.common.enum.custom import StatusEnum
-from backend.common.schema import CustomEmailStr, CustomPhoneStr, SchemaBase
+from backend.common.schema import CustomEmailStr, SchemaBase
 
 
 class UserBase(SchemaBase):
     username: str = Field(..., description='用户名')
     email: Optional[CustomEmailStr] = Field(description='邮箱')
-    phone: Optional[CustomPhoneStr] = Field(description='手机号')
+    phone: Optional[str] = Field(description='手机号')
     nickname: str = Field(..., description='昵称')
     dept_id: int | None = Field(default=None, description='部门 ID')
 

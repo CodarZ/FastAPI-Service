@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
 from backend.common.enum.custom import StatusEnum
 from backend.common.model import Base, id_key
-from backend.common.schema import CustomEmailStr, CustomPhoneStr
+from backend.common.schema import CustomEmailStr
 
 if TYPE_CHECKING:
     from backend.app.admin.model import User
@@ -25,7 +25,7 @@ class Dept(Base):
     name: Mapped[str] = mapped_column(String(50), comment='部门名称')
     sort: Mapped[int] = mapped_column(INTEGER, default=0, comment='排序')
     leader: Mapped[str | None] = mapped_column(String(20), default=None, comment='负责人')
-    phone: Mapped[CustomPhoneStr | None] = mapped_column(String(11), default=None, comment='手机')
+    phone: Mapped[str | None] = mapped_column(String(11), default=None, comment='手机')
     email: Mapped[CustomEmailStr | None] = mapped_column(String(50), default=None, comment='邮箱')
     status: Mapped[StatusEnum] = mapped_column(INTEGER, default=StatusEnum.YES, comment='部门状态(0停用 1正常)')
 
