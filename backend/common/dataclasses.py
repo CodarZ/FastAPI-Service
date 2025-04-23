@@ -144,11 +144,11 @@ class TokenPayload:
     用于存储令牌中包含的核心信息。
 
     Attributes:
-        id (int): 用户标识符
+        user_id (int | str): 用户标识符
         session_uuid (str): 会话唯一标识符
         expire_time (datetime): 令牌过期时间
     """
 
-    id: int
+    user_id: int
     session_uuid: str
-    expire_time: datetime
+    expire_time: datetime | None
