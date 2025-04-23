@@ -6,7 +6,8 @@ from datetime import timedelta
 from typing import Any
 from uuid import uuid4
 
-from fastapi import Request
+from fastapi import Depends, Request
+from fastapi.security import HTTPBearer
 from fastapi.security.utils import get_authorization_scheme_param
 from jose import ExpiredSignatureError, JWTError, jwt
 from pwdlib import PasswordHash
@@ -21,6 +22,9 @@ from backend.database.mysql import async_db_session
 from backend.database.redis import redis_client
 from backend.utils.serializers import select_as_dict
 from backend.utils.timezone import timezone
+
+# JWT authorizes dependency injection
+DependsJWTAuth = Depends(HTTPBearer())
 
 password_hash = PasswordHash((BcryptHasher(),))
 
