@@ -79,7 +79,7 @@ async def create_access_token(user_id: int, multi_login: bool, **kwargs):
 
     access_token = jwt_encode({
         'session_uuid': session_uuid,
-        'expire_time': expire_time,
+        'expire_time': expire_time.isoformat(),
         'user_id': user_id,
     })
 
@@ -110,7 +110,7 @@ async def create_refresh_token(user_id: int, multi_login: bool):
     expire_time = timezone.now() + timedelta(seconds=settings.TOKEN_REFRESH_EXPIRE_SECONDS)
 
     refresh_token = jwt_encode({
-        'expire_time': expire_time,
+        'expire_time': expire_time.isoformat(),
         'user_id': user_id,
     })
 
