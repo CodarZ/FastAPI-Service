@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, EmailStr, validate_email
+from pydantic_core import core_schema
 
 from backend.utils.regexp_verify import is_phone
 
@@ -36,6 +37,13 @@ class CustomPhoneStr(str):
         if is_phone(__input_value):
             return __input_value
         raise ValueError('手机号格式不正确')
+
+    @classmethod
+    def __get_pydantic_core_schema__(cls, source_type, handler):
+        return core_schema.no_info_plain_validator_function(
+            cls._validate,
+            json_schema_input_schema=core_schema.str_schema(metadata={'format': 'phone', 'title': '手机号'}),
+        )
 
 
 class CustomEmailStr(EmailStr):
