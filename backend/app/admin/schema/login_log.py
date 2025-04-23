@@ -27,7 +27,7 @@ class LoginLogBase(SchemaBase):
     browser: str | None = Field(description='浏览器')
     device: str | None = Field(description='设备')
 
-    login_time: str = Field(description='登录时间')
+    login_time: datetime = Field(description='登录时间')
 
 
 class LoginLogCreate(LoginLogBase):

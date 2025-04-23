@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 from typing import Any
 
 from pydantic import ConfigDict, Field
@@ -35,7 +36,7 @@ class OperationLog(SchemaBase):
     browser: str | None = Field(None, description='浏览器')
     device: str | None = Field(None, description='设备')
 
-    operate_time: str = Field(description='操作时间')
+    operate_time: datetime = Field(description='操作时间')
 
 
 class OperationLogCreate(OperationLog):
@@ -52,4 +53,4 @@ class OperationLogInfo(OperationLog):
     model_config = ConfigDict(from_attributes=True)
 
     id: int = Field(description='操作日志 ID')
-    created_time: str = Field(description='创建时间')
+    created_time: datetime = Field(description='创建时间')

@@ -19,8 +19,15 @@ class StatusEnum(IntEnum):
     YES = 1
 
 
-class OperaLogCipherEnum(IntEnum):
-    """操作日志加密类型枚举"""
+class OperationLogCipherEnum(IntEnum):
+    """
+    操作日志加密类型枚举
+
+    aes:          0 - 使用 AES 对称加密（安全性高，性能损耗较大）
+    md5:          1 - 使用 MD5 摘要加密（不可逆，适合简单脱敏）
+    itsdangerous: 2 - 使用 ItsDangerous 加密（常用于签名和加密，适合 Web 场景）
+    plan:         3 - 不加密（明文存储）
+    """
 
     aes = 0
     md5 = 1

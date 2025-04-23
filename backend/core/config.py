@@ -134,6 +134,20 @@ class Settings(BaseSettings):
     LOG_STDOUT_FILENAME: str = f'fs_access_{ENVIRONMENT}.log'
     LOG_STDERR_FILENAME: str = f'fs_error_{ENVIRONMENT}.log'
 
+    # ============== 操作日志 ==============
+    OPERATION_LOG_ENCRYPT_TYPE: int = 1  # 0: AES (性能损耗); 1: md5; 2: ItsDangerous; 3: 不加密, others: 替换为 ******
+    # 密钥 os.urandom(32), 需使用 bytes.hex() 方法转换为 str
+    OPERATION_LOG_ENCRYPT_SECRET_KEY: SecretStr = SecretStr(os.urandom(32).hex())
+    OPERATION_LOG_PATH_EXCLUDE: list[str] = [
+        f'{API_ROUTE_PREFIX}/auth/login/swagger',
+    ]
+    OPERATION_LOG_ENCRYPT_KEY_INCLUDE: list[str] = [  # 需要脱敏处理的字段
+        'password',
+        'old_password',
+        'new_password',
+        'confirm_password',
+    ]
+
 
 @lru_cache
 def get_settings():

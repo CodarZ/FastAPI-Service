@@ -18,6 +18,7 @@ from backend.core.paths import STATIC_DIR
 from backend.database.mysql import create_table
 from backend.database.redis import redis_client
 from backend.middleware.jwt import JWTAuthMiddleware
+from backend.middleware.operation import OperationLogMiddleware
 from backend.middleware.state import StateMiddleware
 from backend.utils.check import ensure_unique_route_names, http_limit_callback
 from backend.utils.openapi_patch import simplify_operation_ids
@@ -75,7 +76,12 @@ def register_static_file(app: FastAPI):
 
 
 def register_middleware(app: FastAPI):
-    # JWT auth (必须)
+    """注册中间件"""
+
+    # 操作日志中间件
+    app.add_middleware(OperationLogMiddleware)
+
+    # JWT auth
     app.add_middleware(
         AuthenticationMiddleware,
         backend=JWTAuthMiddleware(),
@@ -87,7 +93,10 @@ def register_middleware(app: FastAPI):
 
         app.add_middleware(AccessMiddleware)
 
+    # State
     app.add_middleware(StateMiddleware)
+
+    # Trace ID
     app.add_middleware(CorrelationIdMiddleware, validator=lambda x: False)
 
     # CORS（必须放在最下面）
