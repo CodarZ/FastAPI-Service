@@ -6,6 +6,7 @@ from fastapi.security import HTTPBasicCredentials
 
 from backend.app.admin.schema.user import UserInfo
 from backend.common.security.jwt import create_access_token
+from backend.utils.timezone import timezone
 
 __all__ = ['auth_service']
 
@@ -31,6 +32,7 @@ class AuthService:
             email=None,
             phone=None,
             uuid='12345678-1234-5678-1234-567812345678',
+            birth_date=timezone.now(),
         )
 
 
