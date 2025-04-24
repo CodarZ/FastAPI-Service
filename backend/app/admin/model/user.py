@@ -18,21 +18,7 @@ if TYPE_CHECKING:
 
 
 class User(Base):
-    """用户表
-
-    使用邮箱注册：
-    1. `username`默认为邮箱。
-    2. 需要填写`password`。
-
-    使用手机号验证码注册：
-    1. `username`默认为手机号。
-    2. `password`默认为空。
-
-    授权登录下：
-    1. `username`默认为获取到的一些数据。
-    2. `password`默认为空。
-    3. 是否需要绑定手机号、邮箱等信息？
-    """
+    """用户表"""
 
     @declared_attr.directive
     def __tablename__(cls):
@@ -46,6 +32,7 @@ class User(Base):
     salt: Mapped[bytes | None] = mapped_column(VARBINARY(255), comment='加密盐')
 
     nickname: Mapped[str] = mapped_column(String(20), comment='昵称')
+    realname: Mapped[str | None] = mapped_column(String(50), default=None, comment=' 真实姓名')
     email: Mapped[CustomEmailStr | None] = mapped_column(
         String(50), unique=True, index=True, default=None, comment='邮箱'
     )
