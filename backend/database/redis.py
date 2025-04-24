@@ -60,7 +60,7 @@ class RedisClient(Redis):
 
         if deleted_keys:
             await self.delete(*deleted_keys)
-            log.info(f"🧹 已删除 Redis 前缀 '{prefix}' 下 {len(deleted_keys)} 个 key")
+            log.warning(f"🧹 已删除 Redis '{prefix}' 下 {len(deleted_keys)} 个 key")
 
 
 redis_client = RedisClient()

@@ -114,7 +114,7 @@ def set_custom_logfile() -> None:
     logger.add(
         str(log_stdout_file),
         level=settings.LOG_STDOUT_LEVEL,
-        filter=lambda record: record['level'].no <= 25,
+        filter=lambda record: record['level'].no <= 30,
         backtrace=False,
         diagnose=False,
         **log_config,
@@ -124,7 +124,7 @@ def set_custom_logfile() -> None:
     logger.add(
         str(log_stderr_file),
         level=settings.LOG_STDERR_LEVEL,
-        filter=lambda record: record['level'].no >= 30,
+        filter=lambda record: record['level'].no > 30,
         backtrace=True,
         diagnose=True,
         **log_config,
