@@ -12,6 +12,7 @@ from fastapi_limiter import FastAPILimiter
 from starlette.middleware.authentication import AuthenticationMiddleware
 
 from backend.app.router import router
+from backend.common.exception.handler import register_exception
 from backend.common.logger import set_custom_logfile, setup_logging
 from backend.core.config import settings
 from backend.core.paths import STATIC_DIR
@@ -40,6 +41,7 @@ def register_app() -> FastAPI:
     register_static_file(app)
     register_middleware(app)
     register_router(app)
+    register_exception(app)
 
     return app
 
