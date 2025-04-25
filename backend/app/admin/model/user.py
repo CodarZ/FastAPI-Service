@@ -9,7 +9,6 @@ from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
 from backend.app.admin.model.m2m import sys_user_role
 from backend.common.model import Base, id_key
-from backend.common.schema import CustomEmailStr
 from backend.database.mysql import uuid4_str
 from backend.utils.timezone import timezone
 
@@ -33,9 +32,7 @@ class User(Base):
 
     nickname: Mapped[str] = mapped_column(String(20), comment='昵称')
     realname: Mapped[str | None] = mapped_column(String(50), default=None, comment=' 真实姓名')
-    email: Mapped[CustomEmailStr | None] = mapped_column(
-        String(50), unique=True, index=True, default=None, comment='邮箱'
-    )
+    email: Mapped[str | None] = mapped_column(String(50), unique=True, index=True, default=None, comment='邮箱')
     phone: Mapped[str | None] = mapped_column(String(11), unique=True, index=True, default=None, comment='手机号')
     avatar: Mapped[str | None] = mapped_column(String(255), default=None, comment='头像')
     gender: Mapped[int | None] = mapped_column(INTEGER, default=None, comment='性别(0女 1男 3未知)')

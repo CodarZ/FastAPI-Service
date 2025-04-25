@@ -5,16 +5,16 @@
 from datetime import datetime
 from typing import Any, Optional, Self
 
-from pydantic import ConfigDict, Field, model_validator
+from pydantic import ConfigDict, EmailStr, Field, model_validator
 
 from backend.app.admin.schema.dept import DeptInfo
 from backend.app.admin.schema.role import RoleInfo
-from backend.common.schema import CustomEmailStr, SchemaBase
+from backend.common.schema import SchemaBase
 
 
 class UserBase(SchemaBase):
     username: str = Field(description='用户名')
-    email: Optional[CustomEmailStr] = Field(description='邮箱')
+    email: Optional[EmailStr] = Field(description='邮箱')
     phone: Optional[str] = Field(description='手机号')
     nickname: str = Field(description='昵称')
     realname: Optional[str] = Field(description='真实姓名')
@@ -41,7 +41,7 @@ class UserAuth(SchemaBase):
 
 
 class UserCreateEmail(SchemaBase):
-    email: CustomEmailStr = Field(description='邮箱')
+    email: EmailStr = Field(description='邮箱')
     password: str = Field(description='密码')
     # captcha: str = Field(description='图形验证码')
 
@@ -63,7 +63,7 @@ class UserCreate(SchemaBase):
     username: str = Field(max_length=20, description='用户名')
     password: Optional[str] = Field(description='密码（默认 123456）')
     phone: str = Field(max_length=11, description='手机号')
-    email: Optional[CustomEmailStr] = Field(description='邮箱')
+    email: Optional[EmailStr] = Field(description='邮箱')
     nickname: str = Field(description='昵称')
     realname: Optional[str] = Field(description='真实姓名')
     avatar: Optional[str] = Field(description='头像')
@@ -88,7 +88,7 @@ class UserUpdate(SchemaBase):
     username: str = Field(max_length=20, description='用户名')
     password: Optional[str] = Field(description='密码（默认 123456）')
     phone: str = Field(max_length=11, description='手机号')
-    email: Optional[CustomEmailStr] = Field(description='邮箱')
+    email: Optional[EmailStr] = Field(description='邮箱')
     nickname: str = Field(description='昵称')
     realname: Optional[str] = Field(description='真实姓名')
     avatar: Optional[str] = Field(description='头像')
