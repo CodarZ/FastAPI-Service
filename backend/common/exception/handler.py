@@ -248,12 +248,10 @@ async def _validation_exception_handler(
     if error.get('type') == 'json_invalid':
         message = 'json解析失败'
     else:
-        message = error_msg = error.get('msg')
-
-        if settings.ENVIRONMENT == 'development':  # 开发环境显示更详细的信息
-            error_input = error.get('input')
-            field = str(error.get('loc')[-1])
-            message = f'{field} {error_msg}，输入：{error_input}'
+        error_msg = error.get('msg')
+        error_input = error.get('input')
+        field = str(error.get('loc')[-1])
+        message = f'{field} {error_msg}，输入：{error_input}'
 
     content = {
         'code': CustomResponseCode.HTTP_422.code,
