@@ -73,7 +73,7 @@ class OperationLogMiddleware(BaseHTTPMiddleware):
         print(opera_create.model_dump_json())
 
         if request_next.err:
-            log.error(f'操作日志中间件, 执行请求异常: {request_next.err}')
+            log.error(f'【操作日志中间件】执行请求异常: {request_next.err}')
             raise request_next.err from None
         return request_next.response
 
@@ -168,6 +168,6 @@ class OperationLogMiddleware(BaseHTTPMiddleware):
             if exception:
                 code = exception.get('code')
                 msg = exception.get('msg')
-                log.error(f'操作日志中间件, 处理请求异常: {msg}')
+                log.error(f'【操作日志中间件】处理请求异常: {msg}')
                 break
         return code, msg
