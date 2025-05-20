@@ -1,0 +1,39 @@
+[project]
+name = "fastapi-servies"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+  "asgi-correlation-id>=4.3.4",
+  "asyncmy>=0.2.10",
+  "asyncpg>=0.30.0",
+  "bcrypt>=4.3.0",
+  "fastapi-limiter>=0.1.6",
+  "fastapi-pagination>=0.13.1",
+  "fastapi[standard]>=0.115.12",
+  "httpx>=0.28.1",
+  "loguru>=0.7.3",
+  "msgspec>=0.19.0",
+  "path>=17.1.0",
+  "pydantic>=2.11.4",
+  "pydantic-extra-types>=2.10.4",
+  "pydantic-settings>=2.9.1",
+  "python-jose>=3.4.0",
+  "requests>=2.32.3",
+  "user-agents>=2.2.0",
+]
+
+
+[dependency-groups]
+dev = ["pytest>=8.3.5"]
+lint = ["pre-commit>=4.2.0", "ruff>=0.11.10"]
+
+[[tool.uv.index]]
+name = "aliyun"
+url = "https://mirrors.aliyun.com/pypi/simple"
+
+[tool.uv]
+package = false
+python-downloads = "manual"
+default-groups = ["dev", "lint"]
