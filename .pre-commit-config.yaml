@@ -12,8 +12,8 @@ repos:
     hooks:
       - id: ruff
         args:
-          - '--fix'
-          - '--unsafe-fixes'
+          - "--fix"
+          - "--unsafe-fixes"
       - id: ruff-format
 
   - repo: git@github.com:astral-sh/uv-pre-commit.git
@@ -21,4 +21,4 @@ repos:
     hooks:
       - id: uv-lock
       - id: uv-export
-        args: ['--no-hashes', -o, requirements.txt]
+        args: ["--no-hashes", -o, requirements.txt]

@@ -48,7 +48,7 @@
     "editor.defaultFormatter": "tamasfe.even-better-toml"
   },
   "[yaml]": {
-    "editor.defaultFormatter": "tamasfe.even-better-toml"
+    "editor.defaultFormatter": "redhat.vscode-yaml"
   },
   "[markdown]": {
     "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
