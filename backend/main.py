@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from fastapi import FastAPI
+from backend.core.registrar import register_app
 
-app = FastAPI()
-
-
-@app.get('/')
-async def root():
-    return {'message': 'Hello World!'}
+app = register_app()
