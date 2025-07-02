@@ -53,7 +53,7 @@ msgspec==0.19.0
 nodeenv==1.9.1
 packaging==25.0
 path==17.1.0
-pillow==11.2.1
+pillow==11.3.0
 platformdirs==4.3.8
 pluggy==1.6.0
 pre-commit==4.2.0
