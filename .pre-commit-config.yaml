@@ -16,7 +16,6 @@ repos:
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: debug-statements
-        args: ['--fix=lf']
 
   # 代码检查和格式化工具
   # https://github.com/astral-sh/ruff-pre-commit.git
