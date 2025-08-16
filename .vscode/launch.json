@@ -1,0 +1,42 @@
+{
+  "version": "1.0.0",
+  "configurations": [
+    {
+      "name": "FastAPI Development",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "backend.main:app",
+        "--reload"
+      ],
+      "jinja": true,
+      "justMyCode": true,
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "ENVIRONMENT": "development"
+      },
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "FastAPI Production",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "backend.main:app",
+        "--log-level",
+        "info"
+      ],
+      "jinja": false,
+      "justMyCode": true,
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "ENVIRONMENT": "production"
+      },
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
