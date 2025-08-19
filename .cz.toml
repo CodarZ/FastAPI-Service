@@ -5,7 +5,7 @@ tag_format = "v$version"
 version_files = ["pyproject.toml:version"]
 
 [tool.commitizen.customize]
-message_template = "{{change_type}}{{scope}}: {{subject}}{% if body %}\n\n{{body}}{% endif %}{% if footer %}\n\n{{footer}}{% endif %}"
+message_template = "{{change_type}}{% if scope %}({{scope}}){% endif %}: {{subject}}{% if body %}\n\n{{body}}{% endif %}{% if footer %}\n\n{{footer}}{% endif %}"
 example = "✨ feat(api): add user registration endpoint"
 schema = """
 <type>(<scope>): <subject>
