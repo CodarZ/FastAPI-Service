@@ -7,7 +7,7 @@ requires-python = ">=3.13"
 dependencies = []
 
 [dependency-groups]
-dev = ["pytest>=8.4.1"]
+dev = ["pytest>=8.4.1", "commitizen>=3.35.0"]
 lint = ["pre-commit>=4.2.0", "ruff>=0.12.8"]
 
 [tool.uv]

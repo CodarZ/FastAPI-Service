@@ -1,0 +1,59 @@
+[tool.commitizen]
+name = "cz_customize"
+version = "0.0.0"
+tag_format = "v$version"
+version_files = ["pyproject.toml:version"]
+
+[tool.commitizen.customize]
+message_template = "{{change_type}}{{scope}}: {{subject}}{% if body %}\n\n{{body}}{% endif %}{% if footer %}\n\n{{footer}}{% endif %}"
+example = "✨ feat(api): add user registration endpoint"
+schema = """
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+"""
+schema_pattern = "^(🐛 fix|✨ feat|📝 docs|🎨 style|♻️ refactor|⚡️ perf|✅ test|🔧 chore|🏗️ build|👷 ci|⏪ revert|⬆️ upgrade|🔥 remove|🎉 init|🔒 security)(\\(.+\\))?: .+"
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "change_type"
+choices = [
+  { value = "✨ feat", name = "✨ feat:       新功能" },
+  { value = "🐛 fix", name = "🐛 fix:        修复 Bug" },
+  { value = "📝 docs", name = "📝 docs:       文档更新" },
+  { value = "🎨 style", name = "🎨 style:      代码格式化" },
+  { value = "♻️ refactor", name = "♻️  refactor:   代码重构" },
+  { value = "⚡️ perf", name = "⚡️ perf:       性能优化" },
+  { value = "✅ test", name = "✅ test:       增加或修改测试" },
+  { value = "🔧 chore", name = "🔧 chore:      更改依赖、修改配置等" },
+  { value = "🏗️ build", name = "🏗️  build:      影响构建系统或外部依赖的更改" },
+  { value = "👷 ci", name = "👷 ci:         CI/CD 相关更改" },
+  { value = "⏪ revert", name = "⏪ revert:     回退之前的提交" },
+  { value = "⬆️ upgrade", name = "⬆️  upgrade:    升级依赖" },
+  { value = "🔥 remove", name = "🔥 remove:     移除代码或文件" },
+  { value = "🎉 init", name = "🎉 init:       初始提交" },
+  { value = "🔒 security", name = "🔒 security:   安全性修复" },
+]
+message = "请选择本次提交的类型:"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "scope"
+message = "说明本次提交的影响范围 (可选，如: auth, ui, api):"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "subject"
+message = "请用一句话简短描述本次提交 (必填):"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "body"
+message = "提供更详细的提交描述 (可选，使用 | 进行换行):"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "footer"
+message = "页脚信息 (可选，如: Closes #1231232, BREAKING CHANGE: ...):"
