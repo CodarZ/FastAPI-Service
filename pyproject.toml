@@ -47,3 +47,6 @@ default-groups = ["dev", "lint"]
 [[tool.uv.index]]
 name = "aliyun"
 url = "https://mirrors.aliyun.com/pypi/simple"
+
+[tool.setuptools]
+packages = ["backend"]
