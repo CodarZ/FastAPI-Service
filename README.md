@@ -35,3 +35,31 @@ uv run cz --config .cz.toml c
 - 🔥 remove: 移除代码或文件
 - 🎉 init: 初始提交
 - 🔒 security: 安全性修复
+
+## 版本管理
+
+本项目使用 Commitizen 自动化版本管理，基于符合规范的提交消息自动生成版本号和变更日志。
+
+### 版本发布
+
+```bash
+# 预览即将发布的版本（不实际更新）
+uv run cz --config .cz.toml bump --dry-run
+
+# 自动分析提交记录并更新版本号
+uv run cz --config .cz.toml bump
+
+# 手动指定版本类型
+uv run cz --config .cz.toml bump --increment MAJOR    # 主版本 (1.0.0 -> 2.0.0)
+uv run cz --config .cz.toml bump --increment MINOR    # 次版本 (1.0.0 -> 1.1.0)
+uv run cz --config .cz.toml bump --increment PATCH    # 补丁版本 (1.0.0 -> 1.0.1)
+```
+
+### 版本规则
+
+Commitizen 会根据提交类型自动决定版本更新方式：
+
+- **BREAKING CHANGE** 或包含 `!` 的提交 → 主版本更新 (MAJOR)
+- **feat** 类型的提交 → 次版本更新 (MINOR)
+- **fix** 类型的提交 → 补丁版本更新 (PATCH)
+- 其他类型的提交 → 不更新版本
