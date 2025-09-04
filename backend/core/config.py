@@ -113,7 +113,7 @@ class Settings(BaseSettings):
     IP_LOCATION_EXPIRE_SECONDS: int = 86400
 
     # ============== 日志 Log ==============
-    LOG_ROOT_LEVEL: str = 'NOTSET'
+    LOG_ROOT_LEVEL: str = 'INFO'
     LOG_STD_FORMAT: str = (
         '<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</> | <lvl>{level: <8}</> | '
         '<cyan> {correlation_id} </> | <lvl>{message}</>'
