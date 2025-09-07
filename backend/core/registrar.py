@@ -7,6 +7,7 @@ from fastapi import FastAPI
 
 from backend.common.log import set_custom_logfile, setup_logging
 from backend.core.config import settings
+from backend.database.postgresql import create_tables
 from backend.database.redis import redis_client
 
 
@@ -27,6 +28,9 @@ def register_app() -> FastAPI:
 
 @asynccontextmanager
 async def init(app: FastAPI):
+    # 创建数据库表
+    await create_tables()
+
     await redis_client.open()
 
     yield
