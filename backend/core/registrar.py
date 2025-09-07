@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from backend.common.log import setup_logging
+from backend.common.log import set_custom_logfile, setup_logging
 from backend.core.config import settings
 from backend.database.redis import redis_client
 
@@ -37,3 +37,5 @@ async def init(app: FastAPI):
 def register_logger() -> None:
     """注册日志"""
     setup_logging()
+
+    set_custom_logfile()

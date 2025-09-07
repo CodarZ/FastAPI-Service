@@ -7,10 +7,13 @@ import logging
 import re
 import sys
 
+from os import path
+
 from asgi_correlation_id import correlation_id
 from loguru import logger
 
 from backend.core.config import settings
+from backend.core.path import LOG_DIR
 
 
 class InterceptHandler(logging.Handler):
@@ -78,6 +81,45 @@ def setup_logging() -> None:
                 'filter': lambda record: correlation_id_filter(record),
             }
         ]
+    )
+
+
+def set_custom_logfile() -> None:
+    """设置自定义日志文件"""
+    log_path = LOG_DIR
+
+    # 日志文件
+    log_stdout_file = path.join(log_path, settings.LOG_STDOUT_FILENAME)
+    log_stderr_file = path.join(log_path, settings.LOG_STDERR_FILENAME)
+
+    # 配置 Loguru 日志文件处理器
+    # https://loguru.readthedocs.io/en/stable/api/logger.html#loguru._logger.Logger.add
+    log_config = {
+        'rotation': '10 MB',  # 单个日志文件大小超过 10MB 时轮转
+        'retention': '15 days',  # 保留最近 15 天的日志
+        'compression': 'tar.gz',  # 旧日志压缩为 .tar.gz 格式
+        'enqueue': True,  # 启用多线程安全
+        'format': settings.LOG_FILE_FORMAT,  # 日志格式化样式
+    }
+
+    # 标准输出文件
+    logger.add(
+        str(log_stdout_file),
+        level=settings.LOG_STDOUT_LEVEL,
+        filter=lambda record: record['level'].no <= 30,
+        backtrace=False,
+        diagnose=False,
+        **log_config,
+    )
+
+    # 标准错误文件
+    logger.add(
+        str(log_stderr_file),
+        level=settings.LOG_STDERR_LEVEL,
+        filter=lambda record: record['level'].no > 30,
+        backtrace=True,
+        diagnose=True,
+        **log_config,
     )
 
 
