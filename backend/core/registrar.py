@@ -4,6 +4,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi_limiter import FastAPILimiter, http_default_callback
 
 from backend.common.log import set_custom_logfile, setup_logging
 from backend.core.config import settings
@@ -31,11 +32,20 @@ async def init(app: FastAPI):
     # 创建数据库表
     await create_tables()
 
+    # 初始化 Redis
     await redis_client.open()
+
+    # 初始化 Limiter
+    await FastAPILimiter.init(
+        redis=redis_client,
+        prefix=settings.REDIS_REQUEST_LIMITER_PREFIX,
+        http_callback=http_default_callback,
+    )
 
     yield
 
     await redis_client.shut()
+    await FastAPILimiter.close()
 
 
 def register_logger() -> None:
