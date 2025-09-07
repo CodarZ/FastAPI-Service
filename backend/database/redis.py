@@ -47,5 +47,27 @@ class RedisClient(Redis):
         except Exception as e:
             log.error('❌ 关闭 Redis 连接时出现异常: {}', e)
 
+    async def delete_prefix(self, prefix: str, exclude: str | list[str] | None = None) -> None:
+        """删除指定前缀的所有 Key"""
+        exclude_set = set()
+        if exclude:
+            if isinstance(exclude, str):
+                exclude_set.add(exclude)
+            else:
+                exclude_set.update(exclude)
+        try:
+            keys = []
+            async for key in self.scan_iter(match=f'{prefix}*'):
+                if key not in exclude_set:
+                    keys.append(key)
+
+            if keys:
+                deleted_count = await self.delete(*keys)
+                log.info(f"成功删除 {deleted_count} 个前缀为 '{prefix}' 的 key")
+
+        except Exception as e:
+            log.error(f"删除前缀为 '{prefix}' 的 key 时出现异常: {e}")
+            raise
+
 
 redis_client: RedisClient = RedisClient()
