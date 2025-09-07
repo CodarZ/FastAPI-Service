@@ -10,6 +10,7 @@ from typing import Literal
 
 from pydantic import SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from sqlalchemy import URL
 
 from backend.core.path import ENV_DIR
 from backend.utils.project import get_project_version
@@ -70,9 +71,17 @@ class Settings(BaseSettings):
     DB_ECHO: bool = False  # 连接到数据库时是否打印SQL语句
     DB_CHARSET: str = 'utf8mb4'
 
-    def PostgreSQL_DATABASE_URL(self) -> str:
+    @property
+    def PostgreSQL_DATABASE_URL(self):
         """构建 PostgreSQL 数据库连接 URL"""
-        return f'postgresql://{self.DB_USER}:{self.DB_PASSWORD.get_secret_value()}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_DATABASE}'
+        return URL.create(
+            drivername='postgresql+asyncpg',
+            username=self.DB_USER,
+            password=self.DB_PASSWORD.get_secret_value(),
+            host=settings.DB_HOST,
+            port=settings.DB_PORT,
+            database=self.DB_DATABASE if self.ENVIRONMENT == 'production' else f'{self.DB_DATABASE}_test',
+        )
 
     # ============== Redis ==============
     REDIS_HOST: str = '127.0.0.1'
