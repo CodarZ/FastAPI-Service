@@ -16,6 +16,7 @@ from backend.core.path import STATIC_DIR, UPLOAD_DIR
 from backend.database.postgresql import create_tables
 from backend.database.redis import redis_client
 from backend.middleware.access import AccessMiddleware
+from backend.middleware.state import StateMiddleware
 from backend.utils.serializers import MsgSpecJSONResponse
 
 
@@ -96,3 +97,5 @@ def register_middleware(app: FastAPIBase) -> None:
     """注册中间件"""
 
     app.add_middleware(AccessMiddleware)
+
+    app.add_middleware(StateMiddleware)
