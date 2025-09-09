@@ -4,6 +4,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI as FastAPIBase
+from fastapi.staticfiles import StaticFiles
 from fastapi_limiter import FastAPILimiter, http_default_callback
 from starlette.middleware.cors import CORSMiddleware
 from starlette.types import ASGIApp
@@ -11,6 +12,7 @@ from starlette.types import ASGIApp
 from backend.common.exception.handler import register_exception
 from backend.common.log import set_custom_logfile, setup_logging
 from backend.core.config import settings
+from backend.core.path import STATIC_DIR, UPLOAD_DIR
 from backend.database.postgresql import create_tables
 from backend.database.redis import redis_client
 from backend.utils.serializers import MsgSpecJSONResponse
@@ -41,6 +43,8 @@ def register_app() -> FastAPIBase:
     )
 
     register_logger()
+
+    register_static_file(app)
 
     register_exception(app)
 
@@ -73,3 +77,13 @@ def register_logger() -> None:
     setup_logging()
 
     set_custom_logfile()
+
+
+def register_static_file(app: FastAPIBase) -> None:
+    """注册静态资源服务"""
+    # 上传静态资源
+    app.mount('/static/upload', StaticFiles(directory=UPLOAD_DIR), name='upload')
+
+    # 固有静态资源
+    if settings.FASTAPI_STATIC_FILES:
+        app.mount('/static', StaticFiles(directory=STATIC_DIR), name='static')
