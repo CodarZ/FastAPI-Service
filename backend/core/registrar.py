@@ -15,6 +15,7 @@ from backend.core.config import settings
 from backend.core.path import STATIC_DIR, UPLOAD_DIR
 from backend.database.postgresql import create_tables
 from backend.database.redis import redis_client
+from backend.middleware.access import AccessMiddleware
 from backend.utils.serializers import MsgSpecJSONResponse
 
 
@@ -45,6 +46,8 @@ def register_app() -> FastAPIBase:
     register_logger()
 
     register_static_file(app)
+
+    register_middleware(app)
 
     register_exception(app)
 
@@ -87,3 +90,9 @@ def register_static_file(app: FastAPIBase) -> None:
     # 固有静态资源
     if settings.FASTAPI_STATIC_FILES:
         app.mount('/static', StaticFiles(directory=STATIC_DIR), name='static')
+
+
+def register_middleware(app: FastAPIBase) -> None:
+    """注册中间件"""
+
+    app.add_middleware(AccessMiddleware)
