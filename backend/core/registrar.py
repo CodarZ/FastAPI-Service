@@ -3,6 +3,7 @@
 
 from contextlib import asynccontextmanager
 
+from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI as FastAPIBase
 from fastapi.staticfiles import StaticFiles
 from fastapi_limiter import FastAPILimiter, http_default_callback
@@ -99,3 +100,5 @@ def register_middleware(app: FastAPIBase) -> None:
     app.add_middleware(AccessMiddleware)
 
     app.add_middleware(StateMiddleware)
+
+    app.add_middleware(CorrelationIdMiddleware, validator=None)
