@@ -8,6 +8,7 @@ from fastapi_limiter import FastAPILimiter, http_default_callback
 from starlette.middleware.cors import CORSMiddleware
 from starlette.types import ASGIApp
 
+from backend.common.exception.handler import register_exception
 from backend.common.log import set_custom_logfile, setup_logging
 from backend.core.config import settings
 from backend.database.postgresql import create_tables
@@ -40,6 +41,8 @@ def register_app() -> FastAPIBase:
     )
 
     register_logger()
+
+    register_exception(app)
 
     return app
 
