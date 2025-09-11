@@ -156,6 +156,7 @@ pydantic==2.11.7
     #   fastapi-service
     #   pydantic-extra-types
     #   pydantic-settings
+    #   sqlalchemy-crud-plus
 pydantic-core==2.33.2
     # via pydantic
 pydantic-extra-types==2.10.5
@@ -210,6 +211,10 @@ six==1.17.0
 sniffio==1.3.1
     # via anyio
 sqlalchemy==2.0.43
+    # via
+    #   fastapi-service
+    #   sqlalchemy-crud-plus
+sqlalchemy-crud-plus==1.12.0
     # via fastapi-service
 starlette==0.47.3
     # via
