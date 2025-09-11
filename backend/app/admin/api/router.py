@@ -3,4 +3,9 @@
 
 from fastapi import APIRouter
 
+from backend.app.admin.api.v1.sys import router as sys_router
+
 admin_router = APIRouter()
+
+
+admin_router.include_router(sys_router)
