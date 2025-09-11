@@ -113,7 +113,7 @@ def register_router(app: FastAPIBase) -> None:
     """注册路由"""
 
     # API
-    app.include_router(router, prefix=settings.FASTAPI_API_ROUTE_PREFIX)
+    app.include_router(router)
 
     # Extra
     ensure_unique_route_names(app)
