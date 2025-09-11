@@ -23,5 +23,14 @@ class UserService:
 
             await user_crud.register_by_username(db, params)
 
+    @staticmethod
+    async def get_userinfo(*, pk: int):
+        """根据 pk 获取用户信息"""
+        async with async_db_session.begin() as db:
+            user = await user_crud.get(db, pk)
+            if not user:
+                raise errors.NotFoundError(msg='用户不存在')
+            return user
+
 
 user_service = UserService()

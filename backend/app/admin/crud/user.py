@@ -12,6 +12,10 @@ from backend.common.security.jwt import get_hash_password
 
 
 class UserCRUD(CRUDPlus[User]):
+    async def get(self, db: AsyncSession, pk: int) -> User | None:
+        """根据 pk 获取用户详情"""
+        return await self.select_model(db, pk)
+
     async def get_by_column(self, db: AsyncSession, column: str, value: str):
         """根据指定列名和值获取 详情"""
         return await self.select_model_by_column(db, **{column: value})  # type: ignore
