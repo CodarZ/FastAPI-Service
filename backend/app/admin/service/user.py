@@ -82,6 +82,11 @@ class UserService:
                 if existing_user:
                     raise errors.ValidationError(msg='该手机号已存在')
 
+            # 验证密码（如果要更新密码）
+            if params.password is not None:
+                if not params.password:
+                    raise errors.ValidationError(msg='密码不能为空')
+
             # 执行更新
             count = await user_crud.update(db, pk, params)
             return count

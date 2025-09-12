@@ -77,6 +77,13 @@ class UserCRUD(CRUDPlus[User]):
             if value is not None:
                 update_data[field] = value
 
+        # 处理密码更新
+        if params.password is not None:
+            salt = bcrypt.gensalt()
+            hashed_password = get_hash_password(params.password, salt)
+            update_data['password'] = hashed_password
+            update_data['salt'] = salt
+
         if not update_data:
             return 0
 

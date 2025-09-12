@@ -62,6 +62,7 @@ class UserUpdateParams(SchemaBase):
     """用户更新参数"""
 
     username: str | None = Field(default=None, description='用户名')
+    password: str | None = Field(default=None, description='密码')
     nickname: str | None = Field(default=None, description='昵称')
     email: EmailStr | None = Field(default=None, description='邮箱')
     phone: str | None = Field(default=None, description='手机号')
