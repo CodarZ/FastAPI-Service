@@ -1,8 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
+
 from backend.app.admin.crud.user import user_crud
-from backend.app.admin.schema.user import UserListQueryParams, UserRegisterParams, UserUpdateParams
+from backend.app.admin.model.user import User
+from backend.app.admin.schema.user import (
+    UserDetailWithSocials,
+    UserListQueryParams,
+    UserRegisterParams,
+    UserUpdateParams,
+)
 from backend.common.exception import errors
 from backend.database.postgresql import async_db_session
 
@@ -30,6 +39,20 @@ class UserService:
             if not user:
                 raise errors.NotFoundError(msg='用户不存在')
             return user
+
+    @staticmethod
+    async def get_userinfo_with_socials(*, pk: int) -> UserDetailWithSocials:
+        """根据 pk 获取包含社交绑定状态的用户信息"""
+
+        async with async_db_session.begin() as db:
+            stmt = select(User).options(selectinload(User.socials)).where(User.id == pk)
+            result = await db.execute(stmt)
+            user = result.scalar_one_or_none()
+
+            if not user:
+                raise errors.NotFoundError(msg='用户不存在')
+
+            return UserDetailWithSocials.model_validate(user)
 
     @staticmethod
     async def get_list(*, params: UserListQueryParams):

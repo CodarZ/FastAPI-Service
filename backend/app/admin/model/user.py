@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations
+
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import INTEGER, Boolean, DateTime, LargeBinary, String
-from sqlalchemy.orm import Mapped, declared_attr, mapped_column
+from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
 from backend.common.model import Base, id_key
 from backend.database.postgresql import uuid4_str
 from backend.utils.timezone import timezone
+
+if TYPE_CHECKING:
+    from backend.app.admin.model import UserSocial
 
 
 class User(Base):
@@ -45,3 +51,6 @@ class User(Base):
     last_login_time: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), init=False, comment='最后登录时间'
     )
+
+    # 用户-社交  一对多
+    socials: Mapped[list['UserSocial']] = relationship(init=False, back_populates='user')

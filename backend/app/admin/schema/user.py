@@ -4,6 +4,7 @@ from datetime import datetime
 
 from pydantic import ConfigDict, EmailStr, Field
 
+from backend.app.admin.schema.user_social import UserSocialBase
 from backend.common.schema import SchemaBase
 
 
@@ -74,3 +75,9 @@ class UserUpdateParams(SchemaBase):
     is_verified: bool | None = Field(default=None, description='是否实名认证')
     is_multi_login: bool | None = Field(default=None, description='是否允许多端登录')
     is_staff: bool | None = Field(default=None, description='是否可以登录后台管理')
+
+
+class UserDetailWithSocials(UserDetail):
+    """包含社交绑定状态的用户详情"""
+
+    socials: list[UserSocialBase] | None = Field(default=None, description='社交平台绑定状态')

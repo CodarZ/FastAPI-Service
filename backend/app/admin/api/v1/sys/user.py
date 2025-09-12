@@ -5,7 +5,13 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Path
 
-from backend.app.admin.schema.user import UserDetail, UserListQueryParams, UserRegisterParams, UserUpdateParams
+from backend.app.admin.schema.user import (
+    UserDetail,
+    UserDetailWithSocials,
+    UserListQueryParams,
+    UserRegisterParams,
+    UserUpdateParams,
+)
 from backend.app.admin.service.user import user_service
 from backend.common.pagination import DependsPagination, PageData
 from backend.common.response.base import ResponseModel, ResponseSchemaModel, response_base
@@ -33,6 +39,14 @@ async def get_user_list(
 async def get_user_detail(pk: Annotated[int, Path(description='用户 ID')]) -> ResponseSchemaModel[UserDetail]:
     user = await user_service.get_userinfo(pk=pk)
     user_detail = UserDetail.model_validate(user)
+    return response_base.success_with_schema(data=user_detail)
+
+
+@router.get('/{pk}/social', summary='获取用户信息（包含第三方授权信息）')
+async def get_user_detail_with_social(
+    pk: Annotated[int, Path(description='用户 ID')],
+) -> ResponseSchemaModel[UserDetailWithSocials]:
+    user_detail = await user_service.get_userinfo_with_socials(pk=pk)
     return response_base.success_with_schema(data=user_detail)
 
 
