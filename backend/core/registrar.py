@@ -7,6 +7,7 @@ from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI as FastAPIBase
 from fastapi.staticfiles import StaticFiles
 from fastapi_limiter import FastAPILimiter, http_default_callback
+from fastapi_pagination import add_pagination
 from starlette.middleware.cors import CORSMiddleware
 from starlette.types import ASGIApp
 
@@ -55,6 +56,8 @@ def register_app() -> FastAPIBase:
     register_middleware(app)
 
     register_router(app)
+
+    register_page(app)
 
     register_exception(app)
 
@@ -118,3 +121,8 @@ def register_router(app: FastAPIBase) -> None:
     # Extra
     ensure_unique_route_names(app)
     simplify_operation_ids(app)
+
+
+def register_page(app: FastAPIBase):
+    """分页查询"""
+    add_pagination(app)
