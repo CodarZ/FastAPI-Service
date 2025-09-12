@@ -4,6 +4,7 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from pydantic import PydanticUserError, ValidationError
+from sqlalchemy.exc import SQLAlchemyError
 from uvicorn.protocols.http.h11_impl import STATUS_PHRASES
 
 from backend.common.exception.errors import BaseExceptionMixin
@@ -71,6 +72,24 @@ async def _validation_exception_handler(request: Request, e: RequestValidationEr
 
 
 def register_exception(app: FastAPI):
+    @app.exception_handler(SQLAlchemyError)
+    async def sqlalchemy_exception_handler(request: Request, exc: SQLAlchemyError):
+        """SQLAlchemy 数据库异常处理"""
+        if settings.ENVIRONMENT == 'development':
+            # 开发环境显示详细错误信息
+            content = {
+                'code': StandardResponseCode.HTTP_500,
+                'msg': f'数据库错误: {str(exc)}',
+                'data': None,
+            }
+        else:
+            # 生产环境隐藏详细错误信息
+            res = response_base.fail(res=CustomResponseCode.HTTP_500)
+            content = res.model_dump()
+        request.state.__request_sqlalchemy_exception__ = content
+        content.update(trace_id=get_request_trace_id(request))
+        return MsgSpecJSONResponse(content, StandardResponseCode.HTTP_500)
+
     @app.exception_handler(HTTPException)
     async def http_exception_handler(request: Request, exc: HTTPException):
         """全局HTTP异常处理"""
