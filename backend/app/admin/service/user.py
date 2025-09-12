@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-
 from backend.app.admin.crud.user import user_crud
-from backend.app.admin.schema.user import UserRegisterParams
+from backend.app.admin.schema.user import UserListQueryParams, UserRegisterParams
 from backend.common.exception import errors
 from backend.database.postgresql import async_db_session
 
@@ -31,6 +30,15 @@ class UserService:
             if not user:
                 raise errors.NotFoundError(msg='用户不存在')
             return user
+
+    @staticmethod
+    async def get_list(*, params: UserListQueryParams):
+        """获取用户分页列表"""
+        async with async_db_session.begin() as db:
+            stmt = await user_crud.get_list_select(params)
+            from backend.common.pagination import paging_data
+
+            return await paging_data(db, stmt)
 
 
 user_service = UserService()

@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_crud_plus import CRUDPlus
 
 from backend.app.admin.model.user import User
-from backend.app.admin.schema.user import UserRegisterParams
+from backend.app.admin.schema.user import UserListQueryParams, UserRegisterParams
 from backend.common.security.jwt import get_hash_password
 
 
@@ -30,6 +30,22 @@ class UserCRUD(CRUDPlus[User]):
 
         user = self.model(**dict_params)
         db.add(user)
+
+    async def get_list_select(self, params: UserListQueryParams):
+        """获取用户列表"""
+        filters = {}
+
+        for field in ['username', 'nickname', 'email']:
+            value = getattr(params, field, None)
+            if value:
+                filters[f'{field}__like'] = f'%{value}%'
+
+        for field in ['phone', 'is_verified', 'gender', 'is_staff']:
+            value = getattr(params, field, None)
+            if value is not None:
+                filters[field] = value
+
+        return await self.select_order('id', 'asc', **filters)
 
 
 user_crud = UserCRUD(User)
