@@ -34,3 +34,11 @@ async def get_user_detail(pk: Annotated[int, Path(description='用户 ID')]) -> 
     user = await user_service.get_userinfo(pk=pk)
     user_detail = UserDetail.model_validate(user)
     return response_base.success_with_schema(data=user_detail)
+
+
+@router.delete('/{pk}', summary='删除用户')
+async def delte_user(pk: Annotated[int, Path(description='用户 ID')]) -> ResponseModel:
+    count = await user_service.delete(pk=pk)
+    if count > 0:
+        return response_base.success(res=CustomResponse(code=200, msg='删除成功'))
+    return response_base.fail(res=CustomResponse(code=400, msg='删除失败'))

@@ -47,5 +47,9 @@ class UserCRUD(CRUDPlus[User]):
 
         return await self.select_order('id', 'asc', **filters)
 
+    async def delete(self, db: AsyncSession, pk: int) -> int:
+        """删除用户"""
+        return await self.delete_model(db, pk)
+
 
 user_crud = UserCRUD(User)

@@ -40,5 +40,16 @@ class UserService:
 
             return await paging_data(db, stmt)
 
+    @staticmethod
+    async def delete(*, pk: int) -> int:
+        """删除用户"""
+        async with async_db_session.begin() as db:
+            user = await user_crud.get(db, pk)
+            if not user:
+                raise errors.NotFoundError(msg='用户不存在')
+            count = await user_crud.delete(db, pk)
+
+            return count
+
 
 user_service = UserService()
