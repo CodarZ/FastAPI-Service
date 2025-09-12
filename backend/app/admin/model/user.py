@@ -31,7 +31,7 @@ class User(Base):
     phone: Mapped[str | None] = mapped_column(String(11), default=None, unique=True, index=True, comment='手机号')
     avatar: Mapped[str | None] = mapped_column(String(255), default=None, comment='头像')
     gender: Mapped[int | None] = mapped_column(INTEGER, default=None, comment='性别(0女 1男 3未知)')
-    birth_date: Mapped[datetime | None] = mapped_column(DateTime, default=None, comment='出生日期')
+    birth_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None, comment='出生日期')
 
     status: Mapped[int] = mapped_column(INTEGER, index=True, default=1, comment='用户账号状态(0停用 1正常)')
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False, comment='是否实名认证')
@@ -43,5 +43,5 @@ class User(Base):
         DateTime(timezone=True), init=False, default_factory=timezone.now, comment='注册时间'
     )
     last_login_time: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), init=False, onupdate=timezone.now, comment='最后登录时间'
+        DateTime(timezone=True), init=False, comment='最后登录时间'
     )
