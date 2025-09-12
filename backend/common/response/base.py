@@ -76,17 +76,25 @@ class ResponseBase:
         *,
         res: CustomResponseCode | CustomResponse,
         data: Any | None = None,
-    ) -> ResponseModel | ResponseSchemaModel:
+    ) -> ResponseModel:
         return ResponseModel(code=res.code, msg=res.msg, data=data)
+
+    @staticmethod
+    def __response_with_schema(
+        *,
+        res: CustomResponseCode | CustomResponse,
+        data: SchemaT | None = None,
+    ) -> ResponseSchemaModel[SchemaT]:
+        return ResponseSchemaModel[SchemaT](code=res.code, msg=res.msg, data=data)
 
     def success(
         self,
         *,
         res: CustomResponseCode | CustomResponse = CustomResponseCode.HTTP_200,
         data: Any | None = None,
-    ) -> ResponseModel | ResponseSchemaModel:
+    ) -> ResponseModel:
         """
-        快捷方法，用于生成成功响应。
+        快捷方法，用于生成成功响应（无类型校验）。
 
         :param res: 成功状态码及信息（默认为 HTTP_200）（CustomResponseCode 或 CustomResponse 实例）
         :param data: 成功返回的数据（可选）
@@ -94,12 +102,27 @@ class ResponseBase:
         """
         return self.__response(res=res, data=data)
 
+    def success_with_schema(
+        self,
+        *,
+        res: CustomResponseCode | CustomResponse = CustomResponseCode.HTTP_200,
+        data: SchemaT | None = None,
+    ) -> ResponseSchemaModel[SchemaT]:
+        """
+        快捷方法，用于生成成功响应（带类型校验）。
+
+        :param res: 成功状态码及信息（默认为 HTTP_200）（CustomResponseCode 或 CustomResponse 实例）
+        :param data: 成功返回的数据（可选）
+        :return: 统一格式的成功响应 ResponseSchemaModel 模型
+        """
+        return self.__response_with_schema(res=res, data=data)
+
     def fail(
         self,
         *,
         res: CustomResponseCode | CustomResponse = CustomResponseCode.HTTP_400,
         data: Any = None,
-    ) -> ResponseModel | ResponseSchemaModel:
+    ) -> ResponseModel:
         """
         快捷方法，用于生成失败响应。
 
