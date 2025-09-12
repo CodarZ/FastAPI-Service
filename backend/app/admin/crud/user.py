@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_crud_plus import CRUDPlus
 
 from backend.app.admin.model.user import User
-from backend.app.admin.schema.user import UserListQueryParams, UserRegisterParams
+from backend.app.admin.schema.user import UserListQueryParams, UserRegisterParams, UserUpdateParams
 from backend.common.security.jwt import get_hash_password
 
 
@@ -50,6 +50,37 @@ class UserCRUD(CRUDPlus[User]):
     async def delete(self, db: AsyncSession, pk: int) -> int:
         """删除用户"""
         return await self.delete_model(db, pk)
+
+    async def update(self, db: AsyncSession, pk: int, params: UserUpdateParams) -> int:
+        """更新用户信息"""
+        # 获取需要更新的字段，排除 None 值
+        update_data = {}
+
+        # 定义允许更新的字段
+        updateable_fields = [
+            'username',
+            'nickname',
+            'email',
+            'phone',
+            'realname',
+            'avatar',
+            'gender',
+            'birth_date',
+            'status',
+            'is_verified',
+            'is_multi_login',
+            'is_staff',
+        ]
+
+        for field in updateable_fields:
+            value = getattr(params, field, None)
+            if value is not None:
+                update_data[field] = value
+
+        if not update_data:
+            return 0
+
+        return await self.update_model(db, pk, update_data)
 
 
 user_crud = UserCRUD(User)

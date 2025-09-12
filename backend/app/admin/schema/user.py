@@ -56,3 +56,20 @@ class UserListQueryParams(SchemaBase):
     status: int | None = Field(default=None, description='用户账号状态(0停用 1正常)')
     is_staff: bool | None = Field(default=None, description='是否可以登录后台管理')
     is_verified: bool | None = Field(default=None, description='是否实名认证')
+
+
+class UserUpdateParams(SchemaBase):
+    """用户更新参数"""
+
+    username: str | None = Field(default=None, description='用户名')
+    nickname: str | None = Field(default=None, description='昵称')
+    email: EmailStr | None = Field(default=None, description='邮箱')
+    phone: str | None = Field(default=None, description='手机号')
+    realname: str | None = Field(default=None, description='真实姓名')
+    avatar: str | None = Field(default=None, description='头像')
+    gender: int | None = Field(default=None, description='性别(0女 1男 3未知)')
+    birth_date: datetime | None = Field(default=None, description='出生日期')
+    status: int | None = Field(default=None, description='用户账号状态(0停用 1正常)')
+    is_verified: bool | None = Field(default=None, description='是否实名认证')
+    is_multi_login: bool | None = Field(default=None, description='是否允许多端登录')
+    is_staff: bool | None = Field(default=None, description='是否可以登录后台管理')

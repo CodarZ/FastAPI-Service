@@ -5,7 +5,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Path
 
-from backend.app.admin.schema.user import UserDetail, UserListQueryParams, UserRegisterParams
+from backend.app.admin.schema.user import UserDetail, UserListQueryParams, UserRegisterParams, UserUpdateParams
 from backend.app.admin.service.user import user_service
 from backend.common.pagination import DependsPagination, PageData
 from backend.common.response.base import ResponseModel, ResponseSchemaModel, response_base
@@ -42,3 +42,11 @@ async def delte_user(pk: Annotated[int, Path(description='用户 ID')]) -> Respo
     if count > 0:
         return response_base.success(res=CustomResponse(code=200, msg='删除成功'))
     return response_base.fail(res=CustomResponse(code=400, msg='删除失败'))
+
+
+@router.put('/{pk}', summary='更新用户信息')
+async def update_user(pk: Annotated[int, Path(description='用户 ID')], params: UserUpdateParams) -> ResponseModel:
+    count = await user_service.update(pk=pk, params=params)
+    if count > 0:
+        return response_base.success(res=CustomResponse(code=200, msg='修改用户信息成功'))
+    return response_base.fail(res=CustomResponse(code=400, msg='修改用户信息失败'))
