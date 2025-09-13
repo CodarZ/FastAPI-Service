@@ -42,3 +42,71 @@ class StrEnum(_EnumBase, str, Enum):
     """自定义字符串枚举类"""
 
     pass
+
+
+class DictEnum(Enum):
+    """自定义键值对枚举类"""
+
+    @property
+    def label(self) -> str:
+        return self.value[0]
+
+    @property
+    def code(self) -> str:
+        return self.value[1]
+
+    @classmethod
+    def get_member_keys(cls):
+        """枚举成员 key 列表"""
+        return list(cls.__members__.keys())
+
+    @classmethod
+    def get_member_values(cls):
+        """枚举成员 value 列表"""
+        return [member.value for member in cls]
+
+    @classmethod
+    def get_member_codes(cls):
+        """枚举成员的 code 列表"""
+        return [member.code for member in cls]
+
+    @classmethod
+    def get_member_labels(cls):
+        """枚举成员的 label 列表"""
+        return [member.label for member in cls]
+
+    @classmethod
+    def has_key(cls, key: str) -> bool:
+        """检查是否存在指定的键名"""
+        return key in cls.__members__
+
+    @classmethod
+    def has_code(cls, code: str) -> bool:
+        """检查是否存在指定的 code"""
+        return code in cls.get_member_codes()
+
+    @classmethod
+    def has_label(cls, label: str) -> bool:
+        """检查是否存在指定的 label"""
+        return label in cls.get_member_labels()
+
+    @classmethod
+    def value_of(cls, key: str):
+        """通过 key 获取枚举成员"""
+        return cls.__members__.get(key)
+
+    @classmethod
+    def get_by_code(cls, code: str):
+        """通过 code 获取枚举成员"""
+        for member in cls:
+            if member.code == code:
+                return member
+        return None
+
+    @classmethod
+    def get_by_label(cls, label: str):
+        """通过 label 获取枚举成员"""
+        for member in cls:
+            if member.label == label:
+                return member
+        return None
