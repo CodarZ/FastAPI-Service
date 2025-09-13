@@ -8,6 +8,7 @@ from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 
 from backend.common.log import log
+from backend.utils.timezone import timezone
 
 
 class AccessMiddleware(BaseHTTPMiddleware):
@@ -20,6 +21,10 @@ class AccessMiddleware(BaseHTTPMiddleware):
             log.debug(f'--> 请求开始[{path}]')
 
         perf_time = time.perf_counter()
+        request.state.perf_time = perf_time
+
+        start_time = timezone.now()
+        request.state.start_time = start_time
 
         response = await call_next(request)
 
