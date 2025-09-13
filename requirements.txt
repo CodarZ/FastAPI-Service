@@ -13,6 +13,8 @@ argcomplete==3.6.2
     # via commitizen
 asgi-correlation-id==4.3.4
     # via fastapi-service
+asgiref==3.9.1
+    # via fastapi-service
 asyncmy==0.2.10
     # via fastapi-service
 asyncpg==0.30.0

@@ -7,6 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
   "aiofiles>=24.1.0",
   "asgi-correlation-id>=4.3.4",
+  "asgiref>=3.9.1",
   "asyncmy>=0.2.10",
   "asyncpg>=0.30.0",
   "bcrypt>=4.3.0",
