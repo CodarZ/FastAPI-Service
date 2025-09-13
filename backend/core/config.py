@@ -21,9 +21,13 @@ __all__ = ['settings']
 class Settings(BaseSettings):
     ENVIRONMENT: Literal['development', 'test', 'production'] = 'development'
 
-    # 动态加载 ENV_DIR 的 `.env` 文件
+    # 动态加载 ENV_DIR 的 `.env` 文件，支持 .local 文件覆盖
     model_config = SettingsConfigDict(
-        env_file=Path(ENV_DIR) / f'.env.{os.getenv("ENVIRONMENT", "development")}',
+        env_file=[
+            Path(ENV_DIR) / '.env',
+            Path(ENV_DIR) / f'.env.{os.getenv("ENVIRONMENT", "development")}',
+            Path(ENV_DIR) / f'.env.{os.getenv("ENVIRONMENT", "development")}.local',
+        ],
         env_file_encoding='utf-8',
     )
 
