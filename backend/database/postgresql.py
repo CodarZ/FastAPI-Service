@@ -29,10 +29,10 @@ def create_async_engine_and_session(url):
             pool_pre_ping=True,  # 低：False 高：True
             pool_use_lifo=False,  # 低：False 高：True
         )
-        log.success('✅ PostgreSQL 连接成功')
+        log.info('🔄 PostgreSQL 引擎创建成功，等待实际连接测试...')
     except Exception as e:
-        log.error('❌ PostgreSQL 连接失败 {}', e)
-        sys.exit()
+        log.error('❌ PostgreSQL 引擎创建失败 {}', e)
+        sys.exit(1)
     else:
         # 创建异步会话工厂
         db_session = async_sessionmaker(
@@ -56,8 +56,13 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 async def create_tables() -> None:
     """创建数据库表"""
-    async with async_engine.begin() as coon:
-        await coon.run_sync(MappedBase.metadata.create_all)
+    try:
+        async with async_engine.begin() as coon:
+            await coon.run_sync(MappedBase.metadata.create_all)
+        log.success('✅ 数据库表创建成功')
+    except Exception as e:
+        log.error('❌ 数据库表创建失败，连接数据库失败: {}', e)
+        sys.exit(1)
 
 
 def uuid4_str() -> str:
