@@ -8,7 +8,7 @@ from pydantic import ConfigDict, Field
 from backend.common.schema import SchemaBase
 
 
-class UserSocialBase(SchemaBase):
+class UserSocialSchemaBase(SchemaBase):
     """用户社交绑定基础信息"""
 
     model_config = ConfigDict(from_attributes=True)
@@ -18,7 +18,7 @@ class UserSocialBase(SchemaBase):
     union_id: str | None = Field(default=None, description='平台标识')
 
 
-class UserSocialDetail(UserSocialBase):
+class UserSocialDetail(UserSocialSchemaBase):
     """用户社交绑定详情"""
 
     model_config = ConfigDict(from_attributes=True)
@@ -28,7 +28,7 @@ class UserSocialDetail(UserSocialBase):
     user_id: int | None = Field(description='用户关联ID')
 
 
-class UserSocialBindParams(UserSocialBase):
+class UserSocialBindParams(UserSocialSchemaBase):
     """社交平台绑定参数"""
 
     pass

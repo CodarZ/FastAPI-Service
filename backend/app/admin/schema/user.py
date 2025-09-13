@@ -4,11 +4,11 @@ from datetime import datetime
 
 from pydantic import ConfigDict, EmailStr, Field
 
-from backend.app.admin.schema.user_social import UserSocialBase
+from backend.app.admin.schema.user_social import UserSocialSchemaBase
 from backend.common.schema import SchemaBase
 
 
-class UserInfoBase(SchemaBase):
+class UserSchemaBase(SchemaBase):
     """基础属性值, 不包含状态"""
 
     id: int = Field(description='用户 ID')
@@ -22,7 +22,7 @@ class UserInfoBase(SchemaBase):
     birth_date: datetime | None = Field(description='出生日期')
 
 
-class UserDetail(UserInfoBase):
+class UserDetail(UserSchemaBase):
     """包含所有属性、状态"""
 
     model_config = ConfigDict(from_attributes=True)
@@ -80,4 +80,4 @@ class UserUpdateParams(SchemaBase):
 class UserDetailWithSocials(UserDetail):
     """包含社交绑定状态的用户详情"""
 
-    socials: list[UserSocialBase] | None = Field(default=None, description='社交平台绑定状态')
+    socials: list[UserSocialSchemaBase] | None = Field(default=None, description='社交平台绑定状态')
