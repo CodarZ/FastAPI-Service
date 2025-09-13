@@ -23,6 +23,7 @@ venv/
 
 # 日志文件
 log
+!backend/**/*/log
 *.log
 *.out
 *.err
