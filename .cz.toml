@@ -3,6 +3,7 @@ name = "cz_customize"
 version = "0.1.0"
 tag_format = "v$version"
 version_files = ["pyproject.toml:version"]
+bump_message = "🔖 release(version): bump version $current_version → $new_version"
 
 [tool.commitizen.customize]
 message_template = "{{change_type}}{% if scope %}({{scope}}){% endif %}: {{subject}}{% if body %}\n\n{{body}}{% endif %}{% if footer %}\n\n{{footer}}{% endif %}"
@@ -15,6 +16,10 @@ schema = """
 <footer>
 """
 schema_pattern = "^(🐛 fix|✨ feat|📝 docs|🎨 style|♻️ refactor|⚡️ perf|✅ test|🔧 chore|🏗️ build|👷 ci|⏪ revert|⬆️ upgrade|🔥 remove|🎉 init|🔒 security)(\\(.+\\))?: .+"
+
+# 版本更新映射规则
+bump_pattern = "^(BREAKING CHANGE|✨ feat|🐛 fix|🔒 security)"
+bump_map = { "BREAKING CHANGE" = "MAJOR", "✨ feat" = "MINOR", "🐛 fix" = "PATCH", "🔒 security" = "PATCH" }
 
 [[tool.commitizen.customize.questions]]
 type = "list"
