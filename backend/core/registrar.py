@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from asyncio import create_task
 from contextlib import asynccontextmanager
 
 from asgi_correlation_id import CorrelationIdMiddleware
@@ -20,6 +21,7 @@ from backend.core.path import STATIC_DIR, UPLOAD_DIR
 from backend.database.postgresql import create_tables
 from backend.database.redis import redis_client
 from backend.middleware.access import AccessMiddleware
+from backend.middleware.operation import OperationLogMiddleware
 from backend.middleware.state import StateMiddleware
 from backend.utils.openapi import simplify_operation_ids
 from backend.utils.serializers import MsgSpecJSONResponse
@@ -79,6 +81,9 @@ async def init(app: FastAPIBase):
         http_callback=http_default_callback,
     )
 
+    # 创建操作日志任务
+    create_task(OperationLogMiddleware.consumer())
+
     yield
 
     await redis_client.shut()
@@ -104,6 +109,8 @@ def register_static_file(app: FastAPIBase) -> None:
 
 def register_middleware(app: FastAPIBase) -> None:
     """注册中间件"""
+
+    app.add_middleware(OperationLogMiddleware)
 
     app.add_middleware(AccessMiddleware)
 
