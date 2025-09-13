@@ -136,7 +136,7 @@ class Settings(BaseSettings):
     LOG_STDERR_FILENAME: str = f'fs_error_{ENVIRONMENT}.log'
 
     # ============== 操作日志 ==============
-    OPERATION_LOG_ENCRYPT_TYPE: int = 1  # 0: AES (性能损耗); 1: md5; 2: ItsDangerous; 3: 不加密, others: 替换为 ******
+    OPERATION_LOG_ENCRYPT_TYPE: int = 1  # OperationLogCipherEnum
     # 密钥 os.urandom(32), 需使用 bytes.hex() 方法转换为 str
     OPERATION_LOG_ENCRYPT_SECRET_KEY: SecretStr = SecretStr(os.urandom(32).hex())
     OPERATION_LOG_PATH_EXCLUDE: list[str] = [
@@ -152,6 +152,9 @@ class Settings(BaseSettings):
         'new_password',
         'confirm_password',
     ]
+
+    OPERATION_LOG_QUEUE_BATCH_CONSUME_SIZE: int = 100  # 队列数量
+    OPERATION_LOG_QUEUE_TIMEOUT: int = 60  # 1 分钟
 
 
 @lru_cache
