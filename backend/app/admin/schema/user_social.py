@@ -11,8 +11,6 @@ from backend.common.schema import SchemaBase
 class UserSocialSchemaBase(SchemaBase):
     """用户社交绑定基础信息"""
 
-    model_config = ConfigDict(from_attributes=True)
-
     open_id: str = Field(description='用户唯一平台标识 open_id')
     platform: str = Field(description='社交平台名称')
     union_id: str | None = Field(default=None, description='平台标识')
@@ -30,8 +28,6 @@ class UserSocialDetail(UserSocialSchemaBase):
 
 class UserSocialBindParams(UserSocialSchemaBase):
     """社交平台绑定参数"""
-
-    pass
 
 
 class UserSocialUnbindParams(SchemaBase):
