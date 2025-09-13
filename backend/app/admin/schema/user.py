@@ -4,7 +4,7 @@ from datetime import datetime
 
 from pydantic import ConfigDict, EmailStr, Field
 
-from backend.app.admin.schema.user_social import UserSocialSchemaBase
+from backend.app.admin.schema.user_social import UserSocialDetail
 from backend.common.schema import SchemaBase
 
 
@@ -14,12 +14,12 @@ class UserSchemaBase(SchemaBase):
     id: int = Field(description='用户 ID')
     username: str = Field(description='用户名')
     nickname: str = Field(description='昵称')
-    email: EmailStr | None = Field(description='邮箱')
-    phone: str | None = Field(description='手机号')
-    realname: str | None = Field(description='真实姓名')
-    avatar: str | None = Field(description='头像')
-    gender: int | None = Field(description='性别(0女 1男 3未知)')
-    birth_date: datetime | None = Field(description='出生日期')
+    email: EmailStr | None = Field(default=None, description='邮箱')
+    phone: str | None = Field(default=None, description='手机号')
+    realname: str | None = Field(default=None, description='真实姓名')
+    avatar: str | None = Field(default=None, description='头像')
+    gender: int | None = Field(default=None, description='性别(0女 1男 3未知)')
+    birth_date: datetime | None = Field(default=None, description='出生日期')
 
 
 class UserDetail(UserSchemaBase):
@@ -36,7 +36,7 @@ class UserDetail(UserSchemaBase):
     is_staff: bool = Field(description='是否可以登录后台管理')
 
     join_time: datetime = Field(description='注册时间')
-    last_login_time: datetime | None = Field(description='最后登录时间')
+    last_login_time: datetime | None = Field(default=None, description='最后登录时间')
 
 
 class UserRegisterParams(SchemaBase):
@@ -80,4 +80,4 @@ class UserUpdateParams(SchemaBase):
 class UserDetailWithSocials(UserDetail):
     """包含社交绑定状态的用户详情"""
 
-    socials: list[UserSocialSchemaBase] | None = Field(default=None, description='社交平台绑定状态')
+    socials: list[UserSocialDetail] | None = Field(default=None, description='社交平台绑定状态')

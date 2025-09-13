@@ -59,6 +59,7 @@ class UserService:
         """获取用户分页列表"""
         async with async_db_session.begin() as db:
             stmt = await user_crud.get_list_select(params)
+
             from backend.common.pagination import paging_data
 
             return await paging_data(db, stmt)

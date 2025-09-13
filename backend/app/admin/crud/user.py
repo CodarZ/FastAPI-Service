@@ -3,7 +3,9 @@
 
 import bcrypt
 
+from sqlalchemy import Select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import noload
 from sqlalchemy_crud_plus import CRUDPlus
 
 from backend.app.admin.model.user import User
@@ -31,7 +33,7 @@ class UserCRUD(CRUDPlus[User]):
         user = self.model(**dict_params)
         db.add(user)
 
-    async def get_list_select(self, params: UserListQueryParams):
+    async def get_list_select(self, params: UserListQueryParams) -> Select:
         """获取用户列表"""
         filters = {}
 
@@ -45,7 +47,9 @@ class UserCRUD(CRUDPlus[User]):
             if value is not None:
                 filters[field] = value
 
-        return await self.select_order('id', 'asc', **filters)
+        # 使用 noload 避免自动加载关系字段，防止 greenlet 错误
+        stmt = await self.select_order('id', 'asc', **filters)
+        return stmt.options(noload(User.socials))
 
     async def delete(self, db: AsyncSession, pk: int) -> int:
         """删除用户"""

@@ -31,7 +31,6 @@ async def get_user_list(
     params: UserListQueryParams = Depends(),
 ) -> ResponseSchemaModel[PageData[UserDetail]]:
     data = await user_service.get_list(params=params)
-    # TODO 类型问题
     return response_base.success_with_schema(data=PageData[UserDetail](**data))
 
 

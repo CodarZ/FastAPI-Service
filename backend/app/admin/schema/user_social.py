@@ -23,7 +23,7 @@ class UserSocialDetail(UserSocialSchemaBase):
 
     id: int = Field(description='绑定记录 ID')
     bound_time: datetime = Field(description='绑定时间')
-    user_id: int | None = Field(description='用户关联ID')
+    user_id: int | None = Field(default=None, description='用户关联ID')
 
 
 class UserSocialBindParams(UserSocialSchemaBase):
