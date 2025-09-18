@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 import dataclasses
 
+from datetime import datetime
+
 from fastapi import Response
 
 from backend.common.enum.custom import StatusEnum
@@ -29,3 +31,40 @@ class RequestCallNext:
     status: StatusEnum
     err: Exception | None
     response: Response
+
+
+@dataclasses.dataclass
+class AccessToken:
+    """访问令牌"""
+
+    access_token: str
+    expire_time: datetime
+    session_uuid: str
+
+
+@dataclasses.dataclass
+class RefreshToken:
+    """刷新令牌"""
+
+    refresh_token: str
+    expire_time: datetime
+
+
+@dataclasses.dataclass
+class NewToken:
+    """新访问令牌"""
+
+    access_token: str
+    access_expire_time: datetime
+    refresh_token: str
+    refresh_expire_time: datetime
+    session_uuid: str
+
+
+@dataclasses.dataclass
+class TokenPayload:
+    """令牌载荷数据类"""
+
+    user_id: int
+    session_uuid: str
+    expire_time: datetime
