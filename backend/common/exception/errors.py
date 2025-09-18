@@ -143,7 +143,7 @@ class TokenError(HTTPError):
 
     code = StandardResponseCode.HTTP_401
 
-    def __init__(self, *, msg: str = '身份验证失败', headers: dict[str, Any] | None = None):
+    def __init__(self, *, msg: str = '用户身份认证失败', headers: dict[str, Any] | None = None):
         super().__init__(code=self.code, msg=msg, headers=headers or {'WWW-Authenticate': 'Bearer'})
 
 
