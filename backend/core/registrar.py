@@ -9,6 +9,7 @@ from fastapi import FastAPI as FastAPIBase
 from fastapi.staticfiles import StaticFiles
 from fastapi_limiter import FastAPILimiter, http_default_callback
 from fastapi_pagination import add_pagination
+from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.types import ASGIApp
 
@@ -21,6 +22,7 @@ from backend.core.path import STATIC_DIR, UPLOAD_DIR
 from backend.database.postgresql import create_tables
 from backend.database.redis import redis_client
 from backend.middleware.access import AccessMiddleware
+from backend.middleware.jwt import JWTAuthMiddleware
 from backend.middleware.operation import OperationLogMiddleware
 from backend.middleware.state import StateMiddleware
 from backend.utils.openapi import simplify_operation_ids
@@ -112,9 +114,15 @@ def register_middleware(app: FastAPIBase) -> None:
 
     app.add_middleware(OperationLogMiddleware)
 
-    app.add_middleware(AccessMiddleware)
-
     app.add_middleware(StateMiddleware)
+
+    app.add_middleware(
+        AuthenticationMiddleware,
+        backend=JWTAuthMiddleware(),
+        on_error=JWTAuthMiddleware.auth_exception_handler,
+    )
+
+    app.add_middleware(AccessMiddleware)
 
     app.add_middleware(CorrelationIdMiddleware, validator=None)
 
