@@ -5,6 +5,7 @@ import os
 
 from functools import lru_cache
 from pathlib import Path
+from re import Pattern
 from secrets import token_urlsafe
 from typing import Literal
 
@@ -111,6 +112,7 @@ class Settings(BaseSettings):
     TOKEN_REQUEST_PATH_EXCLUDE: list[str] = [
         f'{FASTAPI_API_ROUTE_PREFIX}/auth/login',
     ]  # JWT
+    TOKEN_REQUEST_PATH_EXCLUDE_PATTERN: list[Pattern[str]] = []  # JWT (正则表达式)
 
     # ============== Cookies ==============
     COOKIE_REFRESH_TOKEN_KEY: str = 'fs_refresh_token'  # cookie 中存放 refresh_token 的名字
