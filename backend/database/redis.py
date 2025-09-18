@@ -28,7 +28,7 @@ class RedisClient(Redis):
         """建立 Redis 连接并验证"""
         try:
             await self.ping()
-            log.info('✅ Redis 连接成功')
+            log.success('✅ Redis 连接成功')
         except TimeoutError:
             log.error('❌ 数据库 redis 连接超时')
             sys.exit(1)
@@ -43,7 +43,7 @@ class RedisClient(Redis):
         """关闭 Redis 连接"""
         try:
             await self.close()
-            log.info('✅ Redis 连接关闭成功')
+            log.success('✅ Redis 连接关闭成功')
         except Exception as e:
             log.error('❌ 关闭 Redis 连接时出现异常: {}', e)
 
