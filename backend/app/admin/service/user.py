@@ -67,6 +67,10 @@ class UserService:
     @staticmethod
     async def delete(*, pk: int) -> int:
         """删除用户"""
+
+        if pk == 1:
+            raise errors.ForbiddenError(msg='超级管理员禁止删除')
+
         async with async_db_session.begin() as db:
             user = await user_crud.get(db, pk)
             if not user:
