@@ -11,6 +11,7 @@ from sqlalchemy_crud_plus import CRUDPlus
 from backend.app.admin.model.user import User
 from backend.app.admin.schema.user import UserListQueryParams, UserRegisterParams, UserUpdateParams
 from backend.common.security.jwt import get_hash_password
+from backend.utils.timezone import timezone
 
 
 class UserCRUD(CRUDPlus[User]):
@@ -92,6 +93,16 @@ class UserCRUD(CRUDPlus[User]):
             return 0
 
         return await self.update_model(db, pk, update_data)
+
+    async def update_login_time(self, db: AsyncSession, username: str) -> int:
+        """
+        更新用户最后登录时间
+
+        :param db: 数据库会话
+        :param username: 用户名
+        :return:
+        """
+        return await self.update_model_by_column(db, {'last_login_time': timezone.now()}, username=username)
 
 
 user_crud = UserCRUD(User)
