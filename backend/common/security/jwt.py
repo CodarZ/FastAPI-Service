@@ -3,7 +3,7 @@
 
 import json
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Any
 from uuid import uuid4
 
@@ -67,6 +67,7 @@ def jwt_decode(token: str) -> TokenPayload:
     try:
         payload = jwt.decode(token, settings.TOKEN_SECRET_KEY, settings.TOKEN_ALGORITHM, {'verify_exp': True})
 
+        print(payload)
         user_id = payload.get('user_id')
         session_uuid = payload.get('session_uuid')
         expire = payload.get('expire')
@@ -74,12 +75,16 @@ def jwt_decode(token: str) -> TokenPayload:
         if not session_uuid or not user_id or not expire:
             raise errors.TokenError(msg='Token 无效')
 
-        expire_time = timezone.from_datetime(timezone.to_utc(expire))
+        # 将 ISO 格式字符串转换为 datetime 对象
+        expire_datetime = datetime.fromisoformat(expire) if isinstance(expire, str) else expire
+        expire_time = timezone.from_datetime(timezone.to_utc(expire_datetime))
 
     except ExpiredSignatureError:
         raise errors.TokenError(msg='Token 已过期')
-    except (JWTError, Exception):
+    except JWTError:
         raise errors.TokenError(msg='Token 无效')
+    except Exception:
+        raise errors.ServerError(msg='Token 解析异常')
     return TokenPayload(int(user_id), session_uuid, expire_time)
 
 
@@ -97,7 +102,7 @@ async def create_access_token(user_id: int, multi_login: bool, **kwargs) -> Acce
 
     if not multi_login:
         await redis_client.delete_prefix(f'{settings.TOKEN_REDIS_PREFIX}:{user_id}')
-        # await redis_client.delete_prefix(f'{settings.TOKEN_EXTRA_INFO_REDIS_PREFIX}:{user_id}')
+        await redis_client.delete_prefix(f'{settings.TOKEN_EXTRA_INFO_REDIS_PREFIX}:{user_id}')
 
     await redis_client.setex(
         f'{settings.TOKEN_REDIS_PREFIX}:{user_id}:{session_uuid}',
