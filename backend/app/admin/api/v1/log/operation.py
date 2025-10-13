@@ -12,6 +12,7 @@ from backend.app.admin.service.operation_log import operation_log_service
 from backend.common.pagination import DependsPagination, PageData
 from backend.common.response.base import ResponseModel, ResponseSchemaModel, response_base
 from backend.common.response.code import CustomResponse
+from backend.common.security.jwt import DependsJWTAuth
 
 router = APIRouter()
 
@@ -25,7 +26,7 @@ async def get_operation_log_list(
     return response_base.success_with_schema(data=PageData[OperationLogDetail](**data))
 
 
-@router.delete('/delete', summary='批量删除操作日志')
+@router.delete('/delete', summary='批量删除操作日志', dependencies=[DependsJWTAuth])
 async def delete_operation_logs(params: OperationLogDeleteParams) -> ResponseModel:
     """批量删除操作日志"""
     count = await operation_log_service.delete(params=params)
@@ -34,7 +35,7 @@ async def delete_operation_logs(params: OperationLogDeleteParams) -> ResponseMod
     return response_base.fail(res=CustomResponse(code=400, msg='删除失败，未找到相关记录'))
 
 
-@router.delete('/clear', summary='清空所有操作日志')
+@router.delete('/clear', summary='清空所有操作日志', dependencies=[DependsJWTAuth])
 async def clear_all_operation_logs() -> ResponseModel:
     """清空所有操作日志"""
     await operation_log_service.delete_all()
