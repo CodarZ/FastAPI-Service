@@ -16,6 +16,7 @@ from backend.app.admin.service.user import user_service
 from backend.common.pagination import DependsPagination, PageData
 from backend.common.response.base import ResponseModel, ResponseSchemaModel, response_base
 from backend.common.response.code import CustomResponse
+from backend.common.security.jwt import DependsJWTAuth
 
 router = APIRouter()
 
@@ -26,7 +27,7 @@ async def user_register(params: UserRegisterParams) -> ResponseModel:
     return response_base.success(res=CustomResponse(code=200, msg='注册成功'))
 
 
-@router.get('/list', summary='分页获取用户列表', dependencies=[DependsPagination])
+@router.get('/list', summary='分页获取用户列表', dependencies=[DependsJWTAuth, DependsPagination])
 async def get_user_list(
     params: UserListQueryParams = Depends(),
 ) -> ResponseSchemaModel[PageData[UserDetail]]:
@@ -34,14 +35,14 @@ async def get_user_list(
     return response_base.success_with_schema(data=PageData[UserDetail](**data))
 
 
-@router.get('/{pk}', summary='获取用户信息')
+@router.get('/{pk}', summary='获取用户信息', dependencies=[DependsJWTAuth])
 async def get_user_detail(pk: Annotated[int, Path(description='用户 ID')]) -> ResponseSchemaModel[UserDetail]:
     user = await user_service.get_userinfo(pk=pk)
     user_detail = UserDetail.model_validate(user)
     return response_base.success_with_schema(data=user_detail)
 
 
-@router.get('/{pk}/social', summary='获取用户信息（包含第三方授权信息）')
+@router.get('/{pk}/social', summary='获取用户信息（包含第三方授权信息）', dependencies=[DependsJWTAuth])
 async def get_user_detail_with_social(
     pk: Annotated[int, Path(description='用户 ID')],
 ) -> ResponseSchemaModel[UserDetailWithSocials]:
@@ -49,7 +50,7 @@ async def get_user_detail_with_social(
     return response_base.success_with_schema(data=user_detail)
 
 
-@router.delete('/{pk}', summary='删除用户')
+@router.delete('/{pk}', summary='删除用户', dependencies=[DependsJWTAuth])
 async def delte_user(pk: Annotated[int, Path(description='用户 ID')]) -> ResponseModel:
     count = await user_service.delete(pk=pk)
     if count > 0:
@@ -57,7 +58,7 @@ async def delte_user(pk: Annotated[int, Path(description='用户 ID')]) -> Respo
     return response_base.fail(res=CustomResponse(code=400, msg='删除失败'))
 
 
-@router.put('/{pk}', summary='更新用户信息')
+@router.put('/{pk}', summary='更新用户信息', dependencies=[DependsJWTAuth])
 async def update_user(pk: Annotated[int, Path(description='用户 ID')], params: UserUpdateParams) -> ResponseModel:
     count = await user_service.update(pk=pk, params=params)
     if count > 0:
