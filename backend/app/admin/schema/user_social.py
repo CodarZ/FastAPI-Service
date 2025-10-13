@@ -3,7 +3,7 @@
 
 from datetime import datetime
 
-from pydantic import ConfigDict, Field
+from pydantic import Field
 
 from backend.common.schema import SchemaBase
 
@@ -18,8 +18,6 @@ class UserSocialSchemaBase(SchemaBase):
 
 class UserSocialDetail(UserSocialSchemaBase):
     """用户社交绑定详情"""
-
-    model_config = ConfigDict(from_attributes=True)
 
     id: int = Field(description='绑定记录 ID')
     bound_time: datetime = Field(description='绑定时间')

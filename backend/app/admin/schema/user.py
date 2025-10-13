@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
-from pydantic import ConfigDict, EmailStr, Field
+from pydantic import EmailStr, Field
 
 from backend.app.admin.schema.user_social import UserSocialDetail
 from backend.common.schema import SchemaBase
@@ -24,8 +24,6 @@ class UserSchemaBase(SchemaBase):
 
 class UserDetail(UserSchemaBase):
     """包含所有属性、状态"""
-
-    model_config = ConfigDict(from_attributes=True)
 
     uuid: str = Field(description='用户 UUID')
 

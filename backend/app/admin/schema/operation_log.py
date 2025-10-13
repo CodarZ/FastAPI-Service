@@ -4,7 +4,7 @@
 from datetime import datetime
 from typing import Any
 
-from pydantic import ConfigDict, Field
+from pydantic import Field
 
 from backend.common.enum.custom import StatusEnum
 from backend.common.schema import SchemaBase
@@ -66,8 +66,6 @@ class OperationLogListQueryParams(SchemaBase):
 
 class OperationLogDetail(OperationLogSchemaBase):
     """详情"""
-
-    model_config = ConfigDict(from_attributes=True)
 
     id: int = Field(description='日志 ID')
 
