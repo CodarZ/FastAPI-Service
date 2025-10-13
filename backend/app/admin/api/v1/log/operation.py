@@ -38,7 +38,7 @@ async def get_operation_log_list(
         username=username,
         moudle=moudle,
         path=path,
-        method=method,
+        method=method.upper() if method else None,
         code=code,
         ip=ip,
         country=country,
