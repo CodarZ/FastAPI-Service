@@ -79,7 +79,7 @@ class OperationLogMiddleware(BaseHTTPMiddleware):
 
         # 此信息只能在请求后获取
         _route = request.scope.get('route')
-        summary = getattr(_route, 'summary') or ''
+        summary = getattr(_route, 'summary', '') if _route else ''
 
         # 日志记录
         log.debug(f'接口摘要：[{summary}]')
