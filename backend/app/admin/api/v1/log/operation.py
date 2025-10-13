@@ -17,7 +17,7 @@ from backend.common.security.jwt import DependsJWTAuth
 router = APIRouter()
 
 
-@router.get('/list', summary='分页获取操作日志列表', dependencies=[DependsPagination])
+@router.get('/list', summary='分页获取操作日志列表', dependencies=[DependsJWTAuth, DependsPagination])
 async def get_operation_log_list(
     params: OperationLogListQueryParams = Depends(),
 ) -> ResponseSchemaModel[PageData[OperationLogDetail]]:
