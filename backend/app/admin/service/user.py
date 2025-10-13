@@ -13,6 +13,7 @@ from backend.app.admin.schema.user import (
     UserUpdateParams,
 )
 from backend.common.exception import errors
+from backend.common.pagination import paging_data
 from backend.database.postgresql import async_db_session
 
 
@@ -59,8 +60,6 @@ class UserService:
         """获取用户分页列表"""
         async with async_db_session.begin() as db:
             stmt = await user_crud.get_list_select(params)
-
-            from backend.common.pagination import paging_data
 
             return await paging_data(db, stmt)
 

@@ -7,6 +7,7 @@ from backend.app.admin.schema.operation_log import (
     OperationLogDeleteParams,
     OperationLogListQueryParams,
 )
+from backend.common.pagination import paging_data
 from backend.database.postgresql import async_db_session
 
 
@@ -18,7 +19,6 @@ class OperationLogService:
         """获取 分页列表"""
         async with async_db_session.begin() as db:
             stmt = await operation_log_crud.get_list_select(params)
-            from backend.common.pagination import paging_data
 
             return await paging_data(db, stmt)
 

@@ -3,7 +3,8 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Path
+from fastapi import APIRouter, Path, Query
+from pydantic import EmailStr
 
 from backend.app.admin.schema.user import (
     UserDetail,
@@ -29,9 +30,27 @@ async def user_register(params: UserRegisterParams) -> ResponseModel:
 
 @router.get('/list', summary='分页获取用户列表', dependencies=[DependsJWTAuth, DependsPagination])
 async def get_user_list(
-    params: UserListQueryParams = Depends(),
+    username: Annotated[str | None, Query(description='用户名')] = None,
+    nickname: Annotated[str | None, Query(description='昵称')] = None,
+    email: Annotated[EmailStr | None, Query(description='邮箱')] = None,
+    phone: Annotated[str | None, Query(description='手机号')] = None,
+    gender: Annotated[int | None, Query(description='性别(0女 1男 3未知)')] = None,
+    status: Annotated[int | None, Query(description='用户账号状态(0停用 1正常)')] = None,
+    is_staff: Annotated[bool | None, Query(description='是否可以登录后台管理')] = None,
+    is_verified: Annotated[bool | None, Query(description='是否实名认证')] = None,
 ) -> ResponseSchemaModel[PageData[UserDetail]]:
-    data = await user_service.get_list(params=params)
+    # 转换为原有的参数格式
+    query_params = UserListQueryParams(
+        username=username,
+        nickname=nickname,
+        email=email,
+        phone=phone,
+        gender=gender,
+        status=status,
+        is_staff=is_staff,
+        is_verified=is_verified,
+    )
+    data = await user_service.get_list(params=query_params)
     return response_base.success_with_schema(data=PageData[UserDetail](**data))
 
 
