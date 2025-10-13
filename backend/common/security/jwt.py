@@ -67,7 +67,6 @@ def jwt_decode(token: str) -> TokenPayload:
     try:
         payload = jwt.decode(token, settings.TOKEN_SECRET_KEY, settings.TOKEN_ALGORITHM, {'verify_exp': True})
 
-        print(payload)
         user_id = payload.get('user_id')
         session_uuid = payload.get('session_uuid')
         expire = payload.get('expire')

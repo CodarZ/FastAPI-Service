@@ -81,6 +81,12 @@ class OperationLogMiddleware(BaseHTTPMiddleware):
         _route = request.scope.get('route')
         summary = getattr(_route, 'summary', '') if _route else ''
 
+        try:
+            # 此信息来源于 JWT 认证中间件
+            username = request.user.username
+        except AttributeError:
+            username = None
+
         # 日志记录
         log.debug(f'接口摘要：[{summary}]')
         log.debug(f'请求参数：{args}')
@@ -88,7 +94,7 @@ class OperationLogMiddleware(BaseHTTPMiddleware):
         # 创建日志
         operation_log = OperationLogCreateParams(
             trace_id=trace_id,
-            username='暂无',
+            username=username,
             method=method,
             moudle=summary,
             path=path,
