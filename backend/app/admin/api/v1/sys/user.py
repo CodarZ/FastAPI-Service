@@ -3,8 +3,7 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Path, Query
-from pydantic import EmailStr
+from fastapi import APIRouter, Depends, Path
 
 from backend.app.admin.schema.user import (
     UserDetail,
@@ -15,6 +14,7 @@ from backend.app.admin.schema.user import (
 )
 from backend.app.admin.service.user import user_service
 from backend.common.pagination import DependsPagination, PageData
+from backend.common.request.query import create_dependency
 from backend.common.response.base import ResponseModel, ResponseSchemaModel, response_base
 from backend.common.response.code import CustomResponse
 from backend.common.security.jwt import DependsJWTAuth
@@ -30,27 +30,9 @@ async def user_register(params: UserRegisterParams) -> ResponseModel:
 
 @router.get('/list', summary='分页获取用户列表', dependencies=[DependsJWTAuth, DependsPagination])
 async def get_user_list(
-    username: Annotated[str | None, Query(description='用户名')] = None,
-    nickname: Annotated[str | None, Query(description='昵称')] = None,
-    email: Annotated[EmailStr | None, Query(description='邮箱')] = None,
-    phone: Annotated[str | None, Query(description='手机号')] = None,
-    gender: Annotated[int | None, Query(description='性别(0女 1男 3未知)')] = None,
-    status: Annotated[int | None, Query(description='用户账号状态(0停用 1正常)')] = None,
-    is_staff: Annotated[bool | None, Query(description='是否可以登录后台管理')] = None,
-    is_verified: Annotated[bool | None, Query(description='是否实名认证')] = None,
+    params: Annotated[UserListQueryParams, Depends(create_dependency(UserListQueryParams))],
 ) -> ResponseSchemaModel[PageData[UserDetail]]:
-    # 转换为原有的参数格式
-    query_params = UserListQueryParams(
-        username=username,
-        nickname=nickname,
-        email=email,
-        phone=phone,
-        gender=gender,
-        status=status,
-        is_staff=is_staff,
-        is_verified=is_verified,
-    )
-    data = await user_service.get_list(params=query_params)
+    data = await user_service.get_list(params=params)
     return response_base.success_with_schema(data=PageData[UserDetail](**data))
 
 
