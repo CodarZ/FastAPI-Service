@@ -30,5 +30,8 @@ class AuthLoginToken(AccessTokenBase):
     user: UserDetail = Field(description='用户信息')
 
 
-class AuthLoginParams:
-    pass
+class AuthLoginParams(SchemaBase):
+    """用户登录认证参数"""
+
+    username: str = Field(description='用户名')
+    password: str = Field(description='密码')
