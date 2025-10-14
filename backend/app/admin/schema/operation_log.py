@@ -4,7 +4,7 @@
 from datetime import datetime
 from typing import Any
 
-from pydantic import Field
+from pydantic import Field, field_validator
 
 from backend.common.enum.custom import StatusEnum
 from backend.common.schema import SchemaBase
@@ -37,6 +37,12 @@ class OperationLogSchemaBase(SchemaBase):
 
     operated_time: datetime = Field(description='操作时间')
 
+    @field_validator('method')
+    @classmethod
+    def validate_method(cls, v: str) -> str:
+        """确保 method 字段为大写"""
+        return v.upper() if v else v
+
 
 class OperationLogCreateParams(OperationLogSchemaBase):
     """创建参数"""
@@ -62,6 +68,12 @@ class OperationLogListQueryParams(SchemaBase):
     city: str | None = Field(default=None, description='城市')
 
     status: StatusEnum | None = Field(default=None, description='操作状态（0异常 1正常）')
+
+    @field_validator('method')
+    @classmethod
+    def validate_method(cls, v: str | None) -> str | None:
+        """确保 method 字段为大写"""
+        return v.upper() if v else v
 
 
 class OperationLogDetail(OperationLogSchemaBase):
