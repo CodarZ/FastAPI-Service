@@ -29,7 +29,7 @@ def create_async_engine_and_session(url):
             pool_pre_ping=True,  # 低：False 高：True
             pool_use_lifo=False,  # 低：False 高：True
         )
-        log.info('🔄 PostgreSQL 引擎创建成功，等待实际连接测试...')
+        log.info('🔄 PostgreSQL 引擎创建成功')
     except Exception as e:
         log.error('❌ PostgreSQL 引擎创建失败 {}', e)
         sys.exit(1)
