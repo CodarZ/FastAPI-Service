@@ -5,11 +5,11 @@
 from backend.common.enum.base import IntEnum, StrEnum
 
 
-class LoginLogStatusEnum(IntEnum):
-    """登陆日志状态"""
+class LoginLogStatusEnum(StrEnum):
+    """登陆状态"""
 
-    FAIL = 0
-    SUCCESS = 1
+    FAIL = 'FAIL'
+    SUCCESS = 'SUCCESS'
 
 
 class StatusEnum(IntEnum):
