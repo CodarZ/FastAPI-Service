@@ -3,11 +3,15 @@
 
 from fastapi import BackgroundTasks, Request, Response
 from fastapi.security import HTTPBasicCredentials
+from starlette.background import BackgroundTask
 
 from backend.app.admin.crud.user import user_crud
 from backend.app.admin.model.user import User
+from backend.app.admin.schema.login_log import LoginLogCreateParams
 from backend.app.admin.schema.token import AuthLoginParams, AuthLoginToken
 from backend.app.admin.schema.user import UserDetail
+from backend.app.admin.service.login_log import login_log_service
+from backend.common.enum.custom import LoginLogStatusEnum
 from backend.common.exception import errors
 from backend.common.log import log
 from backend.common.security.jwt import create_access_token, create_refresh_token, verify_password
@@ -83,19 +87,63 @@ class AuthService:
                     expires=timezone.to_utc(refresh_token.expire_time),
                     httponly=True,
                 )
-            except errors.NotFoundError as e:
-                log.error('登陆错误: 用户名不存在')
-                raise errors.NotFoundError(msg=e.msg if e.msg else '用户不存在')
-            except (errors.RequestError, errors.CustomError) as e:
-                if not user:
-                    log.error('登陆错误: 用户密码有误')
-
-                raise errors.RequestError(msg=e.msg if e.msg else '用户密码错误')
             except Exception as e:
-                log.error(f'登陆未知错误: {e}')
-                raise
+                # 根据异常类型记录不同的错误信息
+                if isinstance(e, errors.NotFoundError):
+                    error_msg = e.msg if e.msg else '用户不存在'
+                elif isinstance(e, (errors.RequestError, errors.CustomError)):
+                    error_msg = e.msg if e.msg else '用户密码错误'
+                elif isinstance(e, (errors.AuthorizationError)):
+                    error_msg = e.msg if e.msg else '用户未授权'
+                else:
+                    log.error(f'登陆未知错误: {e}')
+                    error_msg = '登录失败，请稍后重试'
+
+                # 统一创建登录日志记录任务
+                task_params = LoginLogCreateParams(
+                    username=params.username,
+                    user_uuid=user.uuid if user else None,
+                    status=LoginLogStatusEnum.FAIL,
+                    ip=None,
+                    country=None,
+                    region=None,
+                    city=None,
+                    user_agent=request.state.user_agent if request.state.user_agent else None,
+                    browser=request.state.browser if request.state.browser else None,
+                    os=request.state.os if request.state.os else None,
+                    device=request.state.device if request.state.device else None,
+                    login_time=timezone.now(),
+                    msg=error_msg,
+                )
+                task = BackgroundTask(login_log_service.create, params=task_params)
+
+                # 根据异常类型抛出相应的错误
+                if isinstance(e, errors.NotFoundError):
+                    raise errors.NotFoundError(msg=error_msg, background=task)
+                elif isinstance(e, (errors.RequestError, errors.CustomError)):
+                    raise errors.RequestError(msg=error_msg, background=task)
+                else:
+                    # 对于其他未知异常，使用 RequestError 并带上 task
+                    raise errors.RequestError(msg=error_msg, background=task)
 
             else:
+                task_params = LoginLogCreateParams(
+                    username=params.username,
+                    user_uuid=user.uuid,
+                    status=LoginLogStatusEnum.SUCCESS,
+                    ip=None,
+                    country=None,
+                    region=None,
+                    city=None,
+                    user_agent=request.state.user_agent if request.state.user_agent else None,
+                    browser=request.state.browser if request.state.browser else None,
+                    os=request.state.os if request.state.os else None,
+                    device=request.state.device if request.state.device else None,
+                    login_time=timezone.now(),
+                    msg='登录成功！',
+                )
+                background_tasks.add_task(login_log_service.create, params=task_params)
+
                 data = AuthLoginToken(
                     access_token=access_token.access_token,
                     expire_time=access_token.expire_time,
