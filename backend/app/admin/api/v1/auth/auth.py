@@ -7,8 +7,10 @@ from fastapi_limiter.depends import RateLimiter
 from backend.app.admin.schema.token import AuthLoginParams, AuthLoginToken, SwaggerToken
 from backend.app.admin.schema.user import UserDetail
 from backend.app.admin.service.auth import auth_service
+from backend.common.dataclasses import NewToken
 from backend.common.response.base import ResponseModel, ResponseSchemaModel, response_base
 from backend.common.security.jwt import DependsJWTAuth
+from backend.database.postgresql import CurrentSession
 
 router = APIRouter()
 
@@ -40,3 +42,9 @@ async def login(
 async def logout(request: Request, response: Response) -> ResponseModel:
     await auth_service.logout(request=request, response=response)
     return response_base.success()
+
+
+@router.post('/refresh', summary='刷新 token')
+async def refresh_token(db: CurrentSession, request: Request) -> ResponseSchemaModel[NewToken]:
+    data = await auth_service.refresh_token(db=db, request=request)
+    return response_base.success_with_schema(data=data)

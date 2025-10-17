@@ -8,12 +8,14 @@ from backend.app.admin.schema.login_log import LoginLogCreateParams
 from backend.app.admin.schema.token import AuthLoginParams, AuthLoginToken
 from backend.app.admin.schema.user import UserDetail
 from backend.app.admin.service.login_log import login_log_service
+from backend.common.dataclasses import NewToken
 from backend.common.enum.custom import LoginLogStatusEnum
 from backend.common.exception import errors
 from backend.common.log import log
 from backend.common.response.code import CustomErrorCode
 from backend.common.security.jwt import (
     create_access_token,
+    create_new_token,
     create_refresh_token,
     get_token,
     jwt_decode,
@@ -186,6 +188,46 @@ class AuthService:
         await redis_client.delete(f'{settings.TOKEN_EXTRA_INFO_REDIS_PREFIX}:{user_id}:{session_uuid}')
         if refresh_token:
             await redis_client.delete(f'{settings.TOKEN_REFRESH_REDIS_PREFIX}:{user_id}:{refresh_token}')
+
+    @staticmethod
+    async def refresh_token(*, db: AsyncSession, request: Request) -> NewToken:
+        """刷新令牌"""
+
+        refresh_token = request.cookies.get(settings.COOKIE_REFRESH_TOKEN_KEY)
+        if not refresh_token:
+            raise errors.RequestError(msg='Refresh Token 已过期，请重新登录')
+
+        token_payload = jwt_decode(refresh_token)
+        user = await user_crud.get(db, token_payload.user_id)
+        if not user:
+            raise errors.NotFoundError(msg='用户不存在')
+        if not user.status:
+            raise errors.AuthorizationError(msg='用户已被锁定, 请联系统管理员')
+        if not user.is_multi_login and await redis_client.keys(match=f'{settings.TOKEN_REDIS_PREFIX}:{user.id}:*'):
+            raise errors.ForbiddenError(msg='此用户已在异地登录，请重新登录并及时修改密码')
+
+        n_token = await create_new_token(
+            refresh_token,
+            token_payload.session_uuid,
+            user.id,
+            multi_login=user.is_multi_login,
+            # extra info
+            username=user.username,
+            nickname=user.nickname,
+            last_login_time=timezone.to_str(user.last_login_time) if user.last_login_time else None,
+            ip=request.state.ip,
+            os=request.state.os,
+            browser=request.state.browser,
+            device_type=request.state.device,
+        )
+
+        return NewToken(
+            access_token=n_token.access_token,
+            access_expire_time=n_token.access_expire_time,
+            refresh_token=n_token.refresh_token,
+            refresh_expire_time=n_token.refresh_expire_time,
+            session_uuid=n_token.session_uuid,
+        )
 
 
 auth_service: AuthService = AuthService()
