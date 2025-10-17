@@ -12,7 +12,13 @@ from backend.common.enum.custom import LoginLogStatusEnum
 from backend.common.exception import errors
 from backend.common.log import log
 from backend.common.response.code import CustomErrorCode
-from backend.common.security.jwt import create_access_token, create_refresh_token, verify_password
+from backend.common.security.jwt import (
+    create_access_token,
+    create_refresh_token,
+    get_token,
+    jwt_decode,
+    verify_password,
+)
 from backend.core.config import settings
 from backend.database.postgresql import AsyncSession, async_db_session
 from backend.database.redis import redis_client
@@ -161,7 +167,25 @@ class AuthService:
 
     @staticmethod
     async def logout(*, request: Request, response: Response):
-        pass
+        try:
+            token = get_token(request)
+            token_payload = jwt_decode(token)
+
+            user_id = token_payload.user_id
+            session_uuid = token_payload.session_uuid
+            refresh_token = request.cookies.get(settings.COOKIE_REFRESH_TOKEN_KEY)
+
+        except errors.TokenError:
+            return
+
+        finally:
+            response.delete_cookie(settings.COOKIE_REFRESH_TOKEN_KEY)
+
+        await redis_client.delete(f'{settings.JWT_USER_REDIS_PREFIX}:{user_id}')
+        await redis_client.delete(f'{settings.TOKEN_REDIS_PREFIX}:{user_id}:{session_uuid}')
+        await redis_client.delete(f'{settings.TOKEN_EXTRA_INFO_REDIS_PREFIX}:{user_id}:{session_uuid}')
+        if refresh_token:
+            await redis_client.delete(f'{settings.TOKEN_REFRESH_REDIS_PREFIX}:{user_id}:{refresh_token}')
 
 
 auth_service: AuthService = AuthService()

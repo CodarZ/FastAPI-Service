@@ -7,7 +7,8 @@ from fastapi_limiter.depends import RateLimiter
 from backend.app.admin.schema.token import AuthLoginParams, AuthLoginToken, SwaggerToken
 from backend.app.admin.schema.user import UserDetail
 from backend.app.admin.service.auth import auth_service
-from backend.common.response.base import ResponseSchemaModel, response_base
+from backend.common.response.base import ResponseModel, ResponseSchemaModel, response_base
+from backend.common.security.jwt import DependsJWTAuth
 
 router = APIRouter()
 
@@ -33,3 +34,9 @@ async def login(
         request=request, response=response, params=params, background_tasks=background_tasks
     )
     return response_base.success_with_schema(data=data)
+
+
+@router.post('/logout', summary='用户登出', dependencies=[DependsJWTAuth])
+async def logout(request: Request, response: Response) -> ResponseModel:
+    await auth_service.logout(request=request, response=response)
+    return response_base.success()
