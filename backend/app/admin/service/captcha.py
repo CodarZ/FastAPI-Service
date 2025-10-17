@@ -41,7 +41,14 @@ class CaptchaService:
             ex=settings.CAPTCHA_LOGIN_EXPIRE_SECONDS,
         )
 
-        return CaptchaDetail(uuid=uuid, img_type=img_type, image='data:image/png;base64,' + img)
+        # 根据图片类型处理图片数据
+        if img_type == 'base64':
+            image_data = f'data:image/png;base64,{img}'
+        else:
+            # file 或 bytesio 类型直接返回原始数据
+            image_data = img
+
+        return CaptchaDetail(uuid=uuid, img_type=img_type, image=image_data)
 
 
 captcha_service = CaptchaService()
