@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 from asyncio import create_task
 from contextlib import asynccontextmanager
 

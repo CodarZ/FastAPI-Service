@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 from backend.app.admin.crud.operation_log import operation_log_crud
 from backend.app.admin.schema.operation_log import (
     OperationLogCreateParams,

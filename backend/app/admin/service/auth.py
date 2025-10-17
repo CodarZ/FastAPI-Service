@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 from fastapi import BackgroundTasks, Request, Response
 from fastapi.security import HTTPBasicCredentials
 from starlette.background import BackgroundTask

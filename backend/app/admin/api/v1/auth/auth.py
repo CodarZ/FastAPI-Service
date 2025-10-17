@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-
 from typing import Annotated
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Request, Response
@@ -25,10 +21,7 @@ async def login_swagger(params: Annotated[HTTPBasicCredentials, Depends()]) -> R
 
 
 @router.post(
-    '/login',
-    summary='用户登录',
-    description='json 格式登录, 仅支持在第三方api工具调试, 例如: postman',
-    dependencies=[Depends(RateLimiter(times=5, minutes=1))],
+    '/login', summary='用户登录', description='json 格式登录', dependencies=[Depends(RateLimiter(times=5, minutes=1))]
 )
 async def login(
     request: Request,

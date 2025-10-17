@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-
 from backend.app.admin.crud.login_log import login_log_crud
 from backend.app.admin.schema.login_log import LoginLogCreateParams, LoginLogDeleteParams, LoginLogListQueryParams
 from backend.common.pagination import paging_data

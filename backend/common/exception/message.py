@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 # 自定义验证错误信息不包含验证预期内容（即用户输入内容）, 而是以更加友好的形式展现错误。
 # 参考链接提供了受支持的字段以及如何替换预期字段：
 # - 受支持字段参考: https://github.com/pydantic/pydantic-core/blob/a5cb7382643415b716b1a7a5392914e50f726528/tests/test_errors.py#L266
