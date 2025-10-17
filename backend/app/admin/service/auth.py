@@ -11,9 +11,11 @@ from backend.app.admin.service.login_log import login_log_service
 from backend.common.enum.custom import LoginLogStatusEnum
 from backend.common.exception import errors
 from backend.common.log import log
+from backend.common.response.code import CustomErrorCode
 from backend.common.security.jwt import create_access_token, create_refresh_token, verify_password
 from backend.core.config import settings
 from backend.database.postgresql import AsyncSession, async_db_session
+from backend.database.redis import redis_client
 from backend.utils.timezone import timezone
 
 
@@ -55,6 +57,14 @@ class AuthService:
 
             try:
                 user = await self.user_verify(db, params.username, params.password)
+
+                # 验证码
+                captcha_code = await redis_client.get(f'{settings.CAPTCHA_LOGIN_REDIS_PREFIX}:{params.uuid}')
+                if not captcha_code:
+                    raise errors.RequestError(msg='验证码已经过期')
+                if captcha_code.lower() != params.captcha.lower():
+                    raise errors.CustomError(error=CustomErrorCode.CAPTCHA_ERROR)
+                await redis_client.delete(f'{settings.CAPTCHA_LOGIN_REDIS_PREFIX}:{params.uuid}')
 
                 await user_crud.update_login_time(db, user.username)
                 await db.refresh(user)

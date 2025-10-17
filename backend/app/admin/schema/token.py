@@ -32,3 +32,6 @@ class AuthLoginParams(SchemaBase):
 
     username: str = Field(description='用户名')
     password: str = Field(description='密码')
+
+    uuid: str = Field(description='验证码 UUID')
+    captcha: str = Field(description='验证码')
