@@ -62,3 +62,8 @@ message = "提供更详细的提交描述 (可选，使用 | 进行换行):"
 type = "input"
 name = "footer"
 message = "页脚信息 (可选，如: Closes #1231232, BREAKING CHANGE: ...):"
+
+[tool.commitizen.bump]
+commit = true
+tag = true
+push = false
