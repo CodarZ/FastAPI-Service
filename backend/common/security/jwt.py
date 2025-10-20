@@ -117,7 +117,7 @@ async def create_access_token(user_id: int, multi_login: bool, **kwargs) -> Acce
     return AccessToken(access_token, expire_time, session_uuid)
 
 
-async def create_refresh_token(session_uuid: str, user_id: int, multi_login: bool):
+async def create_refresh_token(session_uuid: str, user_id: int, multi_login: bool) -> RefreshToken:
     """生成 Refresh Token"""
 
     expire_time = timezone.now() + timedelta(seconds=settings.TOKEN_REFRESH_EXPIRE_SECONDS)

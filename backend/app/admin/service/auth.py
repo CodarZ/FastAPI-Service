@@ -89,7 +89,7 @@ class AuthService:
                     device=request.state.device,
                 )
 
-                refresh_token = await create_refresh_token(
+                r_token = await create_refresh_token(
                     access_token.session_uuid,
                     user.id,
                     multi_login=user.is_multi_login,
@@ -97,9 +97,9 @@ class AuthService:
 
                 response.set_cookie(
                     key=settings.COOKIE_REFRESH_TOKEN_KEY,
-                    value=refresh_token.refresh_token,
+                    value=r_token.refresh_token,
                     max_age=settings.COOKIE_REFRESH_TOKEN_EXPIRE_SECONDS,
-                    expires=timezone.to_utc(refresh_token.expire_time),
+                    expires=timezone.to_utc(r_token.expire_time),
                     httponly=True,
                 )
             except Exception as e:
@@ -186,6 +186,7 @@ class AuthService:
         await redis_client.delete(f'{settings.JWT_USER_REDIS_PREFIX}:{user_id}')
         await redis_client.delete(f'{settings.TOKEN_REDIS_PREFIX}:{user_id}:{session_uuid}')
         await redis_client.delete(f'{settings.TOKEN_EXTRA_INFO_REDIS_PREFIX}:{user_id}:{session_uuid}')
+        await redis_client.delete(f'{settings.TOKEN_REFRESH_REDIS_PREFIX}:{user_id}:{session_uuid}')
         if refresh_token:
             await redis_client.delete(f'{settings.TOKEN_REFRESH_REDIS_PREFIX}:{user_id}:{refresh_token}')
 
