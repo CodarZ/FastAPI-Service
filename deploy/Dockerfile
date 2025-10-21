@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.7
+
 # 多阶段构建 - 使用 uv 优化生产镜像
 # === 构建阶段 ===
 FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim AS builder
