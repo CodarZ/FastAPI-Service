@@ -57,7 +57,7 @@ pipeline {
                     }
 
                     sh """
-                        docker build ${buildArgs} \\
+                        DOCKER_BUILDKIT=1 docker buildx build --load ${buildArgs} \\
                             -t ${env.IMAGE_NAME}:${env.ENVIRONMENT} \\
                             -t ${env.IMAGE_NAME}:${env.ENVIRONMENT}-${BUILD_NUMBER} \\
                             -f ${env.DOCKERFILE_PATH} \\
