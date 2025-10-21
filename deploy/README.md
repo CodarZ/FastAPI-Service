@@ -6,14 +6,74 @@
 
 ```text
 deploy/
-├── Dockerfile              # Dockerfile（多阶段构建 + 非 root 用户）
-├── nginx.conf.template     # Nginx 配置模板（仅供参考）
+├── Dockerfile             # Dockerfile（多阶段构建 + 非 root 用户）
+├── Jenkinsfile            # Jenkins CI/CD 配置文件
 └── README.md              # 本文档
 ```
 
-## 🚀 快速开始
+## 🚀 部署方式
 
-### 方式一：直接构建并运行
+### 方式一：Jenkins 自动化部署（推荐）
+
+使用 Jenkins Pipeline 实现自动化构建和部署。
+
+#### 1. 环境变量配置
+
+修改 `Jenkinsfile` 中的 `WORKSPACE_PATH`：
+
+```groovy
+environment {
+    WORKSPACE_PATH = "/home/ubuntu/docker/fs-service"  // 根据实际路径修改
+}
+```
+
+#### 2. 环境准备
+
+在宿主机上创建项目目录：
+
+```bash
+# 根据 WORKSPACE_PATH 在宿主机创建项目目录结构
+sudo mkdir -p /home/ubuntu/docker/fs-service/{log,static/upload,env}
+
+# 复制环境配置文件、或者手动创建 env 文件
+sudo cp env/.env* /home/ubuntu/docker/fs-service/env/
+
+# 设置权限
+sudo chown -R $USER:$USER /home/ubuntu/docker/fs-service
+sudo chmod -R 755 /home/ubuntu/docker/fs-service
+```
+
+#### 3. 配置 Jenkins
+
+1. **创建 Multibranch Pipeline**：
+   - Repository URL: `https://github.com/CodarZ/fastapi-service.git`
+   - Script Path: `deploy/Jenkinsfile`
+
+2. **配置分支策略**：
+   - `master` 分支 → 生产环境（端口 9091）
+   - `test` 分支 → 测试环境（端口 9092）
+   - `develop` 分支 → 开发环境（端口 9093）
+
+#### 4. 触发构建
+
+推送代码到对应分支，Jenkins 会自动：
+
+1. 检出代码
+2. 构建 Docker 镜像
+3. 停止旧容器
+4. 启动新容器
+5. 执行健康检查
+6. 清理旧镜像（仅保留最近 3 个构建版本）
+
+#### 5. 访问服务
+
+| 环境 | 端口 | API 文档地址 |
+|------|------|-------------|
+| 生产环境 | 9091 | `http://[your-url]:9091/[FASTAPI_DOCS_URL]` |
+| 测试环境 | 9092 | `http://[your-url]:9092/[FASTAPI_DOCS_URL]` |
+| 开发环境 | 9093 | `http://[your-url]:9093/[FASTAPI_DOCS_URL]` |
+
+### 方式二：手动构建并运行
 
 #### 1. 构建镜像
 
@@ -46,8 +106,7 @@ docker run -d \
 
 #### 3. 访问服务
 
-- API 文档：<http://localhost:8000/api/docs>
-- 健康检查：<http://localhost:8000/api/health>
+- API 文档：<http://[your-url]:8000/[FASTAPI_DOCS_URL]>
 
 ### 方式二：使用外部数据库和 Redis
 
@@ -142,19 +201,6 @@ docker run -d \
 #### 使用示例
 
 ```bash
-# 使用默认配置（4 workers）
-docker run -d \
-  --name fastapi-service \
-  -p 8000:8000 \
-  fastapi-service:latest
-
-# 自定义 worker 数量（8 workers）
-docker run -d \
-  --name fastapi-service \
-  -p 8000:8000 \
-  -e GRANIAN_WORKERS=8 \
-  fastapi-service:latest
-
 # 高性能配置（16 workers）
 docker run -d \
   --name fastapi-service \
@@ -178,7 +224,53 @@ docker run -d \
 
 - **最终镜像**: ~180MB（仅包含运行时依赖，不含开发工具）
 
-## 🔍 容器管理
+## �️ 常用命令
+
+### Docker 相关
+
+```bash
+# 查看运行中的容器（按环境）
+docker ps -f name=fs-container-production
+docker ps -f name=fs-container-test
+docker ps -f name=fs-container-development
+
+# 查看容器日志
+docker logs fs-container-production
+docker logs -f --tail 100 fs-container-test  # 实时查看最后 100 行
+
+# 停止容器
+docker stop fs-container-production
+
+# 删除容器
+docker rm fs-container-production
+
+# 查看镜像
+docker images fastapi-service
+
+# 查看特定环境的所有镜像版本
+docker images fastapi-service --format "{{.Tag}}" | grep production
+
+# 手动清理旧镜像（保留最近 3 个）
+docker images fastapi-service --format "{{.Tag}}" | \
+  grep "production-" | \
+  sort -t'-' -k2 -n -r | \
+  tail -n +4 | \
+  xargs -r -I {} docker rmi fastapi-service:{}
+
+# 回滚到指定构建版本
+docker stop fs-container-production
+docker rm fs-container-production
+docker run -d \
+  --name fs-container-production \
+  --restart unless-stopped \
+  -p 9091:8000 \
+  -v /home/ubuntu/docker/fs-service/log:/app/log \
+  -v /home/ubuntu/docker/fs-service/static/upload:/app/static/upload \
+  -v /home/ubuntu/docker/fs-service/env:/app/env \
+  -e ENVIRONMENT=production \
+  -e GRANIAN_WORKERS=4 \
+  fastapi-service:production-123  # 指定构建号
+```
 
 ### 查看日志
 
@@ -228,20 +320,100 @@ docker rm fastapi-service
 - [ ] 设置自动备份
 - [ ] 配置监控和告警
 
-### 资源限制示例
-
-```bash
-docker run -d \
-  --name fastapi-service \
-  --memory="2g" \
-  --cpus="2.0" \
-  -p 8000:8000 \
-  fastapi-service:latest
-```
-
 ## 🐛 故障排查
 
-### 应用无法启动
+### Jenkins 部署故障
+
+#### 构建失败
+
+```bash
+# 查看 Jenkins 构建日志
+# 在 Jenkins 界面查看具体的错误信息
+
+# 检查 Docker 环境
+docker --version
+docker ps
+docker images
+
+# 检查磁盘空间
+df -h
+
+# 手动清理 Docker 资源
+docker system prune -a -f
+```
+
+#### 容器无法启动
+
+```bash
+# 查看容器状态
+docker ps -a -f name=fs-container-production
+
+# 查看容器日志
+docker logs fs-container-production
+
+# 检查环境变量文件
+ls -la /home/ubuntu/docker/fs-service/env/
+cat /home/ubuntu/docker/fs-service/env/.env.production
+
+# 检查目录权限
+ls -la /home/ubuntu/docker/fs-service/
+```
+
+#### 健康检查失败
+
+```bash
+# 检查容器是否运行
+docker ps -f name=fs-container-production
+
+# 查看容器日志
+docker logs --tail 50 fs-container-production
+
+# 手动测试 API
+curl -f http://[your-url]:9091/[FASTAPI_DOCS_URL]
+
+# 进入容器检查
+docker exec -it fs-container-production bash
+# 在容器内
+curl http://[your-url]:8000/[FASTAPI_DOCS_URL]
+```
+
+#### 端口冲突
+
+```bash
+# 检查端口占用
+sudo lsof -i :9091
+sudo netstat -tulpn | grep 9091
+
+# 停止占用端口的进程
+sudo kill -9 <PID>
+```
+
+#### 回滚到旧版本
+
+```bash
+# 查看可用的镜像版本
+docker images fastapi-service
+
+# 停止当前容器
+docker stop fs-container-production
+docker rm fs-container-production
+
+# 启动旧版本容器
+docker run -d \
+  --name fs-container-production \
+  --restart unless-stopped \
+  -p 9091:8000 \
+  -v /home/ubuntu/docker/fs-service/log:/app/log \
+  -v /home/ubuntu/docker/fs-service/static/upload:/app/static/upload \
+  -v /home/ubuntu/docker/fs-service/env:/app/env \
+  -e ENVIRONMENT=production \
+  -e GRANIAN_WORKERS=4 \
+  fastapi-service:production-122  # 使用旧的构建号
+```
+
+### 手动部署故障
+
+#### 应用启动问题
 
 1. 检查环境变量配置
 2. 查看容器日志：`docker logs fastapi-service`
@@ -275,7 +447,7 @@ asyncio.run(test())
 docker exec your-redis-container redis-cli -a your-password ping
 ```
 
-### 健康检查失败
+#### API 健康检查问题
 
 ```bash
 # 检查健康状态
@@ -291,6 +463,7 @@ docker inspect --format='{{range .State.Health.Log}}{{.Output}}{{end}}' fastapi-
 - [uv 文档](https://docs.astral.sh/uv/)
 - [Granian 文档](https://github.com/emmett-framework/granian)
 - [Docker 官方文档](https://docs.docker.com/)
+- [Jenkins Pipeline 语法](https://www.jenkins.io/doc/book/pipeline/syntax/)
 
 ## 🆘 获取帮助
 

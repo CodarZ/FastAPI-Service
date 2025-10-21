@@ -1,0 +1,205 @@
+pipeline {
+    agent any
+
+    environment {
+        GIT_REPO = "https://github.com/CodarZ/fastapi-service.git"
+        IMAGE_NAME = "fastapi-service"
+        DOCKERFILE_PATH = "deploy/Dockerfile"
+        WORKSPACE_PATH = "/home/ubuntu/docker/fs-service"
+    }
+
+    parameters {
+        booleanParam(
+            name: 'FORCE_REBUILD',
+            defaultValue: false,
+            description: '是否强制重新构建镜像（不使用缓存）'
+        )
+    }
+
+    stages {
+        stage('初始化') {
+            steps {
+                script {
+                    echo "🚀 开始构建流水线..."
+                    determineEnvironment()
+
+                    echo """
+                    ========================================
+                    📋 构建信息
+                    ========================================
+                    分支: ${env.BRANCH_NAME}
+                    环境: ${env.ENVIRONMENT}
+                    容器名: ${env.CONTAINER_NAME}
+                    映射端口: ${env.DOCKER_PORT}
+                    镜像标签: ${env.IMAGE_NAME}:${env.ENVIRONMENT}
+                    ========================================
+                    """
+                }
+            }
+        }
+
+        stage('代码检出') {
+            steps {
+                script {
+                    echo "📥 拉取代码..."
+                    checkout scm
+                }
+            }
+        }
+
+        stage('构建镜像') {
+            steps {
+                script {
+                    echo "🔨 构建 Docker 镜像..."
+                    def buildArgs = ""
+                    if (params.FORCE_REBUILD) {
+                        buildArgs = "--no-cache"
+                    }
+
+                    sh """
+                        docker build ${buildArgs} \\
+                            -t ${env.IMAGE_NAME}:${env.ENVIRONMENT} \\
+                            -t ${env.IMAGE_NAME}:${env.ENVIRONMENT}-${BUILD_NUMBER} \\
+                            -f ${env.DOCKERFILE_PATH} \\
+                            --build-arg ENVIRONMENT=${env.ENVIRONMENT} \\
+                            .
+                    """
+
+                    echo "✅ 镜像构建成功: ${env.IMAGE_NAME}:${env.ENVIRONMENT}"
+                }
+            }
+        }
+
+        stage('停止旧容器') {
+            steps {
+                script {
+                    echo "🛑 停止并删除旧容器..."
+                    sh """
+                        if [ \$(docker ps -aq -f name=${env.CONTAINER_NAME}) ]; then
+                            echo "停止容器: ${env.CONTAINER_NAME}"
+                            docker stop ${env.CONTAINER_NAME} || true
+                            docker rm ${env.CONTAINER_NAME} || true
+                        else
+                            echo "容器 ${env.CONTAINER_NAME} 不存在"
+                        fi
+                    """
+                }
+            }
+        }
+
+        stage('部署应用') {
+            steps {
+                script {
+                    echo "🚀 部署应用到 ${env.ENVIRONMENT} 环境..."
+
+                    sh """
+                        # 启动容器
+                        docker run -d \\
+                            --name ${env.CONTAINER_NAME} \\
+                            --restart unless-stopped \\
+                            -p ${env.DOCKER_PORT}:8000 \\
+                            -v ${env.WORKSPACE_PATH}/log:/app/log \\
+                            -v ${env.WORKSPACE_PATH}/static/upload:/app/static/upload \\
+                            -v ${env.WORKSPACE_PATH}/env:/app/env \\
+                            -e ENVIRONMENT=${env.ENVIRONMENT} \\
+                            -e GRANIAN_WORKERS=4 \\
+                            ${env.IMAGE_NAME}:${env.ENVIRONMENT}
+
+                        echo "等待容器启动..."
+                        sleep 5
+
+                        echo "容器状态:"
+                        docker ps -f name=${env.CONTAINER_NAME}
+                    """
+
+                    echo "✅ 应用部署成功"
+                    // echo "访问地址: http://localhost:${env.DOCKER_PORT}"
+                    // echo "API 文档: http://localhost:${env.DOCKER_PORT}/api/docs"
+                }
+            }
+        }
+
+        stage('清理旧镜像') {
+            steps {
+                script {
+                    echo "🧹 清理旧的构建镜像..."
+                    sh """
+                        # 保留最近 3 个构建的镜像，删除其他旧镜像
+                        docker images ${env.IMAGE_NAME} --format "{{.Tag}}" | \\
+                            grep "${env.ENVIRONMENT}-" | \\
+                            sort -V -r | \\
+                            tail -n +4 | \\
+                            xargs -I {} docker rmi ${env.IMAGE_NAME}:{} || true
+
+                        # 清理悬空镜像
+                        docker image prune -f || true
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            script {
+                echo """
+                ========================================
+                ✅ 构建部署成功!
+                ========================================
+                环境: ${env.ENVIRONMENT}
+                容器: ${env.CONTAINER_NAME}
+                端口: ${env.DOCKER_PORT}
+                镜像: ${env.IMAGE_NAME}:${env.ENVIRONMENT}
+                构建号: ${BUILD_NUMBER}
+                """
+
+                // ========================================
+                // 访问地址: http://localhost:${env.DOCKER_PORT}
+                // API 文档: http://localhost:${env.DOCKER_PORT}/api/docs
+                // ========================================
+            }
+        }
+
+        failure {
+            script {
+                echo "❌ 构建失败!"
+
+                sh """
+                    echo "========== 容器日志 =========="
+                    if [ \$(docker ps -aq -f name=${env.CONTAINER_NAME}) ]; then
+                        docker logs ${env.CONTAINER_NAME} || true
+                    fi
+
+                    echo "========== 镜像列表 =========="
+                    docker images ${env.IMAGE_NAME} || true
+                """
+            }
+        }
+
+        always {
+            script {
+                echo "🧹 清理 Docker 系统资源..."
+                sh 'docker system prune -f || true'
+            }
+        }
+    }
+}
+
+// **🔹 辅助函数**
+def determineEnvironment() {
+    def envMap = [
+        'master': 'production',
+        'test': 'test',
+        'develop': 'development'
+    ]
+    env.ENVIRONMENT = envMap.get(env.BRANCH_NAME, 'development')
+
+    def portMap = [
+        'production': '9091',
+        'test': '9092',
+        'development': '9093'
+    ]
+    env.DOCKER_PORT = portMap.get(env.ENVIRONMENT, '9099')
+
+    env.CONTAINER_NAME = "fs-container-${env.ENVIRONMENT}"
+}
