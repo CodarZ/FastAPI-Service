@@ -1,0 +1,132 @@
+# ====================================================================
+# Commitizen 配置 - FastAPI 项目提交规范
+# ====================================================================
+#
+# 15 种提交类型 (ALL_TYPES):
+#   ✨ feat | 🐛 fix | ♻️ refactor | ⚡️ perf | 🔒 security |
+#   ⬆️ upgrade |
+#   🔧 chore | 🏗️ build | 👷 ci | 📝 docs |
+#   🎨 style | ✅ test | 🔥 remove | ⏪ revert | 🎉 init
+#
+# 触发版本号变更的提交类型 6种 (BUMP_TYPES):
+#   ✨ feat | 🐛 fix | ♻️ refactor | ⚡️ perf | 🔒 security | ⬆️ upgrade
+#
+# 出现在 CHANGELOG 的提交类型 10种 (CHANGELOG_TYPES):
+#   ✨ feat | 🐛 fix | ♻️ refactor | ⚡️ perf | 🔒 security | ⬆️ upgrade |
+#   🔧 chore | 🏗️ build | 👷 ci | 📝 docs
+#
+# 维护性提交 (不触发版本号、不出现在 CHANGELOG):
+#   🎉 init | 🎨 style | ✅ test | 🔥 remove | ⏪ revert
+# ====================================================================
+
+[tool.commitizen]
+name = "cz_customize"
+tag_format = "$version"
+version_scheme = "pep440"
+version_provider = "uv"
+version_files = ["pyproject.toml:version"]
+update_changelog_on_bump = true
+bump_message = "🔖 release(version): bump version $current_version → $new_version"
+
+[tool.commitizen.bump]
+commit = true
+tag = true
+push = false
+
+[tool.commitizen.customize]
+message_template = "{{change_type}}{% if scope %}({{scope}}){% endif %}: {{subject}}{% if body %}\n\n{{body}}{% endif %}{% if footer %}\n\n{{footer}}{% endif %}"
+example = "✨ feat(system/user): 新增用户登录接口"
+schema = """
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+"""
+# 正则模式 - 允许所有 15 种提交类型
+schema_pattern = "^(✨ feat|🐛 fix|♻️ refactor|⚡️ perf|🔒 security|⬆️ upgrade|🎉 init|🔧 chore|🏗️ build|👷 ci|📝 docs|🎨 style|✅ test|🔥 remove|⏪ revert)(\\([^)]+\\))?:\\s.+"
+# 版本号变更规则 - 仅触发版本号的提交类型
+bump_pattern = "^(✨ feat|🐛 fix|♻️ refactor|⚡️ perf|🔒 security|⬆️ upgrade)"
+bump_map = { "✨ feat" = "MINOR", "🐛 fix" = "PATCH", "♻️ refactor" = "PATCH", "⚡️ perf" = "PATCH", "🔒 security" = "PATCH", "⬆️ upgrade" = "MINOR" }
+# CHANGELOG 中展示的提交类型顺序
+change_type_order = [
+  "BREAKING CHANGE",
+  "✨ feat",
+  "🐛 fix",
+  "♻️ refactor",
+  "⚡️ perf",
+  "🔒 security",
+  "⬆️ upgrade",
+  "🔧 chore",
+  "🏗️ build",
+  "👷 ci",
+  "📝 docs",
+]
+# 提交消息解析器 - 解析所有 15 种提交类型
+commit_parser = "^(?P<change_type>✨ feat|🐛 fix|♻️ refactor|⚡️ perf|🔒 security|⬆️ upgrade|🔧 chore|🏗️ build|👷 ci|📝 docs|🎨 style|✅ test|🔥 remove|⏪ revert|🎉 init)(?:\\((?P<scope>[^)]+)\\))?(?P<breaking>!)?:\\s(?P<message>.+)"
+# CHANGELOG 过滤规则 - 排除维护性提交 (style, test, remove, revert, init)
+changelog_pattern = "^(✨ feat|🐛 fix|♻️ refactor|⚡️ perf|🔒 security|⬆️ upgrade|🔧 chore|🏗️ build|👷 ci|📝 docs|BREAKING CHANGE)?(!)?"
+# CHANGELOG 中的类型映射 (中文显示)
+change_type_map = { "✨ feat" = "✨ 新功能", "🐛 fix" = "🐛 问题修复", "♻️ refactor" = "♻️ 代码重构", "⚡️ perf" = "⚡️ 性能优化", "🔒 security" = "🔒 安全修复", "⬆️ upgrade" = "⬆️ 依赖升级", "🔧 chore" = "🔧 日常维护", "🏗️ build" = "🏗️ 构建相关", "👷 ci" = "👷 CI/CD", "📝 docs" = "📝 文档更新", "BREAKING CHANGE" = "💥 破坏性变更" }
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "change_type"
+message = "请选择本次提交的类型:"
+choices = [
+  { value = "✨ feat", name = "✨ feat:       新功能          (新接口、新业务逻辑)" },
+  { value = "🐛 fix", name = "🐛 fix:        修复 Bug        (接口错误、逻辑异常)" },
+  { value = "♻️ refactor", name = "♻️  refactor:   代码重构        (优化代码结构、提升可维护性)" },
+  { value = "⚡️ perf", name = "⚡️ perf:       性能优化        (SQL优化、缓存优化、响应速度)" },
+  { value = "🔒 security", name = "🔒 security:   安全修复        (漏洞修复、权限控制)" },
+  { value = "⬆️ upgrade", name = "⬆️  upgrade:    升级依赖        (FastAPI、Pydantic等框架升级)" },
+  { value = "🔧 chore", name = "🔧 chore:      日常维护        (依赖更新、配置调整)" },
+  { value = "🏗️ build", name = "🏗️  build:      构建相关        (Docker、部署脚本)" },
+  { value = "👷 ci", name = "👷 ci:         CI/CD           (GitHub Actions、自动化流程)" },
+  { value = "📝 docs", name = "📝 docs:       文档更新        (API文档、注释、README)" },
+  { value = "🎨 style", name = "🎨 style:      代码格式化      (Ruff、Black、排版调整)" },
+  { value = "✅ test", name = "✅ test:       测试相关        (单元测试、集成测试)" },
+  { value = "🔥 remove", name = "🔥 remove:     移除代码        (废弃接口、过期模块)" },
+  { value = "⏪ revert", name = "⏪ revert:     回退提交        (撤销之前的更改)" },
+  { value = "🎉 init", name = "🎉 init:       初始化" },
+]
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "scope"
+message = """
+说明本次提交的影响范围 (可选, 请使用英文):
+  - 单个模块:                     system/user, system/auth, file, corn
+  - 多个模块 (使用逗号分隔):      system/user,system/auth  或  core,common
+  - 子模块使用 / 分隔:            common/exception, common/response
+
+  常用范围:
+  - system/user, file, corn       业务模块
+  - core, core/config             核心功能: 配置管理、缓存策略...
+  - common, common/exception      公共模块: 异常处理、响应封装...
+  - deploy                        部署运维: Docker、Github Action、CI/CD...
+  - middleware                    中间件: JWT、CORS...
+
+"""
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "subject"
+message = "简短描述本次变更 (必填), 如: 新增用户登录接口、修复订单状态更新异常、重构权限验证中间件\n"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "body"
+multiline = true
+message = "提供更详细的提交描述 (可选): 变更的具体内容和原因, 技术实现细节, 影响范围说明, 相关的业务背景\n"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "footer"
+multiline = true
+message = """
+页脚信息 (可选):
+  - 关联 Issue:       Closes #123, Fixes #456, Resolves #789
+  - 破坏性变更 (触发 major 版本升级):       BREAKING CHANGE: 描述
+
+"""

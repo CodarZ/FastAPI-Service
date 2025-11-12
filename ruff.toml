@@ -1,0 +1,53 @@
+line-length = 120
+cache-dir = ".ruff_cache"
+target-version = "py314"
+unsafe-fixes = true
+show-fixes = true
+
+[lint]
+select = [
+    "E",       # pycodestyle 错误（缩进、空格等）
+    "F",       # pyflakes（语法、变量未定义等）
+    "I",       # isort（导入顺序检查）
+    "TC",      # flake8-type-checking（类型检查导入优化）
+    "W505",    # 文档字符串太长（超过 line-length）
+    "PT018",   # pytest assert 使用建议
+    "SIM101",  # 可以合并的 if 语句
+    "SIM114",  # 可以合并的 with 语句
+    "PGH004",  # 避免不必要的 else 语句
+    "PLE1142", # 禁止 open() 忘记加 encoding
+    "RUF100",  # 不允许的 noqa 注释
+    "UP007",   # 类型注解建议（使用 | 代替 Union）
+]
+preview = true
+ignore = [
+    "FURB101", # 忽略未使用的导入
+    "B008",    # FastAPI 依赖注入常用的默认参数不触发警告
+]
+
+[lint.flake8-pytest-style]
+mark-parentheses = false
+parametrize-names-type = "list"
+parametrize-values-row-type = "list"
+parametrize-values-type = "tuple"
+
+[lint.flake8-unused-arguments]
+ignore-variadic-names = true # 忽略未使用参数
+
+[lint.isort]
+lines-between-types = 1
+order-by-type = true
+combine-as-imports = true
+known-first-party = ["backend"]
+
+[lint.per-file-ignores]
+"**/api/**/*.py" = ["TC"]
+"**/model/*.py" = ["TC003"]
+"**/model/__init__.py" = ["F401"]
+"**/tests/*.py" = ["E402"]
+
+[format]
+preview = true
+quote-style = "single"
+docstring-code-format = true
+skip-magic-trailing-comma = false
