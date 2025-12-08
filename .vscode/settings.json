@@ -1,98 +1,146 @@
 {
-    "explorer.confirmDelete": false,
-    "explorer.confirmDragAndDrop": false,
-    "workbench.startupEditor": "welcomePage",
-    "workbench.colorTheme": "One Dark Pro",
-    "workbench.iconTheme": "material-icon-theme",
-    "terminal.integrated.fontFamily": "'FiraCode Nerd Font Mono', Consolas, 'Courier New', monospace, 'Droid Sans Mono'",
-    "terminal.integrated.fontSize": 16,
-    "terminal.integrated.fontWeight": "normal",
-    "terminal.integrated.enableMultiLinePasteWarning": "never",
-    "editor.cursorSmoothCaretAnimation": "on",
-    "editor.guides.bracketPairs": "active",
-    "editor.tabSize": 2,
-    "editor.fontSize": 18,
-    "editor.fontFamily": "'FiraCode Nerd Font', Consolas, 'Courier New', monospace",
-    "editor.autoClosingBrackets": "always",
-    "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
-    "editor.hover.sticky": true,
-    "editor.linkedEditing": true,
-    "editor.formatOnPaste": true,
-    "editor.formatOnType": true,
-    "editor.formatOnSave": true,
-    "editor.unicodeHighlight.allowedCharacters": {
-        "：": true,
-        "（": true,
-        "）": true
-    },
-    "editor.codeActionsOnSave": {
-        "source.fixAll": "explicit"
-    },
+  "telemetry.telemetryLevel": "off",
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "workbench.colorTheme": "One Dark Pro",
+  "workbench.startupEditor": "welcomePage",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.editor.autoLockGroups": {
+    "mainThreadWebview-simpleBrowser.view": false
+  },
+  "workbench.settings.applyToAllProfiles": [
+    "files.dialog.defaultPath"
+  ],
+  "settingsSync.ignoredSettings": [
+    "-files.dialog.defaultPath"
+  ],
+  "security.workspace.trust.untrustedFiles": "open",
+  "terminal.integrated.fontSize": 16,
+  "terminal.integrated.lineHeight": 1.1,
+  "terminal.integrated.fontWeight": "normal",
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "terminal.integrated.fontFamily": "'FiraCode Nerd Font Mono', Consolas, 'Courier New', monospace",
+  "editor.tabSize": 2,
+  "editor.fontSize": 18,
+  "editor.wordWrap": "on",
+  "editor.hover.sticky": true,
+  "editor.linkedEditing": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+  "editor.formatOnSave": true,
+  "editor.autoClosingBrackets": "always",
+  "editor.guides.bracketPairs": "active",
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.unicodeHighlight.nonBasicASCII": false,
+  "editor.fontFamily": "'FiraCode Nerd Font', Consolas, 'Courier New', monospace",
+  "editor.unicodeHighlight.allowedCharacters": {
+    "：": true,
+    "（": true,
+    "）": true
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit",
+    "source.organizeImports": "never"
+  },
+  "editor.defaultFormatter": "charliermarsh.ruff",
+  "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",
-    "[python]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "charliermarsh.ruff",
-        "editor.codeActionsOnSave": {
-            "source.fixAll": "explicit",
-            "source.organizeImports.ruff": "explicit"
-        }
-    },
-    "[json]": {
-        "editor.defaultFormatter": "vscode.json-language-features"
-    },
-    "[jsonc]": {
-        "editor.defaultFormatter": "vscode.json-language-features"
-    },
-    "[toml]": {
-        "editor.defaultFormatter": "tamasfe.even-better-toml"
-    },
-    "[markdown]": {
-        "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
-    },
-    "[shellscript]": {
-        "editor.defaultFormatter": "foxundermoon.shell-format"
-    },
-    "[dotenv]": {
-        "editor.defaultFormatter": "foxundermoon.shell-format"
-    },
-    "[ignore]": {
-        "editor.defaultFormatter": "foxundermoon.shell-format"
-    },
-    "[.editorconfig]": {
-        "editor.defaultFormatter": "foxundermoon.shell-format"
-    },
-    "[properties]": {
-        "editor.defaultFormatter": "foxundermoon.shell-format"
-    },
-    "[dockerfile]": {
-        "editor.defaultFormatter": "foxundermoon.shell-format"
-    },
-    "python.analysis.autoImportCompletions": true,
-    "python.analysis.typeCheckingMode": "standard",
-    "python.analysis.inlayHints.functionReturnTypes": true,
-    "python.analysis.inlayHints.pytestParameters": true,
-    "python.analysis.inlayHints.callArgumentNames": "partial",
-    "files.insertFinalNewline": true,
-    "files.exclude": {
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/.DS_Store": true,
-        "**/Thumbs.db": true,
-        "**/.venv": true,
-        "**/venv": true,
-        "**/*cache": true,
-        "**/__pycache__": true
-    },
-    "search.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/.DS_Store": true,
-        "**/Thumbs.db": true,
-        "**/.venv": true,
-        "**/venv": true,
-        "**/*cache": true,
-        "**/__pycache__": true,
-        "**/*.lock": true
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.ruff": "explicit"
     }
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[dotenv]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[ignore]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[.editorconfig]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[properties]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "files.simpleDialog.enable": true,
+  "files.associations": {
+    "*.json": "jsonc",
+    "*.json5": "json5"
+  },
+  "files.exclude": {
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.venv": true,
+    "**/venv": true,
+    "**/*cache": true,
+    "**/__pycache__": true
+  },
+  "search.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.venv": true,
+    "**/venv": true,
+    "**/*cache": true,
+    "**/__pycache__": true
+  },
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.typeCheckingMode": "standard",
+  "python.analysis.inlayHints.functionReturnTypes": true,
+  "python.analysis.inlayHints.pytestParameters": true,
+  "python.analysis.inlayHints.callArgumentNames": "partial",
+  "redhat.telemetry.enabled": false,
+  "git.autofetch": true,
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": true,
+    "markdown": true,
+    "scminput": true
+  },
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "gitlens.ai.model": "vscode",
+  "gitlens.ai.vscode.model": "copilot:gpt-4o-mini",
+  "gitlens.views.commitDetails.files.layout": "tree",
+  "gitlens.graph.dateFormat": "YYYY.MM.DD HH:mm:ss",
+  "gitlens.graph.dimMergeCommits": true,
+  "gitlens.graph.showRemoteNames": true,
+  "gitlens.graph.dateStyle": "relative",
+  "gitlens.views.contributors.showStatistics": true,
+  "gitlens.views.contributors.files.layout": "tree",
+  "emmet.includeLanguages": {},
+  "prettier.enable": true,
+  "prettier.printWidth": 120,
+  "prettier.singleQuote": true,
+  "prettier.endOfLine": "auto",
+  "chat.editing.confirmEditRequestRemoval": false,
+  "chat.mcp.gallery.enabled": true,
+  "chat.agent.thinkingStyle": "collapsedPreview",
+  "chat.agentSessionsViewLocation": "single-view",
+  "chat.allowAnonymousAccess": false,
+  "chat.checkpoints.showFileChanges": true,
+  "chat.editing.autoAcceptDelay": 1,
+  "chat.emptyState.history.enabled": true,
+  "chat.tools.terminal.autoReplyToPrompts": true,
+  "inlineChat.enableV2": true,
+  "inlineChat.lineEmptyHint": true,
+  "inlineChat.notebookAgent": true
 }
