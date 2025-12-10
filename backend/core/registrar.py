@@ -1,7 +1,11 @@
 from fastapi import FastAPI
+from starlette_context.middleware import ContextMiddleware
+from starlette_context.plugins import RequestIdPlugin
 
 from backend.app.router import router
+from backend.common.response.code import StandardResponseStatus
 from backend.core.config import settings
+from backend.utils.serializers import MsgSpecJSONResponse
 
 
 def register_app():
@@ -13,6 +17,8 @@ def register_app():
         docs_url=settings.FASTAPI_DOCS_URL,
     )
 
+    register_middleware(app)
+
     register_router(app)
 
     return app
@@ -23,3 +29,21 @@ def register_router(app: FastAPI) -> None:
 
     # API
     app.include_router(router)
+
+
+def register_middleware(app: FastAPI) -> None:
+    """注册中间件（执行顺序从下往上）"""
+
+    # ContextVar 上下文管理
+    app.add_middleware(
+        ContextMiddleware,
+        plugins=[RequestIdPlugin(validate=True)],
+        default_error_response=MsgSpecJSONResponse(
+            content={
+                'code': StandardResponseStatus.HTTP_400.code,
+                'msg': StandardResponseStatus.HTTP_400.msg,
+                'data': None,
+            },
+            status_code=StandardResponseStatus.HTTP_400.code,
+        ),
+    )

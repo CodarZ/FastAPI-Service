@@ -78,7 +78,6 @@ class Settings(BaseSettings):
     REDIS_REQUEST_LIMITER_PREFIX: str = 'fs:limiter'  # Redis 限流器前缀
 
     # ============== Trace ID ==============
-    TRACE_ID_REQUEST_HEADER_KEY: str = 'X-Request-ID'  # 请求头中 Trace ID 的 Key
     TRACE_ID_LOG_DEFAULT_VALUE: str = '-'
 
     # ============== Middleware ==============
@@ -86,9 +85,7 @@ class Settings(BaseSettings):
 
     # ============== CORS ==============
     CORS_ALLOWED_ORIGINS: list[str] = []  # 允许跨域的源, 末尾不要带 '/'
-    CORS_EXPOSE_HEADERS: list[str] = [
-        TRACE_ID_REQUEST_HEADER_KEY,
-    ]  # 允许跨域的响应头
+    CORS_EXPOSE_HEADERS: list[str] = []  # 允许跨域的响应头
 
     # ============== JWT ================
     JWT_USER_REDIS_PREFIX: str = 'fs:user'
