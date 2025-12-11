@@ -82,15 +82,20 @@ git push origin feature/user-login
 
 ## 常用命令
 
-### 代码检查
+### 代码检查与格式化
 
 ```bash
-# 运行所有检查
+# 运行所有 pre-commit 检查（自动）
 uv run pre-commit run --all-files
 
-# 单独运行 Ruff
-uv run ruff check .
-uv run ruff format .
+# Python 代码检查与格式化
+uv run ruff check .              # 检查代码质量
+uv run ruff format .             # 格式化代码
+uv run ruff check . --fix        # 自动修复问题
+
+# JSON/YAML/Markdown 格式化（手动）
+bunx prettier --check "**/*.{json,yaml,md}"  # 仅检查
+bunx prettier --write "**/*.{json,yaml,md}"
 ```
 
 ### 测试
@@ -137,15 +142,34 @@ git push origin master --follow-tags
 
 ## 工具链
 
+### 自动检查（Pre-commit 集成）
+
 - **uv**: Python 包管理器
 - **Commitizen**: 规范化提交和自动版本管理
 - **Pre-commit**: 代码提交前自动检查
-  - Ruff (代码检查和格式化)
-  - Bandit (安全扫描)
-  - YAML/JSON/TOML 验证
+  - **Ruff**: Python 代码检查和格式化（支持 .py/.pyi/.ipynb）
+  - **Bandit**: Python 安全漏洞扫描
+  - **YAML/JSON/TOML 验证**: 语法校验（pre-commit-hooks）
+  - **UV 依赖同步**: 自动更新 requirements.txt
+
+### 手动检查工具
+
+- **Prettier**: JSON/YAML/Markdown 格式化
+
+### 其他工具
+
 - **Alembic**: 数据库迁移
 - **Pytest**: 单元测试
 - **GitHub Actions**: CI/CD 自动化
+
+### 工具职责划分
+
+| 文件类型               | 格式化工具       | Lint 工具        | 配置文件                             | Pre-commit |
+| ---------------------- | ---------------- | ---------------- | ------------------------------------ | ---------- |
+| Python (`.py`, `.pyi`) | Ruff             | Ruff + Bandit    | [ruff.toml](ruff.toml)               | ✅ 自动    |
+| Jupyter (`.ipynb`)     | Ruff             | Ruff             | [ruff.toml](ruff.toml)               | ✅ 自动    |
+| JSON/YAML/Markdown     | Prettier         | pre-commit hooks | [.prettierrc.yaml](.prettierrc.yaml) | ⚠️ 手动    |
+| TOML                   | Even Better TOML | pre-commit check | [.editorconfig](.editorconfig)       | ✅ 自动    |
 
 ## 相关配置
 

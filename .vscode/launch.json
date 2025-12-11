@@ -6,12 +6,7 @@
       "type": "debugpy",
       "request": "launch",
       "module": "granian",
-      "args": [
-        "--interface",
-        "asgi",
-        "--reload",
-        "backend.main:app"
-      ],
+      "args": ["--interface", "asgi", "--reload", "backend.main:app"],
       "jinja": true,
       "justMyCode": true,
       "console": "integratedTerminal",
@@ -26,13 +21,7 @@
       "type": "debugpy",
       "request": "launch",
       "module": "granian",
-      "args": [
-        "--interface",
-        "asgi",
-        "--log-level",
-        "info",
-        "backend.main:app"
-      ],
+      "args": ["--interface", "asgi", "--log-level", "info", "backend.main:app"],
       "jinja": false,
       "justMyCode": true,
       "console": "integratedTerminal",

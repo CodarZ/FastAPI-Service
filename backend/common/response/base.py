@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Generic, TypeVar, overload
+from typing import TYPE_CHECKING, Any, TypeVar, overload
 
 from pydantic import BaseModel, Field
 
@@ -21,7 +21,7 @@ class ResponseModel(BaseModel):
     data: Any = Field(None, description='返回数据')
 
 
-class ResponseSchemaModel(ResponseModel, Generic[SchemaT]):
+class ResponseSchemaModel[SchemaT](ResponseModel):
     """包含返回数据 schema 的通用型统一返回模型"""
 
     data: SchemaT
@@ -34,7 +34,7 @@ class ResponseBase:
     @staticmethod
     def __response(
         *,
-        res: 'StandardResponseStatus | ResponseStatus',
+        res: StandardResponseStatus | ResponseStatus,
         data: None = None,
     ) -> ResponseModel: ...
 
@@ -42,14 +42,14 @@ class ResponseBase:
     @staticmethod
     def __response(
         *,
-        res: 'StandardResponseStatus | ResponseStatus',
+        res: StandardResponseStatus | ResponseStatus,
         data: SchemaT,
     ) -> ResponseSchemaModel[SchemaT]: ...
 
     @staticmethod
     def __response(
         *,
-        res: 'StandardResponseStatus | ResponseStatus',
+        res: StandardResponseStatus | ResponseStatus,
         data: SchemaT | None = None,
     ) -> ResponseModel | ResponseSchemaModel[SchemaT]:
         kwargs = {'code': res.code, 'msg': res.msg, 'data': data}
@@ -58,7 +58,7 @@ class ResponseBase:
     def success(
         self,
         *,
-        res: 'StandardResponseStatus | ResponseStatus' = StandardResponseStatus.HTTP_200,
+        res: StandardResponseStatus | ResponseStatus = StandardResponseStatus.HTTP_200,
         data: SchemaT | None = None,
     ) -> ResponseModel | ResponseSchemaModel[SchemaT]:
         """成功响应"""
@@ -67,7 +67,7 @@ class ResponseBase:
     def fail(
         self,
         *,
-        res: 'StandardResponseStatus | ResponseStatus' = StandardResponseStatus.HTTP_400,
+        res: StandardResponseStatus | ResponseStatus = StandardResponseStatus.HTTP_400,
         data: SchemaT | None = None,
     ) -> ResponseModel | ResponseSchemaModel[SchemaT]:
         """失败响应"""
@@ -76,9 +76,9 @@ class ResponseBase:
     @staticmethod
     def fast(
         *,
-        res: 'StandardResponseStatus | ResponseStatus' = StandardResponseStatus.HTTP_200,
+        res: StandardResponseStatus | ResponseStatus = StandardResponseStatus.HTTP_200,
         data: Any = None,
-    ) -> 'Response':
+    ) -> Response:
         """此方法是为了提高接口响应速度而创建的，在解析较大 json 时有显著性能提升，但将丢失 pydantic 解析和验证"""
         return MsgSpecJSONResponse({'code': res.code, 'msg': res.msg, 'data': data})
 

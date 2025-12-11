@@ -1,15 +1,15 @@
 {
-    "recommendations": [
-        "ms-python.vscode-pylance",
-        "ms-python.python",
-        "ms-python.debugpy",
-        "charliermarsh.ruff",
-        "foxundermoon.shell-format",
-        "tamasfe.even-better-toml",
-        "njpwerner.autodocstring",
-        "oderwat.indent-rainbow",
-        "pkief.material-icon-theme",
-        "zhuangtongfa.material-theme",
-        "yzhang.markdown-all-in-one"
-    ]
+  "recommendations": [
+    "ms-python.vscode-pylance",
+    "ms-python.python",
+    "ms-python.debugpy",
+    "charliermarsh.ruff",
+    "esbenp.prettier-vscode",
+    "foxundermoon.shell-format",
+    "tamasfe.even-better-toml",
+    "njpwerner.autodocstring",
+    "oderwat.indent-rainbow",
+    "pkief.material-icon-theme",
+    "zhuangtongfa.material-theme"
+  ]
 }

@@ -1,4 +1,4 @@
-from enum import Enum, IntEnum as SourceIntEnum
+from enum import Enum, IntEnum as SourceIntEnum, StrEnum as SourceStrEnum
 
 
 class _EnumBase(Enum):
@@ -32,13 +32,9 @@ class _EnumBase(Enum):
 class IntEnum(_EnumBase, SourceIntEnum):
     """自定义整数枚举类"""
 
-    pass
 
-
-class StrEnum(_EnumBase, str, Enum):
+class StrEnum(_EnumBase, SourceStrEnum):
     """自定义字符串枚举类"""
-
-    pass
 
 
 class DictEnum(Enum):

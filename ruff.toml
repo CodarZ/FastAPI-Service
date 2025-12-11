@@ -18,11 +18,22 @@ select = [
     "PLE1142", # 禁止 open() 忘记加 encoding
     "RUF100",  # 不允许的 noqa 注释
     "UP007",   # 类型注解建议（使用 | 代替 Union）
+    "B",       # flake8-bugbear（常见陷阱和反模式）
+    "ASYNC",   # flake8-async（异步代码检查）
+    "RET",     # flake8-return（return 语句优化）
+    "SIM",     # flake8-simplify（简化代码）
+    "PTH",     # flake8-use-pathlib（推荐使用 pathlib）
+    "PERF",    # perflint（性能反模式）
+    "FURB",    # refurb（现代化代码建议）
 ]
 preview = true
 ignore = [
-    "FURB101", # 忽略未使用的导入
     "B008",    # FastAPI 依赖注入常用的默认参数不触发警告
+    "FURB101", # 忽略未使用的导入
+    "PLR0913", # 过多参数（FastAPI 路由常见）
+    "PLR2004", # 魔术数字（业务常量可接受）
+    "PLR6301", # 方法可改为静态/类方法（重写父类方法时误报）
+    "T201",    # print 允许在调试/脚本中使用
 ]
 
 [lint.flake8-pytest-style]
@@ -34,6 +45,9 @@ parametrize-values-type = "tuple"
 [lint.flake8-unused-arguments]
 ignore-variadic-names = true # 忽略未使用参数
 
+[lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Body"]
+
 [lint.isort]
 lines-between-types = 1
 order-by-type = true
@@ -44,7 +58,8 @@ known-first-party = ["backend"]
 "**/api/**/*.py" = ["TC"]
 "**/model/*.py" = ["TC003"]
 "**/model/__init__.py" = ["F401"]
-"**/tests/*.py" = ["E402"]
+"**/tests/*.py" = ["E402", "S101"]
+"**/alembic/versions/*.py" = ["E501", "F401", "I001"]
 
 [format]
 preview = true

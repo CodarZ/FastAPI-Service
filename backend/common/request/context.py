@@ -31,8 +31,8 @@ class TypedContext:
     def __getattr__(self, name: str) -> Any:
         try:
             return context[name]
-        except KeyError:
-            raise AttributeError(name)
+        except KeyError as error:
+            raise AttributeError(name) from error
 
     def __setattr__(self, name: str, value: Any) -> None:
         context[name] = value
@@ -40,8 +40,8 @@ class TypedContext:
     def __delattr__(self, name: str) -> None:
         try:
             del context[name]
-        except KeyError:
-            raise AttributeError(name)
+        except KeyError as error:
+            raise AttributeError(name) from error
 
 
 ctx = TypedContext()

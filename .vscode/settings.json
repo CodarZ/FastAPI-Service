@@ -1,20 +1,25 @@
 {
   "telemetry.telemetryLevel": "off",
+  "security.workspace.trust.untrustedFiles": "open",
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "pyproject.toml": "requirements.txt, uv.lock, .python-version",
+    "ruff.toml": "cz.toml, .prettierrc.yaml, .prettierignore, .editorconfig, .pre-commit-config.yaml",
+    "README.md": "README.*, LICENSE, CHANGELOG.md, CONTRIBUTING.md",
+    "pytest.ini": ".pytest_cache, .coverage, htmlcov/, coverage.xml, .coveragerc, conftest.py",
+    "alembic.ini": "alembic/",
+    "Dockerfile": "Dockerfile.*, .dockerignore, docker-compose.yml, docker-compose.*.yml",
+    "docker-compose.yml": "docker-compose.*.yml, .dockerignore"
+  },
   "workbench.colorTheme": "One Dark Pro",
   "workbench.startupEditor": "welcomePage",
   "workbench.iconTheme": "material-icon-theme",
-  "workbench.editor.autoLockGroups": {
-    "mainThreadWebview-simpleBrowser.view": false
-  },
-  "workbench.settings.applyToAllProfiles": [
-    "files.dialog.defaultPath"
-  ],
-  "settingsSync.ignoredSettings": [
-    "-files.dialog.defaultPath"
-  ],
-  "security.workspace.trust.untrustedFiles": "open",
+  "workbench.editor.autoLockGroups": { "mainThreadWebview-simpleBrowser.view": false },
+  "workbench.settings.applyToAllProfiles": ["files.dialog.defaultPath"],
+  "settingsSync.ignoredSettings": ["-files.dialog.defaultPath"],
   "terminal.integrated.fontSize": 16,
   "terminal.integrated.lineHeight": 1.1,
   "terminal.integrated.fontWeight": "normal",
@@ -40,22 +45,32 @@
   },
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
-    "source.fixAll.eslint": "explicit",
-    "source.fixAll.stylelint": "explicit",
-    "source.organizeImports": "never"
+    "source.fixAll.ruff": "explicit"
   },
-  "editor.defaultFormatter": "charliermarsh.ruff",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[python]": {
+    "editor.tabSize": 4,
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
       "source.organizeImports.ruff": "explicit"
     }
   },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[jsonc]": {
-    "editor.defaultFormatter": "vscode.json-language-features"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[toml]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[groovy]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
   },
   "[shellscript]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
@@ -66,11 +81,8 @@
   "[ignore]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
-  "[.editorconfig]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
-  },
   "[properties]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -105,7 +117,7 @@
   "prettier.enable": true,
   "prettier.printWidth": 120,
   "prettier.singleQuote": true,
-  "prettier.endOfLine": "auto",
+  "prettier.endOfLine": "lf",
   "python.analysis.autoImportCompletions": true,
   "python.analysis.typeCheckingMode": "standard",
   "python.analysis.inlayHints.functionReturnTypes": true,

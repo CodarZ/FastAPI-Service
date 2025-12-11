@@ -6,8 +6,8 @@ on:
       - master
 
 permissions:
-  contents: write  # 允许创建 tag 和推送更改
-  pull-requests: write  # 允许创建 PR
+  contents: write # 允许创建 tag 和推送更改
+  pull-requests: write # 允许创建 PR
 
 jobs:
   release:
@@ -35,7 +35,7 @@ jobs:
       - name: 🐍 设置 Python 环境
         uses: actions/setup-python@v6.0.0
         with:
-          python-version: "3.14"
+          python-version: '3.14'
 
       # 4. 安装 Commitizen（发版工具）
       - name: 📦 安装 Commitizen
@@ -94,7 +94,7 @@ jobs:
         with:
           tag: ${{ steps.bump_version.outputs.new_version }}
           name: 🔖 Release ${{ steps.bump_version.outputs.new_version }}
-          bodyFile: "CHANGELOG.md"
+          bodyFile: 'CHANGELOG.md'
           draft: false
           prerelease: ${{ github.ref != 'refs/heads/master' }}
           token: ${{ secrets.GH_TOKEN }}
