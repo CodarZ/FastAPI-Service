@@ -1,12 +1,13 @@
 from typing import TYPE_CHECKING, Any
 
 from starlette_context import context
+from starlette_context.ctx import _Context
 
 if TYPE_CHECKING:
     from datetime import datetime
 
 
-class TypedContext:
+class TypedContext(_Context):
     """上下文管理扩展"""
 
     # 性能
@@ -29,19 +30,13 @@ class TypedContext:
     permission: str | None
 
     def __getattr__(self, name: str) -> Any:
-        try:
-            return context[name]
-        except KeyError as error:
-            raise AttributeError(name) from error
+        return context.get(name)
 
     def __setattr__(self, name: str, value: Any) -> None:
         context[name] = value
 
     def __delattr__(self, name: str) -> None:
-        try:
-            del context[name]
-        except KeyError as error:
-            raise AttributeError(name) from error
+        context.pop(name, None)
 
 
 ctx = TypedContext()
