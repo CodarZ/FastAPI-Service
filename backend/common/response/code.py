@@ -49,7 +49,7 @@ class StandardResponseStatus(ResponseStatusEnum):
     HTTP_308 = (308, '永久重定向')
 
     # 4xx 客户端错误
-    HTTP_400 = (400, '请求参数错误')
+    HTTP_400 = (400, '请求错误')
     HTTP_401 = (401, '身份认证失败')
     HTTP_402 = (402, '需要付费')
     HTTP_403 = (403, '权限不足')
