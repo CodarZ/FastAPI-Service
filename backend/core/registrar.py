@@ -3,6 +3,7 @@ from starlette_context.middleware import ContextMiddleware
 from starlette_context.plugins import RequestIdPlugin
 
 from backend.app.router import router
+from backend.common.exception.handler import register_exception
 from backend.common.response.code import StandardResponseStatus
 from backend.core.config import settings
 from backend.utils.serializers import MsgSpecJSONResponse
@@ -20,6 +21,8 @@ def register_app():
     register_middleware(app)
 
     register_router(app)
+
+    register_exception(app)
 
     return app
 
