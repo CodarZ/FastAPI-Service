@@ -6,6 +6,7 @@ from backend.app.router import router
 from backend.common.exception.handler import register_exception
 from backend.common.response.code import StandardResponseStatus
 from backend.core.config import settings
+from backend.utils.route import ensure_unique_route_name, simplify_operation_id
 from backend.utils.serializers import MsgSpecJSONResponse
 
 
@@ -32,6 +33,10 @@ def register_router(app: FastAPI) -> None:
 
     # API
     app.include_router(router)
+
+    # Extra
+    ensure_unique_route_name(app)
+    simplify_operation_id(app)
 
 
 def register_middleware(app: FastAPI) -> None:
