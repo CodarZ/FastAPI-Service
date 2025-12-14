@@ -7,6 +7,7 @@ from backend.common.exception.handler import register_exception
 from backend.common.log import set_custom_logfile, setup_logging
 from backend.common.response.code import StandardResponseStatus
 from backend.core.config import settings
+from backend.middleware.access import AccessMiddleware
 from backend.utils.route import ensure_unique_route_name, simplify_operation_id
 from backend.utils.serializers import MsgSpecJSONResponse
 
@@ -43,6 +44,8 @@ def register_router(app: FastAPI) -> None:
 
 def register_middleware(app: FastAPI) -> None:
     """注册中间件（执行顺序从下往上）"""
+
+    app.add_middleware(AccessMiddleware)
 
     # ContextVar 上下文管理
     app.add_middleware(
