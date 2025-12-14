@@ -4,6 +4,7 @@ from starlette_context.plugins import RequestIdPlugin
 
 from backend.app.router import router
 from backend.common.exception.handler import register_exception
+from backend.common.log import set_custom_logfile, setup_logging
 from backend.common.response.code import StandardResponseStatus
 from backend.core.config import settings
 from backend.utils.route import ensure_unique_route_name, simplify_operation_id
@@ -18,6 +19,7 @@ def register_app():
         openapi_url=settings.FASTAPI_OPENAPI_URL,
         docs_url=settings.FASTAPI_DOCS_URL,
     )
+    register_logger()
 
     register_middleware(app)
 
@@ -55,3 +57,10 @@ def register_middleware(app: FastAPI) -> None:
             status_code=StandardResponseStatus.HTTP_400.code,
         ),
     )
+
+
+def register_logger() -> None:
+    """注册日志"""
+    setup_logging()
+
+    set_custom_logfile()
