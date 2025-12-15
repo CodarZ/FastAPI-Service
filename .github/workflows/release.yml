@@ -39,28 +39,27 @@ jobs:
         with:
           python-version: '3.14'
 
-      # 4. 安装 uv 和 commitizen（仅需版本管理工具）
-      - name: 📦 安装 uv 和 commitizen
+      # 4. 安装 commitizen
+      - name: 📦 安装 commitizen
         run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          uv pip install --system commitizen
+          pip install commitizen
 
       # 5. 自动升级版本号并生成 CHANGELOG
       - name: 🔖 升级版本号并更新日志
         id: bump_version
         run: |
           # 1. 获取当前版本
-          CURRENT_VERSION=$(uv run cz version --project)
+          CURRENT_VERSION=$(cz --config cz.toml version --project)
           echo "📌 当前版本: $CURRENT_VERSION"
 
           # 2. 执行版本升级 (捕获退出码)
           set +e
-          uv run cz bump --yes --changelog
+          cz --config cz.toml bump --yes --changelog
           BUMP_EXIT_CODE=$?
           set -e
 
           # 3. 获取升级后的新版本, 将版本输出到 GitHub Actions 变量
-          NEW_VERSION=$(uv run cz version --project)
+          NEW_VERSION=$(cz --config cz.toml version --project)
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "📌 新版本: $NEW_VERSION"
 
