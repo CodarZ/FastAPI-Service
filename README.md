@@ -82,6 +82,100 @@ git push origin feature/user-login
 
 ## 常用命令
 
+### 依赖管理
+
+#### 安全升级所有依赖
+
+```bash
+# 1. 升级所有依赖到最新兼容版本（更新 uv.lock）
+uv lock --upgrade
+
+# 2. 同步安装升级后的依赖
+uv sync
+
+# 3. 查看已安装的依赖版本
+uv pip list
+
+# 4. 查看过时的依赖
+uv pip list --outdated
+
+# 5. 同步版本号到 requirements.txt（可选，项目已配置自动同步）
+uv pip compile pyproject.toml -o requirements.txt
+```
+
+#### 升级特定依赖
+
+```bash
+# 升级单个包到最新版本
+uv lock --upgrade-package fastapi
+uv sync
+
+# 升级多个包
+uv lock --upgrade-package fastapi --upgrade-package pydantic
+uv sync
+
+# 或者使用简写形式
+uv lock -P fastapi -P pydantic
+uv sync
+```
+
+#### 依赖安全检查
+
+```bash
+# 查看依赖树
+uv tree
+
+# 查看过时的依赖
+uv pip list --outdated
+
+# 检查依赖的安全漏洞（需要额外工具）
+uv run pip-audit
+```
+
+#### 完整升级流程（推荐）
+
+```bash
+# 步骤 1: 创建功能分支
+git checkout develop
+git pull origin develop
+git checkout -b chore/upgrade-dependencies
+
+# 步骤 2: 备份当前锁定文件（可选）
+cp uv.lock uv.lock.backup
+
+# 步骤 3: 升级所有依赖
+uv lock --upgrade
+uv sync
+
+# 步骤 4: 运行测试确保兼容性
+uv run pytest
+
+# 步骤 5: 运行代码检查
+uv run pre-commit run --all-files
+
+# 步骤 6: 如果测试失败，回滚
+# mv uv.lock.backup uv.lock
+# uv sync
+
+# 步骤 7: 提交变更（使用 Commitizen）
+git add uv.lock pyproject.toml requirements.txt
+uv run cz commit
+# 选择: ⬆️ upgrade: 升级项目依赖到最新兼容版本
+
+# 步骤 8: 推送并创建 PR
+git push origin chore/upgrade-dependencies
+# 在 GitHub 创建 PR，等待审查后合并到 develop
+```
+
+**注意事项：**
+
+- `uv lock --upgrade` 或 `uv lock -U` 会升级所有依赖到符合 `pyproject.toml` 版本约束的最新版本
+- `uv sync` 会根据锁定文件同步安装依赖到虚拟环境
+- 升级后务必运行完整测试套件，确保所有功能正常
+- **必须**在功能分支中进行依赖升级，通过 PR 审查后再合并
+- Pre-commit 钩子会自动同步 `requirements.txt`，无需手动维护
+- 大版本升级建议查看 CHANGELOG，可能需要代码适配
+
 ### 代码检查与格式化
 
 ```bash
