@@ -27,8 +27,8 @@ dependencies = [
     "alembic>=1.17.1",              # 迁移工具
     "sqlalchemy-crud-plus>=1.13.1", # SQLAlchemy CRUD 辅助封装
     "asyncpg>=0.30.0",              # PostgreSQL 异步驱动
-    # 数据模型 / 配置 / 序列化
 
+    # 数据模型 / 配置 / 序列化
     "pydantic>=2.12.4",          # 数据模型&校验
     "pydantic-settings>=2.12.0", # 配置管理
     "msgspec>=0.19.0",           # 高性能编解码/校验
@@ -41,10 +41,10 @@ dependencies = [
     "fast-captcha>=0.3.2",  # 验证码生成
 
     # 运维 / 工具
-    "user-agents>=2.2.0", # 解析客户端设备信息
-    "loguru>=0.7.3",      # 日志
-    "psutil>=7.1.3",      # 进程/系统指标
-    "ip2loc>=1.0.0",      # IP 定位
+    "user-agents>=2.2.0",  # 解析客户端设备信息
+    "loguru>=0.7.3",       # 日志
+    "psutil>=7.1.3",       # 进程/系统指标
+    "py-ip2region>=3.0.2", # IP 地址归属地查询
 ]
 
 [dependency-groups]
