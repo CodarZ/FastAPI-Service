@@ -11,6 +11,7 @@ from backend.common.log import set_custom_logfile, setup_logging
 from backend.common.response.code import StandardResponseStatus
 from backend.core.config import settings
 from backend.database.postgresql import create_tables
+from backend.database.redis import redis_client
 from backend.middleware.access import AccessMiddleware
 from backend.utils.route import ensure_unique_route_name, simplify_operation_id
 from backend.utils.serializers import MsgSpecJSONResponse
@@ -47,7 +48,13 @@ async def init(app: FastAPI) -> AsyncGenerator[None, None]:
     # 创建数据库表
     await create_tables()
 
+    # 连接 Redis
+    await redis_client.open()
+
     yield
+
+    # 关闭 Redis 连接
+    await redis_client.aclose()
 
 
 def register_router(app: FastAPI) -> None:
