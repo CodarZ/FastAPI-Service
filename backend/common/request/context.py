@@ -23,8 +23,11 @@ class TypedContext(_Context):
     # UA 相关
     user_agent: str
     os: str | None
+    os_version: str | None
     browser: str | None
+    browser_version: str | None
     device: str | None
+    device_model: str | None
 
     # 权限
     permission: str | None

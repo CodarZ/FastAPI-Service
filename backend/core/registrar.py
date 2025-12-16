@@ -15,6 +15,7 @@ from backend.core.config import settings
 from backend.database.postgresql import create_tables
 from backend.database.redis import redis_client
 from backend.middleware.access import AccessMiddleware
+from backend.middleware.state import StateMiddleware
 from backend.utils.route import ensure_unique_route_name, simplify_operation_id
 from backend.utils.serializers import MsgSpecJSONResponse
 
@@ -81,6 +82,8 @@ def register_router(app: FastAPI) -> None:
 
 def register_middleware(app: FastAPI) -> None:
     """注册中间件（执行顺序从下往上）"""
+
+    app.add_middleware(StateMiddleware)
 
     app.add_middleware(AccessMiddleware)
 
