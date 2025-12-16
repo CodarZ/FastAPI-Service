@@ -2,12 +2,14 @@ from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING
 
 from fastapi import FastAPI
+from fastapi_limiter import FastAPILimiter
 from starlette_context.middleware import ContextMiddleware
 from starlette_context.plugins import RequestIdPlugin
 
 from backend.app.router import router
 from backend.common.exception.handler import register_exception
 from backend.common.log import set_custom_logfile, setup_logging
+from backend.common.request.limit import http_callback_limit
 from backend.common.response.code import StandardResponseStatus
 from backend.core.config import settings
 from backend.database.postgresql import create_tables
@@ -51,10 +53,19 @@ async def init(app: FastAPI) -> AsyncGenerator[None, None]:
     # 连接 Redis
     await redis_client.open()
 
+    # 初始化 Limiter
+    await FastAPILimiter.init(
+        redis=redis_client,
+        prefix=settings.REDIS_REQUEST_LIMITER_PREFIX,
+        http_callback=http_callback_limit,
+    )
+
     yield
 
     # 关闭 Redis 连接
     await redis_client.aclose()
+
+    await FastAPILimiter.close()
 
 
 def register_router(app: FastAPI) -> None:
