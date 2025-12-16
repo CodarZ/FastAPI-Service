@@ -1,3 +1,6 @@
+from contextlib import asynccontextmanager
+from typing import TYPE_CHECKING
+
 from fastapi import FastAPI
 from starlette_context.middleware import ContextMiddleware
 from starlette_context.plugins import RequestIdPlugin
@@ -7,9 +10,13 @@ from backend.common.exception.handler import register_exception
 from backend.common.log import set_custom_logfile, setup_logging
 from backend.common.response.code import StandardResponseStatus
 from backend.core.config import settings
+from backend.database.postgresql import create_tables
 from backend.middleware.access import AccessMiddleware
 from backend.utils.route import ensure_unique_route_name, simplify_operation_id
 from backend.utils.serializers import MsgSpecJSONResponse
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
 
 
 def register_app():
@@ -19,6 +26,8 @@ def register_app():
         description=settings.FASTAPI_DESCRIPTION,
         openapi_url=settings.FASTAPI_OPENAPI_URL,
         docs_url=settings.FASTAPI_DOCS_URL,
+        default_response_class=MsgSpecJSONResponse,
+        lifespan=init,
     )
     register_logger()
 
@@ -29,6 +38,16 @@ def register_app():
     register_exception(app)
 
     return app
+
+
+@asynccontextmanager
+async def init(app: FastAPI) -> AsyncGenerator[None, None]:
+    """应用生命周期管理器"""
+
+    # 创建数据库表
+    await create_tables()
+
+    yield
 
 
 def register_router(app: FastAPI) -> None:
