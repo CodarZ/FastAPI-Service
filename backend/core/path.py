@@ -12,6 +12,7 @@ LOG_DIR = ROOT_PATH / 'log'
 # 静态资源目录
 STATIC_DIR = ROOT_PATH / 'static'
 UPLOAD_DIR = STATIC_DIR / 'upload'
+IP2REGION_DIR = STATIC_DIR / 'ip2region'
 
 # env 环境变量目录
 ENV_DIR = ROOT_PATH / 'env'
