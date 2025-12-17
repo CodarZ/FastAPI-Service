@@ -9,7 +9,7 @@ from backend.core.config import settings
 
 class RedisClient(Redis):
     def __init__(self) -> None:
-        """初始化 Redis"""
+        """初始化 Redis 配置"""
 
         super().__init__(
             host=settings.REDIS_HOST,
@@ -27,7 +27,7 @@ class RedisClient(Redis):
         """建立 Redis 连接并验证"""
 
         try:
-            self.ping()
+            await self.execute_command('PING')
             log.success('✅ Redis 连接成功')
         except TimeoutError:
             log.error('❌ Redis 连接超时')
