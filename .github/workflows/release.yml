@@ -90,19 +90,25 @@ jobs:
         run: |
           git push origin master --follow-tags
 
-      # 7. 创建 GitHub Release
+      # 7. 当前版本的 CHANGELOG 内容
+      - name: 📄 获取当前版本发布说明
+        if: steps.bump_version.outputs.version_changed == 'true'
+        run: |
+          awk '/^## /{if(p)exit; p=1; next} p' CHANGELOG.md > RELEASE_NOTES.md
+
+      # 8. 创建 GitHub Release
       - name: 📝 创建 GitHub 发布
         if: steps.bump_version.outputs.version_changed == 'true'
         uses: ncipollo/release-action@v1.20.0
         with:
           tag: ${{ steps.bump_version.outputs.new_version }}
           name: 🔖 Release ${{ steps.bump_version.outputs.new_version }}
-          bodyFile: 'CHANGELOG.md'
+          bodyFile: 'RELEASE_NOTES.md'
           draft: false
           prerelease: ${{ github.ref != 'refs/heads/master' }}
           token: ${{ secrets.GH_TOKEN }}
 
-      # 8. 输出发布信息
+      # 9. 输出发布信息
       - name: ✅ 发布摘要信息
         if: steps.bump_version.outputs.version_changed == 'true'
         run: |
