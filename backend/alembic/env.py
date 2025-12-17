@@ -16,8 +16,11 @@ from backend.core.path import ALEMBIC_VERSION_DIR
 if TYPE_CHECKING:
     from sqlalchemy.engine import Connection
 
+__all__ = ['backend']
+
 
 # TODO 在这里导入所有需要迁移的模型, 以确保 Alembic 能够检测到它们
+import backend.app.admin.model
 
 # Alembic Config 对象，提供对 .ini 文件中值的访问
 alembic_config = context.config
