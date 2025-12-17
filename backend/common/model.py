@@ -3,16 +3,14 @@
 为所有业务模型提供统一的声明式映射基础设施。
 """
 
-from typing import TYPE_CHECKING, Annotated, Any
+from datetime import datetime  # noqa: TCH003
+from typing import Annotated, Any
 
 from sqlalchemy import BigInteger, DateTime
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, MappedAsDataclass, declared_attr, mapped_column
 
 from backend.utils.timezone import timezone
-
-if TYPE_CHECKING:
-    from datetime import datetime
 
 # 通用 Mapped 类型主键
 id_key = Annotated[
