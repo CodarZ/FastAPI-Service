@@ -17,6 +17,9 @@ IP2REGION_DIR = STATIC_DIR / 'ip2region'
 # env 环境变量目录
 ENV_DIR = ROOT_PATH / 'env'
 
+# Alembic 版本文件目录
+ALEMBIC_VERSION_DIR = BASE_PATH / 'alembic' / 'versions'
+
 # 确保目录存在
 for directory in [LOG_DIR, STATIC_DIR, UPLOAD_DIR, ENV_DIR]:
     directory.mkdir(parents=True, exist_ok=True)

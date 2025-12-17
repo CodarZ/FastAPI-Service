@@ -202,17 +202,21 @@ uv run pytest
 uv run pytest --cov=app --cov-report=html
 ```
 
-### 数据库迁移
+### 数据库迁移（Alembic）
+
+完整的数据库迁移文档请查看：[**backend/alembic/README.md**](backend/alembic/README.md)
+
+快速开始：
 
 ```bash
-# 生成迁移文件
-uv run alembic revision --autogenerate -m "描述"
+# 1. 自动生成迁移脚本
+uv run alembic revision --autogenerate -m "添加用户表"
 
-# 执行迁移
+# 2. 应用迁移
 uv run alembic upgrade head
 
-# 回滚
-uv run alembic downgrade -1
+# 3. 查看当前版本
+uv run alembic current
 ```
 
 ### 手动版本发布（本地调试用）
