@@ -1,12 +1,13 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, DateTime, Integer, LargeBinary, String
+from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, Integer, LargeBinary, String
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
 from backend.common.model import Base, id_key
 
 if TYPE_CHECKING:
+    from backend.app.admin.model.dept import SysDept
     from backend.app.admin.model.role import SysRole
 
 
@@ -31,6 +32,10 @@ class SysUser(Base):
     gender: Mapped[int | None] = mapped_column(Integer, comment='性别(0女 1男 3其他)')
     birth_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), comment='出生日期')
 
+    dept_id: Mapped[int | None] = mapped_column(
+        BigInteger, ForeignKey('sys_dept.id', ondelete='SET NULL'), index=True, comment='所属部门 ID'
+    )
+
     user_type: Mapped[str] = mapped_column(String(3), server_default='00', comment='用户类型')
     status: Mapped[int] = mapped_column(Integer, index=True, server_default='1', comment='账号状态(0停用 1正常)')
     is_multi_login: Mapped[bool] = mapped_column(Boolean, server_default='false', comment='是否允许多端登录')
@@ -46,6 +51,8 @@ class SysUser(Base):
     )
 
     # 关联关系
+    dept: Mapped['SysDept | None'] = relationship('SysDept', lazy='selectin', passive_deletes=True)
+
     roles: Mapped[list['SysRole']] = relationship(
         'SysRole', secondary='sys_user_role', back_populates='users', lazy='selectin'
     )
