@@ -1,9 +1,13 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, DateTime, Integer, LargeBinary, String
-from sqlalchemy.orm import Mapped, declared_attr, mapped_column
+from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
 from backend.common.model import Base, id_key
+
+if TYPE_CHECKING:
+    from backend.app.admin.model.role import SysRole
 
 
 class SysUser(Base):
@@ -39,4 +43,9 @@ class SysUser(Base):
     last_login_ip: Mapped[str | None] = mapped_column(String(128), init=False, comment='最后登录IP')
     last_login_time: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), init=False, comment='最后登录时间'
+    )
+
+    # 关联关系
+    roles: Mapped[list['SysRole']] = relationship(
+        'SysRole', secondary='sys_user_role', back_populates='users', lazy='selectin'
     )

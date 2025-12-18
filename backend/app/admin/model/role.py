@@ -1,0 +1,28 @@
+from typing import TYPE_CHECKING
+
+from sqlalchemy import Integer, String
+from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
+
+from backend.common.model import Base, id_key
+
+if TYPE_CHECKING:
+    from backend.app.admin.model.user import SysUser
+
+
+class SysRole(Base):
+    """角色表"""
+
+    @declared_attr.directive
+    def __tablename__(cls):
+        return 'sys_role'
+
+    id: Mapped[id_key] = mapped_column(init=False)
+    name: Mapped[str] = mapped_column(String(64), nullable=False, unique=True, comment='名称')
+    code: Mapped[str] = mapped_column(String(100), nullable=False, unique=True, comment='权限字符串')
+    status: Mapped[int] = mapped_column(Integer, server_default='1', comment='状态（0正常 1停用）')
+    remark: Mapped[str | None] = mapped_column(String(500), comment='备注')
+
+    # 关联关系
+    users: Mapped[list['SysUser']] = relationship(
+        'SysUser', secondary='sys_user_role', back_populates='roles', lazy='selectin'
+    )
