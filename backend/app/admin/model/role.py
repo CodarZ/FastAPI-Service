@@ -6,6 +6,7 @@ from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 from backend.common.model import Base, id_key
 
 if TYPE_CHECKING:
+    from backend.app.admin.model.menu import SysMenu
     from backend.app.admin.model.user import SysUser
 
 
@@ -25,4 +26,7 @@ class SysRole(Base):
     # 关联关系
     users: Mapped[list['SysUser']] = relationship(
         'SysUser', secondary='sys_user_role', back_populates='roles', lazy='selectin'
+    )
+    menus: Mapped[list['SysMenu']] = relationship(
+        'SysMenu', secondary='sys_role_menu', back_populates='roles', lazy='selectin'
     )
