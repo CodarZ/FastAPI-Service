@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING, List
 from sqlalchemy import BigInteger, Boolean, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
-from backend.common.enum.custom import MenuEnum  # noqa: TCH001
 from backend.common.model import Base, id_key
 
 if TYPE_CHECKING:
@@ -20,7 +19,7 @@ class SysMenu(Base):
     id: Mapped[id_key] = mapped_column(init=False)
 
     title: Mapped[str] = mapped_column(String(50), comment='菜单标题')
-    type: Mapped[MenuEnum] = mapped_column(Integer, comment='菜单类型')
+    type: Mapped[int] = mapped_column(Integer, comment='菜单类型: 0目录 1菜单 2按钮 3外链 4嵌入式组件')
     path: Mapped[str | None] = mapped_column(String(200), comment='访问地址、外链地址')
     component: Mapped[str | None] = mapped_column(String(300), comment='组件的文件路径')
     permission: Mapped[str | None] = mapped_column(String(128), comment='权限标识')
