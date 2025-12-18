@@ -1,9 +1,12 @@
-from typing import List
+from typing import TYPE_CHECKING, List
 
 from sqlalchemy import BigInteger, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 
 from backend.common.model import Base, id_key
+
+if TYPE_CHECKING:
+    from backend.app.admin.model.role import SysRole
 
 
 class SysDept(Base):
@@ -42,3 +45,8 @@ class SysDept(Base):
 
     # 子菜单集合
     children: Mapped[List['SysDept']] = relationship('SysDept', back_populates='parent', lazy='selectin')
+
+    # 关联关系
+    roles: Mapped[List['SysRole']] = relationship(
+        'SysRole', secondary='sys_role_dept', back_populates='depts', lazy='selectin'
+    )

@@ -50,3 +50,28 @@ sys_role_menu = Table(
     # 唯一约束（避免重复绑定 menu）
     UniqueConstraint('role_id', 'menu_id', name='uq_role_menu'),
 )
+
+
+sys_role_dept = Table(
+    'sys_role_dept',
+    MappedBase.metadata,
+    Column('id', BigInteger, primary_key=True, autoincrement=True, comment='主键 ID'),
+    Column(
+        'role_id',
+        BigInteger,
+        ForeignKey('sys_role.id', ondelete='CASCADE'),
+        index=True,
+        nullable=False,
+        comment='角色 ID',
+    ),
+    Column(
+        'dept_id',
+        BigInteger,
+        ForeignKey('sys_dept.id', ondelete='CASCADE'),
+        index=True,
+        nullable=False,
+        comment='部门 ID',
+    ),
+    # 唯一约束（避免重复绑定 dept）
+    UniqueConstraint('role_id', 'dept_id', name='uq_role_dept'),
+)
