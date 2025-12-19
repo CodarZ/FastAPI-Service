@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
 from backend.common.model import Base, id_key
 
 if TYPE_CHECKING:
-    from backend.app.admin.model.role import SysRole
+    from backend.app.admin.model.sys_role import SysRole
 
 
 class SysMenu(Base):
