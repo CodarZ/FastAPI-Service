@@ -55,6 +55,7 @@ coverage.xml
 .DS_Store
 *.bak
 *.tmp
+temp/
 
 # ruff
 .ruff_cache/
