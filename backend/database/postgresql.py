@@ -1,5 +1,6 @@
 import sys
 
+from collections.abc import AsyncGenerator
 from typing import TYPE_CHECKING, Annotated
 
 from fastapi import Depends
@@ -10,8 +11,6 @@ from backend.common.model import MappedBase
 from backend.core.config import settings
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncGenerator
-
     from sqlalchemy import URL
 
 
