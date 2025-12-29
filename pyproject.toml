@@ -35,6 +35,7 @@ dependencies = [
     "rtoml>=0.13.0",             # TOML 解析
 
     # 安全 / 鉴权
+    "pwdlib>=0.3.0",        # 密码哈希/验证
     "cryptography>=46.0.3",
     "python-jose>=3.5.0",   # JWT/JWS/JWE（依赖 cryptography）
     "itsdangerous>=2.2.0",  # 简单签名/令牌（链接签名/一次性令牌等）
