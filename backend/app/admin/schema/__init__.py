@@ -1,3 +1,4 @@
+from backend.app.admin.schema.login import *
 from backend.app.admin.schema.sys_dept import *
 from backend.app.admin.schema.sys_login_log import *
 from backend.app.admin.schema.sys_menu import *

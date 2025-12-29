@@ -3,6 +3,7 @@
 包含角色相关的所有 Schema：Base/Create/Update/Patch*/Detail/Info/ListItem/Simple/Option/Filter/Map
 """
 
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from pydantic import ConfigDict, Field
@@ -11,8 +12,6 @@ from backend.common.schema import SchemaBase
 from backend.utils.validator import IdsListInt, RoleCodeStr, StatusInt
 
 if TYPE_CHECKING:
-    from datetime import datetime
-
     from backend.app.admin.schema.sys_dept import SysDeptSimple
     from backend.app.admin.schema.sys_menu import SysMenuSimple
     from backend.app.admin.schema.sys_user import SysUserSimple

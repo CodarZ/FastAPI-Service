@@ -3,15 +3,12 @@
 包含部门相关的所有 Schema：Base/Create/Update/Patch*/Detail/Info/ListItem/Simple/Option/Filter/TreeNode
 """
 
-from typing import TYPE_CHECKING
+from datetime import datetime
 
 from pydantic import ConfigDict, EmailStr, Field
 
 from backend.common.schema import SchemaBase
 from backend.utils.validator import MobileStr, SortInt, StatusInt
-
-if TYPE_CHECKING:
-    from datetime import datetime
 
 
 # ==================== 基础 Schema ====================
@@ -181,8 +178,3 @@ class SysDeptFilter(SchemaBase):
     created_time_start: datetime | None = Field(default=None, description='创建时间起')
     created_time_end: datetime | None = Field(default=None, description='创建时间止')
     keyword: str | None = Field(default=None, max_length=100, description='关键词(名称/负责人)')
-
-
-# 更新前置引用以支持递归
-SysDeptTreeNode.model_rebuild()
-SysDeptOptionTree.model_rebuild()

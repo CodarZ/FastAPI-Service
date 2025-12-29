@@ -4,14 +4,12 @@
 日志类通常只需要查询输出，不需要 Create/Update 等输入 Schema
 """
 
-from typing import TYPE_CHECKING
+from datetime import datetime
 
 from pydantic import ConfigDict, Field
 
 from backend.common.schema import SchemaBase
-
-if TYPE_CHECKING:
-    from datetime import datetime
+from backend.utils.validator.types import StatusInt
 
 
 # ==================== 输出 Schema ====================
@@ -23,7 +21,7 @@ class SysLoginLogListItem(SchemaBase):
     id: int = Field(description='日志ID')
     username: str | None = Field(default=None, description='用户名')
     user_id: int | None = Field(default=None, description='用户ID')
-    status: int = Field(description='登录状态(0异常 1正常)')
+    status: StatusInt = Field(description='登录状态(0异常 1正常)')
     ip: str | None = Field(default=None, description='IP地址')
     city: str | None = Field(default=None, description='城市')
     os: str | None = Field(default=None, description='操作系统')
@@ -41,7 +39,7 @@ class SysLoginLogDetail(SchemaBase):
     id: int = Field(description='日志ID')
     username: str | None = Field(default=None, description='用户名')
     user_id: int | None = Field(default=None, description='用户ID')
-    status: int = Field(description='登录状态(0异常 1正常)')
+    status: StatusInt = Field(description='登录状态(0异常 1正常)')
     ip: str | None = Field(default=None, description='IP地址')
     country: str | None = Field(default=None, description='国家')
     region: str | None = Field(default=None, description='地区')
@@ -61,7 +59,7 @@ class SysLoginLogFilter(SchemaBase):
 
     username: str | None = Field(default=None, max_length=20, description='用户名(模糊)')
     user_id: int | None = Field(default=None, description='用户ID')
-    status: int | None = Field(default=None, ge=0, le=1, description='登录状态')
+    status: StatusInt | None = Field(default=None, description='登录状态')
     ip: str | None = Field(default=None, max_length=50, description='IP地址')
     city: str | None = Field(default=None, max_length=50, description='城市(模糊)')
     os: str | None = Field(default=None, max_length=50, description='操作系统(模糊)')
@@ -81,4 +79,4 @@ class SysLoginLogClear(SchemaBase):
     """登录日志清理（按时间范围）"""
 
     before_time: datetime | None = Field(default=None, description='清理此时间之前的日志')
-    status: int | None = Field(default=None, ge=0, le=1, description='仅清理指定状态的日志')
+    status: StatusInt | None = Field(default=None, description='仅清理指定状态的日志')

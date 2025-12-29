@@ -3,16 +3,15 @@
 包含用户相关的所有 Schema：Base/Create/Update/Patch*/Detail/Info/ListItem/Simple/Option/Filter
 """
 
+from datetime import datetime
 from typing import TYPE_CHECKING
 
-from pydantic import ConfigDict, EmailStr, Field, field_validator
+from pydantic import ConfigDict, EmailStr, Field, field_validator, model_serializer
 
 from backend.common.schema import SchemaBase
 from backend.utils.validator import IdsListInt, MobileStr, PasswordStr, StatusInt, UsernameStr
 
 if TYPE_CHECKING:
-    from datetime import datetime
-
     from backend.app.admin.schema.sys_dept import SysDeptSimple
     from backend.app.admin.schema.sys_role import SysRoleSimple
 
@@ -202,6 +201,7 @@ class SysUserDetail(SchemaBase):
     birth_date: datetime | None = Field(default=None, description='出生日期')
     dept_id: int | None = Field(default=None, description='所属部门ID')
     dept: SysDeptSimple | None = Field(default=None, description='所属部门')
+    dept_name: str | None = Field(default=None, description='部门名称')
     user_type: str = Field(description='用户类型')
     status: int = Field(description='账号状态')
     is_multi_login: bool = Field(description='是否允许多端登录')
@@ -209,11 +209,27 @@ class SysUserDetail(SchemaBase):
     is_admin: bool = Field(description='是否后台管理员')
     is_verified: bool = Field(description='是否实名认证')
     roles: list[SysRoleSimple] = Field(default_factory=list, description='角色列表')
+    role_ids: list[int] = Field(default_factory=list, description='角色ID列表')
     remark: str | None = Field(default=None, description='备注')
     last_login_time: datetime | None = Field(default=None, description='最后登录时间')
     last_login_ip: str | None = Field(default=None, description='最后登录IP')
     created_time: datetime = Field(description='创建时间')
     updated_time: datetime | None = Field(default=None, description='更新时间')
+
+    @model_serializer(mode='wrap')
+    def _serialize_model(self, serializer, info):
+        """序列化时提取 dept_name 和 role_ids"""
+        data = serializer(self)
+        # 提取部门名称
+        if self.dept and hasattr(self.dept, 'title'):
+            data['dept_name'] = self.dept.title
+        # 提取角色ID列表
+        if self.roles:
+            data['role_ids'] = [role.id for role in self.roles]
+        # 移除 dept 和 roles 字段
+        # data.pop('dept', None)
+        # data.pop('roles', None)
+        return data
 
 
 class SysUserSimple(SchemaBase):

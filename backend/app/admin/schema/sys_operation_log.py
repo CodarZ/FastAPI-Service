@@ -4,14 +4,12 @@
 日志类通常只需要查询输出，不需要 Create/Update 等输入 Schema
 """
 
-from typing import TYPE_CHECKING, Any
+from datetime import datetime
+from typing import Any
 
 from pydantic import ConfigDict, Field
 
 from backend.common.schema import SchemaBase
-
-if TYPE_CHECKING:
-    from datetime import datetime
 
 
 # ==================== 输出 Schema ====================

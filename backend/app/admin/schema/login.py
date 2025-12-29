@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 from pydantic import Field
 
 from backend.common.schema import SchemaBase
+from backend.utils.validator.types import PasswordStr, UsernameStr
 
 if TYPE_CHECKING:
     from backend.app.admin.schema.sys_user import SysUserInfo
@@ -11,8 +12,8 @@ if TYPE_CHECKING:
 class LoginRequest(SchemaBase):
     """登录请求"""
 
-    username: str = Field(min_length=4, max_length=20, description='用户名')
-    password: str = Field(min_length=8, max_length=128, description='密码')
+    username: UsernameStr = Field(min_length=4, max_length=20, description='用户名')
+    password: PasswordStr = Field(min_length=8, max_length=128, description='密码')
     captcha: str | None = Field(default=None, max_length=10, description='验证码')
 
 

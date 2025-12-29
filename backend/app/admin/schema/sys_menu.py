@@ -3,19 +3,13 @@
 包含菜单相关的所有 Schema：Base/Create/Update/Patch*/Detail/Info/ListItem/Simple/Option/Filter/TreeNode
 """
 
-from typing import TYPE_CHECKING, Literal
+from datetime import datetime
 
 from pydantic import ConfigDict, Field, model_validator
 
+from backend.common.enum.custom import MenuEnum
 from backend.common.schema import SchemaBase
 from backend.utils.validator import PermissionStr, SortInt, StatusInt
-
-if TYPE_CHECKING:
-    from datetime import datetime
-
-
-# 菜单类型枚举
-MenuType = Literal[0, 1, 2, 3, 4]  # 0目录 1菜单 2按钮 3外链 4嵌入式组件
 
 
 # ==================== 基础 Schema ====================
@@ -23,7 +17,7 @@ class SysMenuBase(SchemaBase):
     """菜单基础 Schema（核心字段复用）"""
 
     title: str = Field(min_length=1, max_length=50, description='菜单标题')
-    type: MenuType = Field(description='菜单类型(0目录 1菜单 2按钮 3外链 4嵌入式组件)')
+    type: MenuEnum = Field(description='菜单类型(0目录 1菜单 2按钮 3外链 4嵌入式组件)')
     icon: str | None = Field(default=None, max_length=50, description='图标')
     sort: SortInt = Field(default=0, description='排序')
     remark: str | None = Field(default=None, max_length=500, description='备注')
@@ -51,23 +45,23 @@ class SysMenuCreate(SysMenuBase):
         menu_type = self.type
 
         # 目录(0)或菜单(1)：path 必填
-        if menu_type in (0, 1) and not self.path:
+        if menu_type in (MenuEnum.DIRECTORY, MenuEnum.MENU) and not self.path:
             raise ValueError('目录和菜单类型的访问地址不能为空')
 
         # 菜单(1)：component 必填
-        if menu_type == 1 and not self.component:
+        if menu_type == MenuEnum.MENU and not self.component:
             raise ValueError('菜单类型的组件路径不能为空')
 
         # 按钮(2)：permission 必填
-        if menu_type == 2 and not self.permission:
+        if menu_type == MenuEnum.BUTTON and not self.permission:
             raise ValueError('按钮类型的权限标识不能为空')
 
         # 外链(3)：path 必填且需为URL格式
-        if menu_type == 3 and not self.path:
+        if menu_type == MenuEnum.LINK and not self.path:
             raise ValueError('外链类型的访问地址不能为空')
 
         # 嵌入式组件(4)：path 和 component 必填
-        if menu_type == 4:
+        if menu_type == MenuEnum.EMBEDDED:
             if not self.path:
                 raise ValueError('嵌入式组件的访问地址不能为空')
             if not self.component:
@@ -96,15 +90,15 @@ class SysMenuUpdate(SysMenuBase):
         """根据菜单类型验证必填字段"""
         menu_type = self.type
 
-        if menu_type in (0, 1) and not self.path:
+        if menu_type in (MenuEnum.DIRECTORY, MenuEnum.MENU) and not self.path:
             raise ValueError('目录和菜单类型的访问地址不能为空')
-        if menu_type == 1 and not self.component:
+        if menu_type == MenuEnum.MENU and not self.component:
             raise ValueError('菜单类型的组件路径不能为空')
-        if menu_type == 2 and not self.permission:
+        if menu_type == MenuEnum.BUTTON and not self.permission:
             raise ValueError('按钮类型的权限标识不能为空')
-        if menu_type == 3 and not self.path:
+        if menu_type == MenuEnum.LINK and not self.path:
             raise ValueError('外链类型的访问地址不能为空')
-        if menu_type == 4:
+        if menu_type == MenuEnum.EMBEDDED:
             if not self.path:
                 raise ValueError('嵌入式组件的访问地址不能为空')
             if not self.component:
@@ -320,9 +314,3 @@ class SysMenuFilter(SchemaBase):
     created_time_start: datetime | None = Field(default=None, description='创建时间起')
     created_time_end: datetime | None = Field(default=None, description='创建时间止')
     keyword: str | None = Field(default=None, max_length=100, description='关键词(标题/权限标识)')
-
-
-# 更新前置引用以支持递归
-SysMenuTreeNode.model_rebuild()
-SysMenuOptionTree.model_rebuild()
-SysMenuRoute.model_rebuild()
