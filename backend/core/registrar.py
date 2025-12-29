@@ -11,6 +11,7 @@ from backend.common.exception.handler import register_exception
 from backend.common.log import set_custom_logfile, setup_logging
 from backend.common.request.limit import http_callback_limit
 from backend.common.response.code import StandardResponseStatus
+from backend.common.schema import auto_rebuild_all_schemas
 from backend.core.config import settings
 from backend.database.postgresql import create_tables
 from backend.database.redis import redis_client
@@ -24,6 +25,7 @@ if TYPE_CHECKING:
 
 
 def register_app():
+
     app = FastAPI(
         title=settings.FASTAPI_TITLE,
         version=settings.FASTAPI_VERSION,
@@ -34,6 +36,8 @@ def register_app():
         lifespan=init,
     )
     register_logger()
+
+    auto_rebuild_all_schemas()
 
     register_middleware(app)
 
