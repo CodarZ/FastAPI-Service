@@ -53,17 +53,21 @@ lines-between-types = 1
 order-by-type = true
 combine-as-imports = true
 known-first-party = ["backend"]
-
-[lint.per-file-ignores]
-"**/__init__.py" = ["F401", "F403"]
-"**/api/**/*.py" = ["TC"]
-"**/model/*.py" = ["TC003"]
-"**/schema/*.py" = ["TC001", "TC002"]
-"**/tests/*.py" = ["E402", "S101"]
-"**/alembic/versions/*.py" = ["E501", "F401", "I001"]
+known-third-party = ["fastapi", "starlette", "pydantic", "sqlalchemy"]
 
 [format]
 preview = true
 quote-style = "single"
 docstring-code-format = true
 skip-magic-trailing-comma = false
+
+[lint.per-file-ignores]
+"**/__init__.py" = ["F401", "F403"]
+"**/tests/*.py" = ["B011", "F841", "E402", "S101"]
+"**/alembic/versions/*.py" = ["E501", "F401", "I001"]
+"**/api/**/*.py" = ["TC"]
+"**/model/*.py" = ["TC003"]
+"**/schema/*.py" = ["TC001", "TC002", "TC003", "I001"]
+"**/service/*.py" = ["TC001", "TC002", "TC003", "I001"]
+"**/router.py" = ["TC001", "TC002", "TC003", "I001"]
+"**/postgresql.py" = ["TC001", "TC003", "I001"]
