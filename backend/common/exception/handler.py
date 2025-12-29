@@ -5,6 +5,7 @@ from uvicorn.protocols.http.h11_impl import STATUS_PHRASES
 
 from backend.common.exception.errors import ExceptionBase
 from backend.common.exception.message import USAGE_ERROR_MESSAGES, VALIDATION_ERROR_MESSAGES
+from backend.common.log import log
 from backend.common.request.context import ctx
 from backend.common.request.trace_id import get_request_trace_id
 from backend.common.response.base import response_base
@@ -51,6 +52,7 @@ def register_exception(app: FastAPI):
         """
 
         content = _extract_content(exc, StandardResponseStatus.HTTP_500)
+        log.error(f'PydanticUserError: {exc.code} - {exc.message}')
         return MsgSpecJSONResponse(content, StandardResponseStatus.HTTP_500.code)
 
     @app.exception_handler(AssertionError)
@@ -58,6 +60,7 @@ def register_exception(app: FastAPI):
         """断言异常"""
 
         content = _extract_content(exc, StandardResponseStatus.HTTP_500)
+        log.error(f'AssertionError: {str(exc)}')
         return MsgSpecJSONResponse(content, StandardResponseStatus.HTTP_500.code)
 
     @app.exception_handler(ValidationError)
@@ -86,6 +89,7 @@ def register_exception(app: FastAPI):
         """全局其他未知异常"""
 
         content = _extract_content(exc, StandardResponseStatus.HTTP_500)
+        log.exception(f'未知异常: {type(exc).__name__}: {str(exc)}')
         return MsgSpecJSONResponse(content, StandardResponseStatus.HTTP_500.code)
 
 
