@@ -19,6 +19,8 @@ asgiref==3.11.0
     # via fastapi-service
 asyncpg==0.31.0
     # via fastapi-service
+bcrypt==5.0.0
+    # via pwdlib
 bidict==0.23.1
     # via python-socketio
 billiard==4.2.4
