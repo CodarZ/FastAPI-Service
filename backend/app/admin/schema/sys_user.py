@@ -6,6 +6,7 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
+from fastapi import Query
 from pydantic import ConfigDict, EmailStr, Field, field_validator, model_serializer
 
 from backend.common.schema import SchemaBase
@@ -44,8 +45,9 @@ class SysUserCreate(SysUserBase):
 
 
 class SysUserUpdate(SysUserBase):
-    """用户更新请求（全量更新，管理员操作）"""
+    """用户更新请求（全量更新, 管理员操作）"""
 
+    id: int = Field(description='用户ID')
     dept_id: int | None = Field(default=None, description='所属部门ID')
     role_ids: IdsListInt = Field(default_factory=list, description='角色ID列表')
     avatar: str | None = Field(default=None, max_length=500, description='头像URL')
@@ -53,23 +55,24 @@ class SysUserUpdate(SysUserBase):
     user_type: str = Field(default='00', max_length=3, description='用户类型')
     status: StatusInt = Field(default=1, description='账号状态(0停用 1正常)')
     is_multi_login: bool = Field(default=False, description='是否允许多端登录')
-    is_admin: bool = Field(default=False, description='是否后台管理员')
     is_verified: bool = Field(default=False, description='是否实名认证')
-    # 注意：is_superuser 不应通过普通接口修改，需通过专门的超级管理员接口
+    # 注意: is_admin, is_superuser 不应通过普通接口修改, 需通过专门的接口修改
 
 
 class SysUserPatchStatus(SchemaBase):
     """用户状态修改"""
 
+    id: int = Field(description='用户ID')
     status: StatusInt = Field(description='账号状态(0停用 1正常)')
 
 
 class SysUserPatchPassword(SchemaBase):
     """用户密码修改"""
 
-    old_password: str = Field(min_length=8, max_length=128, description='旧密码')
+    id: int = Field(description='用户ID')
+    old_password: str | None = Field(description='旧密码')
     new_password: PasswordStr = Field(description='新密码')
-    confirm_password: str = Field(min_length=8, max_length=128, description='确认新密码')
+    confirm_password: PasswordStr = Field(min_length=8, max_length=128, description='确认新密码')
 
     @field_validator('confirm_password')
     @classmethod
@@ -83,24 +86,21 @@ class SysUserPatchPassword(SchemaBase):
 class SysUserResetPassword(SchemaBase):
     """用户密码重置（管理员操作）"""
 
+    id: int = Field(description='用户ID')
     new_password: PasswordStr = Field(description='新密码')
 
 
 class SysUserPatchProfile(SchemaBase):
     """用户个人资料修改"""
 
+    id: int = Field(description='用户ID')
     nickname: str | None = Field(default=None, min_length=1, max_length=20, description='昵称')
     realname: str | None = Field(default=None, max_length=50, description='真实姓名')
+    email: EmailStr | None = Field(default=None, description='邮箱')
+    phone: MobileStr | None = Field(default=None, description='手机号')
     avatar: str | None = Field(default=None, max_length=500, description='头像URL')
     gender: int | None = Field(default=None, ge=0, le=3, description='性别(0女 1男 3其他)')
     birth_date: datetime | None = Field(default=None, description='出生日期')
-
-
-class SysUserPatchContact(SchemaBase):
-    """用户联系方式修改"""
-
-    email: EmailStr | None = Field(default=None, description='邮箱')
-    phone: MobileStr | None = Field(default=None, description='手机号')
 
 
 class SysUserRoleMap(SchemaBase):
@@ -112,12 +112,14 @@ class SysUserRoleMap(SchemaBase):
 class SysUserPatchSuperuser(SchemaBase):
     """用户超级管理员状态修改（仅限超级管理员操作）"""
 
+    id: int = Field(description='用户ID')
     is_superuser: bool = Field(description='是否超级管理员')
 
 
 class SysUserPatchAdmin(SchemaBase):
     """用户后台管理员状态修改"""
 
+    id: int = Field(description='用户ID')
     is_admin: bool = Field(description='是否后台管理员')
 
 
@@ -148,21 +150,25 @@ class SysUserListItem(SchemaBase):
     gender: int | None = Field(default=None, description='性别')
     avatar: str | None = Field(default=None, description='头像')
     status: int = Field(description='账号状态')
+    is_verified: bool = Field(description='是否实名认证')
     is_superuser: bool = Field(description='是否超级管理员')
     is_admin: bool = Field(description='是否后台管理员')
+    user_type: str | None = Field(default=None, max_length=3, description='用户类型')
+    is_multi_login: bool | None = Field(default=None, description='是否允许多端登录')
+    dept: SysDeptSimple | None = Field(default=None, description='所属部门')
     dept_id: int | None = Field(default=None, description='所属部门ID')
     # 冗余字段 - 避免关联查询
     dept_name: str | None = Field(default=None, description='部门名称')
     created_time: datetime = Field(description='创建时间')
     last_login_time: datetime | None = Field(default=None, description='最后登录时间')
 
-    @field_validator('dept_name', mode='before')
-    @classmethod
-    def extract_dept_name(cls, v, info):
-        """从关联对象中提取部门名称"""
-        if v is None and hasattr(info.data, 'dept') and info.data.get('dept'):
-            return info.data['dept'].title
-        return v
+    @model_serializer(mode='wrap')
+    def _serialize_model(self, serializer):
+        data = serializer(self)
+        if self.dept and hasattr(self.dept, 'title'):
+            data['dept_name'] = self.dept.title
+        data.pop('dept', None)
+        return data
 
 
 class SysUserInfo(SchemaBase):
@@ -182,7 +188,17 @@ class SysUserInfo(SchemaBase):
     is_superuser: bool = Field(description='是否超级管理员')
     is_admin: bool = Field(description='是否后台管理员')
     dept: SysDeptSimple | None = Field(default=None, description='所属部门')
+    dept_id: int | None = Field(default=None, description='所属部门ID')
+    dept_name: str | None = Field(default=None, description='所属部门名称')
     created_time: datetime = Field(description='创建时间')
+
+    @model_serializer(mode='wrap')
+    def _serialize_model(self, serializer):
+        data = serializer(self)
+        if self.dept and hasattr(self.dept, 'title'):
+            data['dept_name'] = self.dept.title
+        data.pop('dept', None)
+        return data
 
 
 class SysUserDetail(SchemaBase):
@@ -199,8 +215,8 @@ class SysUserDetail(SchemaBase):
     gender: int | None = Field(default=None, description='性别')
     avatar: str | None = Field(default=None, description='头像')
     birth_date: datetime | None = Field(default=None, description='出生日期')
-    dept_id: int | None = Field(default=None, description='所属部门ID')
     dept: SysDeptSimple | None = Field(default=None, description='所属部门')
+    dept_id: int | None = Field(default=None, description='所属部门ID')
     dept_name: str | None = Field(default=None, description='部门名称')
     user_type: str = Field(description='用户类型')
     status: int = Field(description='账号状态')
@@ -217,7 +233,7 @@ class SysUserDetail(SchemaBase):
     updated_time: datetime | None = Field(default=None, description='更新时间')
 
     @model_serializer(mode='wrap')
-    def _serialize_model(self, serializer, info):
+    def _serialize_model(self, serializer):
         """序列化时提取 dept_name 和 role_ids"""
         data = serializer(self)
         # 提取部门名称
@@ -253,38 +269,32 @@ class SysUserOption(SchemaBase):
     nickname: str = Field(description='昵称')
 
 
-class SysUserOptionByDept(SchemaBase):
-    """按部门分组的用户选项"""
-
-    dept_id: int = Field(description='部门ID')
-    dept_name: str = Field(description='部门名称')
-    users: list[SysUserOption] = Field(default_factory=list, description='用户列表')
-
-
 # ==================== 查询 Schema ====================
 class SysUserFilter(SchemaBase):
     """用户查询条件"""
 
-    username: str | None = Field(default=None, max_length=20, description='用户名(模糊)')
-    nickname: str | None = Field(default=None, max_length=20, description='昵称(模糊)')
-    phone: str | None = Field(default=None, max_length=11, description='手机号')
-    email: str | None = Field(default=None, description='邮箱')
-    status: int | None = Field(default=None, ge=0, le=1, description='账号状态')
-    dept_id: int | None = Field(default=None, description='所属部门ID')
-    is_superuser: bool | None = Field(default=None, description='是否超级管理员')
-    is_admin: bool | None = Field(default=None, description='是否后台管理员')
-    created_time_start: datetime | None = Field(default=None, description='创建时间起')
-    created_time_end: datetime | None = Field(default=None, description='创建时间止')
+    username: str | None = Query(default=None, max_length=20, description='用户名(模糊)')
+    realname: str | None = Query(default=None, max_length=50, description='真实姓名(模糊)')
+    nickname: str | None = Query(default=None, max_length=20, description='昵称(模糊)')
+    phone: str | None = Query(default=None, max_length=11, description='手机号')
+    email: str | None = Query(default=None, description='邮箱')
+    user_type: str | None = Query(default=None, max_length=3, description='用户类型')
+    status: int | None = Query(default=None, ge=0, le=1, description='账号状态')
+    dept_id: int | None = Query(default=None, description='所属部门ID')
+    is_verified: bool | None = Query(default=None, description='是否实名认证')
+    is_superuser: bool | None = Query(default=None, description='是否超级管理员')
+    is_admin: bool | None = Query(default=None, description='是否后台管理员')
+    is_multi_login: bool | None = Query(default=None, description='是否允许多端登录')
+    created_time_start: datetime | None = Query(default=None, description='创建时间起')
+    created_time_end: datetime | None = Query(default=None, description='创建时间止')
+    last_login_time_start: datetime | None = Query(default=None, description='最后登录时间起')
+    last_login_time_end: datetime | None = Query(default=None, description='最后登录时间止')
 
 
 class SysUserAdvancedFilter(SysUserFilter):
     """用户高级查询条件"""
 
-    realname: str | None = Field(default=None, max_length=50, description='真实姓名(模糊)')
-    user_type: str | None = Field(default=None, max_length=3, description='用户类型')
-    is_verified: bool | None = Field(default=None, description='是否实名认证')
-    is_multi_login: bool | None = Field(default=None, description='是否允许多端登录')
-    role_id: int | None = Field(default=None, description='角色ID')
-    last_login_time_start: datetime | None = Field(default=None, description='最后登录时间起')
-    last_login_time_end: datetime | None = Field(default=None, description='最后登录时间止')
-    keyword: str | None = Field(default=None, max_length=50, description='关键词(用户名/昵称/手机号)')
+    role_id: int | None = Query(default=None, description='角色ID')
+    keyword: str | None = Query(
+        default=None, max_length=50, description='关键词模糊查询(真实姓名/用户名/昵称/手机号/邮箱)'
+    )
