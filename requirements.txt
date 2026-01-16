@@ -92,7 +92,7 @@ fastapi-limiter==0.1.6
     # via fastapi-service
 fastapi-pagination==0.15.4
     # via fastapi-service
-filelock==3.20.1
+filelock==3.20.3
     # via virtualenv
 flower==2.0.1
     # via fastapi-service
@@ -173,7 +173,7 @@ pwdlib==0.3.0
     # via fastapi-service
 py-ip2region==3.0.2
     # via fastapi-service
-pyasn1==0.6.1
+pyasn1==0.6.2
     # via
     #   python-jose
     #   rsa
@@ -306,7 +306,7 @@ vine==5.1.0
     #   amqp
     #   celery
     #   kombu
-virtualenv==20.35.4
+virtualenv==20.36.1
     # via pre-commit
 watchfiles==1.1.1
     # via uvicorn
