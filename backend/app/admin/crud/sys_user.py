@@ -83,7 +83,6 @@ class CRUDSysUser(CRUDPlus[SysUser]):
 
         # 精确查询字段
         for field in [
-            'user_type',
             'phone',
             'status',
             'dept_id',

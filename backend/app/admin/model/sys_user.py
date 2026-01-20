@@ -36,7 +36,6 @@ class SysUser(Base):
         BigInteger, ForeignKey('sys_dept.id', ondelete='SET NULL'), index=True, comment='所属部门 ID'
     )
 
-    user_type: Mapped[str] = mapped_column(String(3), server_default='00', comment='用户类型')
     status: Mapped[int] = mapped_column(Integer, index=True, server_default='1', comment='账号状态(0停用 1正常)')
     is_multi_login: Mapped[bool] = mapped_column(Boolean, server_default='false', comment='是否允许多端登录')
     is_superuser: Mapped[bool] = mapped_column(Boolean, server_default='false', comment='是否是超级管理员')
