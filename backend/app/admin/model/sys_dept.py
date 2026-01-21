@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class SysDept(Base):
-    """菜单信息表"""
+    """部门信息表"""
 
     @declared_attr.directive
     def __tablename__(cls):
@@ -26,27 +26,34 @@ class SysDept(Base):
 
     sort: Mapped[int] = mapped_column(Integer, comment='显示顺序')
 
-    # 🔑 父级菜单(自引用外键 + ondelete='CASCADE')
+    # 🔑 父级部门(自引用外键 + ondelete='CASCADE')
     parent_id: Mapped[int | None] = mapped_column(
         BigInteger,
         ForeignKey('sys_dept.id', ondelete='CASCADE'),
         index=True,
-        comment='父菜单 ID',
+        comment='父部门 ID',
     )
 
-    # 父菜单对象
+    # 上级部门
     parent: Mapped['SysDept | None'] = relationship(
         'SysDept',
         remote_side='SysDept.id',
         back_populates='children',
-        lazy='selectin',
-        passive_deletes=True,  # 交给数据库级联删除
+        lazy='noload',
+        passive_deletes=True,
     )
 
-    # 子菜单集合
-    children: Mapped[List['SysDept']] = relationship('SysDept', back_populates='parent', lazy='selectin')
+    children: Mapped[List['SysDept']] = relationship(
+        'SysDept',
+        back_populates='parent',
+        lazy='noload',
+        default_factory=list,
+    )
 
-    # 关联关系
     roles: Mapped[List['SysRole']] = relationship(
-        'SysRole', secondary='sys_role_dept', back_populates='depts', lazy='selectin'
+        'SysRole',
+        secondary='sys_role_dept',
+        back_populates='depts',
+        lazy='noload',
+        default_factory=list,
     )
