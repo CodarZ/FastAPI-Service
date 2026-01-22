@@ -17,32 +17,30 @@ class CRUDSysDept(CRUDPlus[SysDept]):
     """部门 CRUD"""
 
     async def get(self, db: AsyncSession, pk: int) -> SysDept | None:
-        result = await self.select_model(db, pk)
-
-        if isinstance(result, SysDept):
-            return result
-
-        mapping = getattr(result, '_mapping', None)
-        if mapping:
-            return mapping.get('SysDept') or next(iter(mapping.values()), None)
-        return None
+        """根据主键获取部门信息（预加载 parent）"""
+        stmt = select(SysDept).where(SysDept.id == pk).options(selectinload(SysDept.parent))
+        result = await db.execute(stmt)
+        return result.scalar_one_or_none()
 
     async def get_by_column(self, db: AsyncSession, column: str, value: str) -> SysDept | None:
-        result = await self.select_model_by_column(db, getattr(self.model, column) == value)
-        if isinstance(result, SysDept):
-            return result
-        mapping = getattr(result, '_mapping', None)
-        if mapping:
-            return mapping.get('SysDept') or next(iter(mapping.values()), None)
-        return None
+        """根据指定列名和值获取部门信息"""
+        column_attr = getattr(SysDept, column)
+        stmt = select(SysDept).where(column_attr == value)
+        result = await db.execute(stmt)
+        return result.scalar_one_or_none()
 
-    async def get_with_parent(self, db: AsyncSession, pk: int) -> SysDept | None:
-        """获取部门（预加载父部门信息）
+    async def get_with_children(self, db: AsyncSession, pk: int) -> SysDept | None:
+        """获取部门（预加载子部门列表）"""
+        stmt = select(SysDept).where(SysDept.id == pk).options(selectinload(SysDept.children))
+        result = await db.execute(stmt)
+        return result.scalar_one_or_none()
 
-        使用 selectinload 策略预加载 parent 关联，避免后续访问时触发额外查询
-        适用场景：需要返回包含父部门信息的详情或信息视图
+    async def get_full_detail(self, db: AsyncSession, pk: int) -> SysDept | None:
+        """获取部门完整详情（预加载子级）
+
+        注意：parent 已通过 lazy='selectin' 自动加载，这里只需预加载 children
         """
-        stmt = select(SysDept).where(SysDept.id == pk).options(selectinload(SysDept.parent))
+        stmt = select(SysDept).where(SysDept.id == pk).options(selectinload(SysDept.children))
         result = await db.execute(stmt)
         return result.scalar_one_or_none()
 
@@ -77,8 +75,8 @@ class CRUDSysDept(CRUDPlus[SysDept]):
                 if value is not None:
                     filters[f'{column}__{op}'] = value
 
-        # 加载 dept 对象
         stmt = await self.select_order('id', 'desc', **filters)
+        # 预加载 parent 关系，避免延迟加载导致 DetachedInstanceError
         return stmt.options(selectinload(SysDept.parent))
 
     async def create(self, db: AsyncSession, params: SysDeptCreate) -> SysDept:
