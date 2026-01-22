@@ -36,13 +36,13 @@ class SysUserService:
         return user
 
     @staticmethod
-    async def get_userinfo(*, db: AsyncSession, pk: int) -> SysUserInfo:
+    async def get_user_info(*, db: AsyncSession, pk: int) -> SysUserInfo:
         """获取用户信息"""
         user = await SysUserService._get_user_or_404(db, pk)
         return SysUserInfo.model_validate(user)
 
     @staticmethod
-    async def get_userinfo_by_username(*, db: AsyncSession, username: str) -> SysUserInfo:
+    async def get_user_info_by_username(*, db: AsyncSession, username: str) -> SysUserInfo:
         """获取用户信息"""
         user = await sys_user_crud.get_by_column(db, column='username', value=username)
         if not user:

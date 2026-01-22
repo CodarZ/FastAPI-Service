@@ -33,8 +33,8 @@ async def create_user(db: CurrentSessionTransaction, params: SysUserCreate):
 
 
 @router.get('/info', summary='获取用户信息', response_model=ResponseSchemaModel[SysUserInfo])
-async def get_userinfo(db: CurrentSession, user_id: Annotated[int, Query(description='用户 ID')]):
-    data = await sys_user_service.get_userinfo(db=db, pk=user_id)
+async def get_user_info(db: CurrentSession, user_id: Annotated[int, Query(description='用户 ID')]):
+    data = await sys_user_service.get_user_info(db=db, pk=user_id)
     return response_base.success(data=data)
 
 
