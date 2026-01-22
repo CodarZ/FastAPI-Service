@@ -5,11 +5,14 @@
 这些类型可以直接在 Schema 中使用，无需重复编写验证器。
 """
 
+from datetime import datetime
 from typing import Annotated
 
-from pydantic import AfterValidator, Field
+from pydantic import AfterValidator, Field, PlainSerializer
 
 import backend.utils.validator.validators as validators
+
+from backend.utils.timezone import timezone
 
 # ==================== 用户相关类型 ====================
 MobileStr = Annotated[str, AfterValidator(validators.validate_mobile), Field(min_length=11, max_length=11)]
@@ -73,3 +76,10 @@ PositiveFloat = Annotated[float, Field(gt=0.0, description='正浮点数')]
 
 NonNegativeFloat = Annotated[float, Field(ge=0.0, description='非负浮点数')]
 """非负浮点数（>=0）"""
+
+# ==================== 时间相关类型 ====================
+LocalDatetime = Annotated[
+    datetime,
+    PlainSerializer(lambda x: timezone.to_str(timezone.to_timezone(x)), return_type=str, when_used='json'),
+]
+"""本地时间（序列化时自动转换为本地时区字符串）"""
