@@ -116,7 +116,7 @@ class SysDeptService:
         await SysDeptService._get_dept_or_404(db, pk)
         return await sys_dept_crud.update_by_column(db, pk, 'status', params.status)
 
-    async def batch_patch_status(self, db: AsyncSession, params: SysDeptBatchPatchStatus) -> int:
+    async def batch_patch_status(self, db: AsyncSession, params: SysDeptBatchPatchStatus) -> dict[str, int | list[int]]:
         """批量更新部门状态
 
         处理逻辑：
