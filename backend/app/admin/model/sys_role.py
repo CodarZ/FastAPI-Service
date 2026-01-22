@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
@@ -32,12 +32,29 @@ class SysRole(Base):
     remark: Mapped[str | None] = mapped_column(String(500), comment='备注')
 
     # 关联关系
-    users: Mapped[list['SysUser']] = relationship(
-        'SysUser', secondary='sys_user_role', back_populates='roles', lazy='selectin'
+    users: Mapped[List['SysUser']] = relationship(
+        'SysUser',
+        secondary='sys_user_role',
+        back_populates='roles',
+        lazy='noload',
+        passive_deletes=True,
+        default_factory=list,
     )
-    menus: Mapped[list['SysMenu']] = relationship(
-        'SysMenu', secondary='sys_role_menu', back_populates='roles', lazy='selectin'
+
+    menus: Mapped[List['SysMenu']] = relationship(
+        'SysMenu',
+        secondary='sys_role_menu',
+        back_populates='roles',
+        lazy='selectin',
+        passive_deletes=True,
+        default_factory=list,
     )
-    depts: Mapped[list['SysDept']] = relationship(
-        'SysDept', secondary='sys_role_dept', back_populates='roles', lazy='selectin'
+
+    depts: Mapped[List['SysDept']] = relationship(
+        'SysDept',
+        secondary='sys_role_dept',
+        back_populates='roles',
+        lazy='noload',
+        passive_deletes=True,
+        default_factory=list,
     )

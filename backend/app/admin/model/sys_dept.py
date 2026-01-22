@@ -31,29 +31,35 @@ class SysDept(Base):
         BigInteger,
         ForeignKey('sys_dept.id', ondelete='CASCADE'),
         index=True,
-        comment='父部门 ID',
+        comment='上级部门 ID',
     )
 
     # 上级部门
     parent: Mapped['SysDept | None'] = relationship(
         'SysDept',
+        foreign_keys=[parent_id],
         remote_side='SysDept.id',
         back_populates='children',
-        lazy='noload',
-        passive_deletes=True,
+        lazy='selectin',
+        default=None,
     )
 
+    # 子部门列表
     children: Mapped[List['SysDept']] = relationship(
         'SysDept',
+        foreign_keys=[parent_id],
         back_populates='parent',
         lazy='noload',
+        passive_deletes=True,
         default_factory=list,
     )
 
+    # 关联关系
     roles: Mapped[List['SysRole']] = relationship(
         'SysRole',
         secondary='sys_role_dept',
         back_populates='depts',
         lazy='noload',
+        passive_deletes=True,
         default_factory=list,
     )

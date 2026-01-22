@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, Integer, LargeBinary, String
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
@@ -50,8 +50,18 @@ class SysUser(Base):
     )
 
     # 关联关系
-    dept: Mapped['SysDept | None'] = relationship('SysDept', lazy='selectin', passive_deletes=True)
+    dept: Mapped['SysDept | None'] = relationship(
+        'SysDept',
+        lazy='selectin',
+        foreign_keys=[dept_id],
+        default=None,
+    )
 
-    roles: Mapped[list['SysRole']] = relationship(
-        'SysRole', secondary='sys_user_role', back_populates='users', lazy='selectin'
+    roles: Mapped[List['SysRole']] = relationship(
+        'SysRole',
+        secondary='sys_user_role',
+        back_populates='users',
+        lazy='selectin',
+        passive_deletes=True,
+        default_factory=list,
     )

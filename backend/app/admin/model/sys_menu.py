@@ -37,27 +37,40 @@ class SysMenu(Base):
     sort: Mapped[int] = mapped_column(comment='排序')
     remark: Mapped[str | None] = mapped_column(String(500), comment='备注')
 
-    # 🔑 父级菜单(自引用外键 + ondelete='CASCADE')
+    # 🔑 上级菜单(自引用外键 + ondelete='CASCADE')
     parent_id: Mapped[int | None] = mapped_column(
         BigInteger,
         ForeignKey('sys_menu.id', ondelete='CASCADE'),
         index=True,
-        comment='父菜单 ID',
+        comment='上级菜单 ID',
     )
 
-    # 父菜单对象
+    # 上级菜单对象
     parent: Mapped['SysMenu | None'] = relationship(
         'SysMenu',
+        foreign_keys=[parent_id],
         remote_side='SysMenu.id',
         back_populates='children',
         lazy='selectin',
-        passive_deletes=True,  # 交给数据库级联删除
+        default=None,
     )
 
     # 子菜单集合
-    children: Mapped[List['SysMenu']] = relationship('SysMenu', back_populates='parent', lazy='selectin')
+    children: Mapped[List['SysMenu']] = relationship(
+        'SysMenu',
+        foreign_keys=[parent_id],
+        back_populates='parent',
+        lazy='noload',
+        passive_deletes=True,
+        default_factory=list,
+    )
 
     # 关联关系
-    roles: Mapped[list['SysRole']] = relationship(
-        'SysRole', secondary='sys_role_menu', back_populates='menus', lazy='selectin'
+    roles: Mapped[List['SysRole']] = relationship(
+        'SysRole',
+        secondary='sys_role_menu',
+        back_populates='menus',
+        lazy='noload',
+        passive_deletes=True,
+        default_factory=list,
     )
