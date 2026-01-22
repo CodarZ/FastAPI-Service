@@ -1,14 +1,12 @@
 import importlib
 import pkgutil
 
-from datetime import datetime
 from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict
 
 from backend.common.log import log
 from backend.core.path import BASE_PATH
-from backend.utils.timezone import timezone
 
 if TYPE_CHECKING:
     from types import ModuleType
@@ -24,18 +22,15 @@ class SchemaBase(BaseModel):
 
     统一配置：
     - use_enum_values: 自动将枚举转为其值
-    - extra='ignore': 忽略传入的未定义的额外字段
+    - extra='forbid': 禁止传入的未定义的额外字段
     - str_strip_whitespace: 自动去除字符串首尾空白
     - json_encoders: datetime 统一使用本地时区格式化
     """
 
     model_config = ConfigDict(
         use_enum_values=True,
-        extra='ignore',
+        extra='forbid',
         str_strip_whitespace=True,
-        json_encoders={
-            datetime: lambda x: timezone.to_str(timezone.to_timezone(x)),
-        },
     )
 
 
