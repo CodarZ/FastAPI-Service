@@ -1,15 +1,11 @@
-"""菜单 Schema 定义
+"""菜单 Schema 定义"""
 
-包含菜单相关的所有 Schema：Base/Create/Update/Patch*/Detail/Info/ListItem/Simple/Option/Filter/TreeNode
-"""
-
-from datetime import datetime
-
+from fastapi import Query
 from pydantic import ConfigDict, Field, model_validator
 
 from backend.common.enum.custom import MenuEnum
 from backend.common.schema import SchemaBase
-from backend.utils.validator import PermissionStr, SortInt, StatusInt
+from backend.utils.validator import IdsListInt, LocalDatetime, PermissionStr, SortInt, StatusInt
 
 
 # ==================== 基础 Schema ====================
@@ -27,7 +23,7 @@ class SysMenuBase(SchemaBase):
 class SysMenuCreate(SysMenuBase):
     """菜单创建请求"""
 
-    parent_id: int | None = Field(default=None, description='父菜单ID')
+    parent_id: int | None = Field(default=None, description='上级菜单ID')
     path: str | None = Field(default=None, max_length=200, description='访问地址/外链地址')
     component: str | None = Field(default=None, max_length=300, description='组件文件路径')
     permission: PermissionStr | None = Field(default=None, description='权限标识')
@@ -41,7 +37,7 @@ class SysMenuCreate(SysMenuBase):
 
     @model_validator(mode='after')
     def validate_menu_type_fields(self):
-        """根据菜单类型验证必填字段"""
+        """根据菜单类型验证必填字段并过滤不相关字段"""
         menu_type = self.type
 
         # 目录(0)或菜单(1)：path 必填
@@ -67,13 +63,42 @@ class SysMenuCreate(SysMenuBase):
             if not self.component:
                 raise ValueError('嵌入式组件的组件路径不能为空')
 
+        # 根据菜单类型过滤不相关的字段
+        if menu_type == MenuEnum.BUTTON:
+            # 按钮：只保留 permission, 清空其他路由相关字段
+            self.path = None
+            self.component = None
+            self.redirect = None
+            self.active_menu = None
+            self.keep_alive = False
+            self.tab = False
+            self.breadcrumb = False
+        elif menu_type == MenuEnum.DIRECTORY:
+            # 目录：清空 component 和 permission
+            self.component = None
+            self.permission = None
+        elif menu_type == MenuEnum.MENU:
+            # 菜单：清空 permission
+            self.permission = None
+        elif menu_type == MenuEnum.LINK:
+            # 外链：清空 component、permission 和页面相关字段
+            self.component = None
+            self.permission = None
+            self.keep_alive = False
+            self.tab = False
+            self.breadcrumb = False
+        elif menu_type == MenuEnum.EMBEDDED:
+            # 嵌入式组件：清空 permission
+            self.permission = None
+
         return self
 
 
 class SysMenuUpdate(SysMenuBase):
     """菜单更新请求（全量更新）"""
 
-    parent_id: int | None = Field(default=None, description='父菜单ID')
+    id: int = Field(description='菜单ID')
+    parent_id: int | None = Field(default=None, description='上级菜单ID')
     path: str | None = Field(default=None, max_length=200, description='访问地址/外链地址')
     component: str | None = Field(default=None, max_length=300, description='组件文件路径')
     permission: PermissionStr | None = Field(default=None, description='权限标识')
@@ -87,7 +112,7 @@ class SysMenuUpdate(SysMenuBase):
 
     @model_validator(mode='after')
     def validate_menu_type_fields(self):
-        """根据菜单类型验证必填字段"""
+        """根据菜单类型验证必填字段并过滤不相关字段"""
         menu_type = self.type
 
         if menu_type in (MenuEnum.DIRECTORY, MenuEnum.MENU) and not self.path:
@@ -104,36 +129,69 @@ class SysMenuUpdate(SysMenuBase):
             if not self.component:
                 raise ValueError('嵌入式组件的组件路径不能为空')
 
+        # 根据菜单类型过滤不相关的字段
+        if menu_type == MenuEnum.BUTTON:
+            # 按钮：只保留 permission, 清空其他路由相关字段
+            self.path = None
+            self.component = None
+            self.redirect = None
+            self.active_menu = None
+            self.keep_alive = False
+            self.tab = False
+            self.breadcrumb = False
+        elif menu_type == MenuEnum.DIRECTORY:
+            # 目录：清空 component 和 permission
+            self.component = None
+            self.permission = None
+        elif menu_type == MenuEnum.MENU:
+            # 菜单：清空 permission
+            self.permission = None
+        elif menu_type == MenuEnum.LINK:
+            # 外链：清空 component、permission 和页面相关字段
+            self.component = None
+            self.permission = None
+            self.keep_alive = False
+            self.tab = False
+            self.breadcrumb = False
+        elif menu_type == MenuEnum.EMBEDDED:
+            # 嵌入式组件：清空 permission
+            self.permission = None
+
         return self
 
 
 class SysMenuPatchStatus(SchemaBase):
     """菜单状态修改"""
 
+    id: int = Field(description='菜单ID')
     status: StatusInt = Field(description='状态(0停用 1正常)')
 
 
 class SysMenuPatchHidden(SchemaBase):
     """菜单隐藏状态修改"""
 
+    id: int = Field(description='菜单ID')
     hidden: bool = Field(description='是否隐藏菜单')
 
 
 class SysMenuPatchSort(SchemaBase):
     """菜单排序修改"""
 
+    id: int = Field(description='菜单ID')
     sort: SortInt = Field(description='排序')
 
 
 class SysMenuPatchParent(SchemaBase):
     """菜单父级修改"""
 
-    parent_id: int | None = Field(default=None, description='父菜单ID')
+    id: int = Field(description='菜单ID')
+    parent_id: int | None = Field(default=None, description='上级菜单ID')
 
 
 class SysMenuPatchDisplay(SchemaBase):
     """菜单显示设置修改"""
 
+    id: int = Field(description='菜单ID')
     icon: str | None = Field(default=None, max_length=50, description='图标')
     sort: SortInt | None = Field(default=None, description='排序')
     hidden: bool | None = Field(default=None, description='是否隐藏')
@@ -145,7 +203,7 @@ class SysMenuPatchDisplay(SchemaBase):
 class SysMenuBatchDelete(SchemaBase):
     """菜单批量删除"""
 
-    menu_ids: list[int] = Field(min_length=1, description='菜单ID列表')
+    menu_ids: IdsListInt = Field(min_length=1, description='菜单ID列表')
 
 
 class SysMenuBatchPatchStatus(SchemaBase):
@@ -171,10 +229,8 @@ class SysMenuListItem(SchemaBase):
     status: int = Field(description='状态')
     hidden: bool = Field(description='是否隐藏')
     sort: int = Field(description='排序')
-    parent_id: int | None = Field(default=None, description='父菜单ID')
-    # 冗余字段
-    parent_title: str | None = Field(default=None, description='父菜单标题')
-    created_time: datetime = Field(description='创建时间')
+    parent_id: int | None = Field(default=None, description='上级菜单ID')
+    created_time: LocalDatetime = Field(description='创建时间')
 
 
 class SysMenuInfo(SchemaBase):
@@ -193,8 +249,8 @@ class SysMenuInfo(SchemaBase):
     status: int = Field(description='状态')
     hidden: bool = Field(description='是否隐藏')
     sort: int = Field(description='排序')
-    parent: SysMenuSimple | None = Field(default=None, description='父菜单')
-    created_time: datetime = Field(description='创建时间')
+    parent_id: int | None = Field(default=None, description='上级菜单ID')
+    created_time: LocalDatetime = Field(description='创建时间')
 
 
 class SysMenuDetail(SchemaBase):
@@ -217,11 +273,11 @@ class SysMenuDetail(SchemaBase):
     tab: bool = Field(description='是否在标签页显示')
     breadcrumb: bool = Field(description='是否在面包屑中显示')
     sort: int = Field(description='排序')
-    parent_id: int | None = Field(default=None, description='父菜单ID')
-    parent: SysMenuSimple | None = Field(default=None, description='父菜单')
+    parent_id: int | None = Field(default=None, description='上级菜单ID')
+    parent: SysMenuSimple | None = Field(default=None, description='上级菜单')
     remark: str | None = Field(default=None, description='备注')
-    created_time: datetime = Field(description='创建时间')
-    updated_time: datetime | None = Field(default=None, description='更新时间')
+    created_time: LocalDatetime = Field(description='创建时间')
+    updated_time: LocalDatetime | None = Field(default=None, description='更新时间')
 
 
 class SysMenuSimple(SchemaBase):
@@ -243,7 +299,7 @@ class SysMenuOption(SchemaBase):
     id: int = Field(description='菜单ID')
     title: str = Field(description='菜单标题')
     type: int = Field(description='菜单类型')
-    parent_id: int | None = Field(default=None, description='父菜单ID')
+    parent_id: int | None = Field(default=None, description='上级菜单ID')
 
 
 class SysMenuTreeNode(SchemaBase):
@@ -265,8 +321,8 @@ class SysMenuTreeNode(SchemaBase):
     tab: bool = Field(description='是否在标签页显示')
     breadcrumb: bool = Field(description='是否在面包屑中显示')
     sort: int = Field(description='排序')
-    parent_id: int | None = Field(default=None, description='父菜单ID')
-    children: list[SysMenuTreeNode] = Field(default_factory=list, description='子菜单列表')
+    parent_id: int | None = Field(default=None, description='上级菜单ID')
+    children: list[SysMenuTreeNode] | None = Field(default=None, description='子菜单列表')
 
 
 class SysMenuOptionTree(SchemaBase):
@@ -277,8 +333,8 @@ class SysMenuOptionTree(SchemaBase):
     id: int = Field(description='菜单ID')
     title: str = Field(description='菜单标题')
     type: int = Field(description='菜单类型')
-    parent_id: int | None = Field(default=None, description='父菜单ID')
-    children: list[SysMenuOptionTree] = Field(default_factory=list, description='子菜单列表')
+    parent_id: int | None = Field(default=None, description='上级菜单ID')
+    children: list[SysMenuOptionTree] | None = Field(default=None, description='子菜单列表')
 
 
 class SysMenuRoute(SchemaBase):
@@ -298,19 +354,38 @@ class SysMenuRoute(SchemaBase):
     tab: bool = Field(description='是否在标签页显示')
     breadcrumb: bool = Field(description='是否在面包屑中显示')
     active_menu: str | None = Field(default=None, description='访问时高亮的菜单')
-    children: list[SysMenuRoute] = Field(default_factory=list, description='子路由')
+    children: list[SysMenuRoute] | None = Field(default=None, description='子路由')
+
+
+class SysMenuTableTree(SchemaBase):
+    """菜单树形表格（树形表格展示）"""
+
+    model_config = ConfigDict(from_attributes=True, extra='ignore')
+
+    id: int = Field(description='菜单ID')
+    title: str = Field(description='菜单标题')
+    type: int = Field(description='菜单类型')
+    path: str | None = Field(default=None, description='访问地址')
+    component: str | None = Field(default=None, description='组件路径')
+    permission: str | None = Field(default=None, description='权限标识')
+    icon: str | None = Field(default=None, description='图标')
+    status: int = Field(description='状态')
+    hidden: bool = Field(description='是否隐藏')
+    sort: int = Field(description='排序')
+    parent_id: int | None = Field(default=None, description='上级菜单ID')
+    created_time: LocalDatetime = Field(description='创建时间')
+    children: list[SysMenuTableTree] | None = Field(default=None, description='子菜单列表')
 
 
 # ==================== 查询 Schema ====================
 class SysMenuFilter(SchemaBase):
     """菜单查询条件"""
 
-    title: str | None = Field(default=None, max_length=50, description='菜单标题(模糊)')
-    type: int | None = Field(default=None, ge=0, le=4, description='菜单类型')
-    status: int | None = Field(default=None, ge=0, le=1, description='状态')
-    hidden: bool | None = Field(default=None, description='是否隐藏')
-    parent_id: int | None = Field(default=None, description='父菜单ID')
-    permission: str | None = Field(default=None, max_length=128, description='权限标识(模糊)')
-    created_time_start: datetime | None = Field(default=None, description='创建时间起')
-    created_time_end: datetime | None = Field(default=None, description='创建时间止')
-    keyword: str | None = Field(default=None, max_length=100, description='关键词(标题/权限标识)')
+    title: str | None = Query(default=None, max_length=50, description='菜单标题(模糊)')
+    type: int | None = Query(default=None, ge=0, le=4, description='菜单类型')
+    status: int | None = Query(default=None, ge=0, le=1, description='状态')
+    hidden: bool | None = Query(default=None, description='是否隐藏')
+    parent_id: int | None = Query(default=None, description='上级菜单ID')
+    permission: str | None = Query(default=None, max_length=128, description='权限标识(模糊)')
+    created_time_start: LocalDatetime | None = Query(default=None, description='创建时间起')
+    created_time_end: LocalDatetime | None = Query(default=None, description='创建时间止')
