@@ -23,10 +23,9 @@ dependencies = [
     "redis[hiredis]>=7.0.1", # 被 fastapi-limiter / Celery 等使用
 
     # 数据库 / ORM / 迁移
-    "sqlalchemy[asyncio]>=2.0.44",  # ORM/SQL 工具
-    "alembic>=1.17.1",              # 迁移工具
-    "sqlalchemy-crud-plus>=1.13.1", # SQLAlchemy CRUD 辅助封装
-    "asyncpg>=0.30.0",              # PostgreSQL 异步驱动
+    "sqlalchemy[asyncio]>=2.0.44", # ORM/SQL 工具
+    "alembic>=1.17.1",             # 迁移工具
+    "asyncpg>=0.30.0",             # PostgreSQL 异步驱动
 
     # 数据模型 / 配置 / 序列化
     "pydantic>=2.12.4",          # 数据模型&校验
