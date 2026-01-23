@@ -8,7 +8,7 @@ from backend.app.admin.schema.sys_user import (
     SysUserDetail,
     SysUserFilter,
     SysUserInfo,
-    SysUserAdvancedFilter,
+    SysUserListItem,
     SysUserPatchPassword,
     SysUserPatchProfile,
     SysUserPatchStatus,
@@ -17,7 +17,6 @@ from backend.app.admin.schema.sys_user import (
 )
 from backend.common.exception import errors
 from backend.common.security.password import verify_password
-
 from backend.database.postgresql import async_session
 
 if TYPE_CHECKING:
@@ -28,7 +27,7 @@ class SysUserService:
     """用户服务类"""
 
     @staticmethod
-    async def _get_user_or_404(db: AsyncSession, pk: int):
+    async def _get_user_or_404(db: 'AsyncSession', pk: int):
         """获取用户, 不存在则抛出 NotFoundError"""
         user = await sys_user_crud.get(db, pk)
         if not user:
@@ -36,52 +35,53 @@ class SysUserService:
         return user
 
     @staticmethod
-    async def get_user_info(*, db: AsyncSession, pk: int) -> SysUserInfo:
+    async def get_user_info(*, db: 'AsyncSession', pk: int) -> SysUserInfo:
         """获取用户信息"""
         user = await SysUserService._get_user_or_404(db, pk)
         return SysUserInfo.model_validate(user)
 
     @staticmethod
-    async def get_user_info_by_username(*, db: AsyncSession, username: str) -> SysUserInfo:
-        """获取用户信息"""
+    async def get_user_info_by_username(*, db: 'AsyncSession', username: str) -> SysUserInfo:
+        """根据用户名获取用户信息"""
         user = await sys_user_crud.get_by_column(db, column='username', value=username)
         if not user:
             raise errors.NotFoundError(msg='用户不存在')
         return SysUserInfo.model_validate(user)
 
     @staticmethod
-    async def get_user_detail(*, db: AsyncSession, pk: int) -> SysUserDetail:
+    async def get_user_detail(*, db: 'AsyncSession', pk: int) -> SysUserDetail:
         """获取用户详情"""
         user = await SysUserService._get_user_or_404(db, pk)
         return SysUserDetail.model_validate(user)
 
     @staticmethod
-    async def get_list(*, params: SysUserFilter):
-        """获取用户列表"""
+    async def get_list(*, params: SysUserFilter) -> list[SysUserListItem]:
+        """获取用户列表（基础过滤）"""
         async with async_session.begin() as db:
             stmt = await sys_user_crud.get_list_select(params)
             result = await db.scalars(stmt)
-            return result.all()
+            users = result.all()
+            # 在 session 内完成序列化, 避免 DetachedInstanceError
+            return [SysUserListItem.model_validate(user) for user in users]
 
     @staticmethod
-    async def get_advanced_list(*, params: SysUserAdvancedFilter):
-        """获取用户列表"""
-        async with async_session.begin() as db:
-            stmt = await sys_user_crud.get_list_advanced_select(params)
-            result = await db.scalars(stmt)
-            return result.all()
-
-    @staticmethod
-    async def create(*, db: AsyncSession, params: SysUserCreate):
+    async def create(*, db: 'AsyncSession', params: SysUserCreate):
         """创建新用户"""
-
         # 校验用户名是否重复
         if await sys_user_crud.get_by_column(db, 'username', params.username):
-            raise errors.ConflictError(msg='用户已存在')
+            raise errors.ConflictError(msg='用户名已存在')
 
-        # 校验手机号是否重复
-        if params.phone and await sys_user_crud.get_by_column(db, 'phone', params.phone):
-            raise errors.ConflictError(msg='手机号已存在')
+        # # 校验手机号是否重复（如果提供了手机号）
+        # if params.phone:
+        #     existing_phone = await sys_user_crud.get_by_column(db, 'phone', params.phone)
+        #     if existing_phone:
+        #         raise errors.ConflictError(msg='手机号已存在')
+
+        # # 校验邮箱是否重复（如果提供了邮箱）
+        # if params.email:
+        #     existing_email = await sys_user_crud.get_by_column(db, 'email', params.email)
+        #     if existing_email:
+        #         raise errors.ConflictError(msg='邮箱已存在')
 
         # TODO: 校验部门是否存在
         # TODO: 校验角色是否存在
@@ -89,8 +89,8 @@ class SysUserService:
         await sys_user_crud.create(db, params)
 
     @staticmethod
-    async def update(*, db: AsyncSession, pk: int, params: SysUserUpdate) -> int:
-        """全量更新用户信息, 包括关联关系 roles"""
+    async def update(*, db: 'AsyncSession', pk: int, params: SysUserUpdate) -> int:
+        """全量更新用户信息（包括关联关系 roles）"""
         # 校验用户是否存在
         user = await sys_user_crud.get(db, pk)
         if not user:
@@ -100,7 +100,19 @@ class SysUserService:
         if params.username != user.username:
             existing_user = await sys_user_crud.get_by_column(db, column='username', value=params.username)
             if existing_user:
-                raise errors.ConflictError(msg='用户已存在')
+                raise errors.ConflictError(msg='用户名已存在')
+
+        # # 校验手机号是否重复（如果提供了手机号且与当前不同）
+        # if params.phone and params.phone != user.phone:
+        #     existing_phone = await sys_user_crud.get_by_column(db, 'phone', params.phone)
+        #     if existing_phone:
+        #         raise errors.ConflictError(msg='手机号已存在')
+
+        # # 校验邮箱是否重复（如果提供了邮箱且与当前不同）
+        # if params.email and params.email != user.email:
+        #     existing_email = await sys_user_crud.get_by_column(db, 'email', params.email)
+        #     if existing_email:
+        #         raise errors.ConflictError(msg='邮箱已存在')
 
         # TODO: 校验部门是否存在
         # TODO: 校验角色是否存在
@@ -108,41 +120,62 @@ class SysUserService:
         return await sys_user_crud.update(db, pk, params)
 
     @staticmethod
-    async def patch_status(*, db: AsyncSession, pk: int, params: SysUserPatchStatus) -> int:
+    async def patch_status(*, db: 'AsyncSession', pk: int, params: SysUserPatchStatus) -> int:
         """更新用户状态"""
-        await SysUserService._get_user_or_404(db, pk)
+        user = await SysUserService._get_user_or_404(db, pk)
+
+        # 不允许停用超级管理员
+        if user.is_superuser and params.status == 0:
+            raise errors.ForbiddenError(msg='不允许停用超级管理员')
+
         return await sys_user_crud.update_by_column(db, pk, 'status', params.status)
 
     @staticmethod
-    async def patch_profile(*, db: AsyncSession, pk: int, params: SysUserPatchProfile) -> int:
-        """更新用户资料"""
+    async def patch_profile(*, db: 'AsyncSession', pk: int, params: SysUserPatchProfile) -> int:
+        """更新用户个人资料"""
         await SysUserService._get_user_or_404(db, pk)
+
+        # # 校验手机号是否重复（如果提供了手机号）
+        # if params.phone:
+        #     existing = await sys_user_crud.get_by_column(db, 'phone', params.phone)
+        #     if existing and existing.id != pk:
+        #         raise errors.ConflictError(msg='手机号已存在')
+
+        # # 校验邮箱是否重复（如果提供了邮箱）
+        # if params.email:
+        #     existing = await sys_user_crud.get_by_column(db, 'email', params.email)
+        #     if existing and existing.id != pk:
+        #         raise errors.ConflictError(msg='邮箱已存在')
+
         return await sys_user_crud.update_profile(db, pk, params)
 
     @staticmethod
-    async def patch_password(*, db: AsyncSession, pk: int, params: SysUserPatchPassword) -> int:
-        """修改用户密码"""
+    async def patch_password(*, db: 'AsyncSession', pk: int, params: SysUserPatchPassword) -> int:
+        """修改用户密码（需要旧密码验证）"""
         user = await SysUserService._get_user_or_404(db, pk)
 
         # 验证旧密码
-        if user.password and params.old_password and not verify_password(params.old_password, user.password):
-            raise errors.AuthorizationError(msg='旧密码错误')
+        if params.old_password:
+            if not user.password:
+                raise errors.RequestError(msg='用户未设置密码')
+            if not verify_password(params.old_password, user.password):
+                raise errors.AuthorizationError(msg='旧密码错误')
 
         return await sys_user_crud.update_password(db, pk, params.new_password)
 
     @staticmethod
-    async def reset_password(*, db: AsyncSession, pk: int, params: SysUserResetPassword) -> int:
-        """重置用户密码"""
+    async def reset_password(*, db: 'AsyncSession', pk: int, params: SysUserResetPassword) -> int:
+        """重置用户密码（管理员操作, 无需旧密码）"""
         await SysUserService._get_user_or_404(db, pk)
         return await sys_user_crud.update_password(db, pk, params.new_password)
 
     @staticmethod
-    async def batch_patch_status(*, db: AsyncSession, params: SysUserBatchPatchStatus) -> dict[str, int | list[int]]:
+    async def batch_patch_status(*, db: 'AsyncSession', params: SysUserBatchPatchStatus) -> dict[str, int | list[int]]:
         """批量更新用户状态
 
         处理逻辑：
-            1. 校验用户是否存在，不存在的自动跳过
-            2. 过滤掉超级管理员（不允许批量修改）
+            1. 校验用户是否存在, 不存在的自动跳过
+            2. 过滤掉超级管理员（不允许批量修改超级管理员状态）
             3. 对剩余有效用户执行批量更新
 
         Returns:
@@ -174,8 +207,11 @@ class SysUserService:
         }
 
     @staticmethod
-    async def delete(*, db: AsyncSession, pk: int) -> int:
-        """删除用户"""
+    async def delete(*, db: 'AsyncSession', pk: int) -> int:
+        """删除用户
+
+        注意：不允许删除超级管理员
+        """
         # 校验用户是否存在
         user = await SysUserService._get_user_or_404(db, pk)
 
@@ -186,12 +222,12 @@ class SysUserService:
         return await sys_user_crud.delete(db, pk=pk)
 
     @staticmethod
-    async def batch_delete(*, db: AsyncSession, params: SysUserBatchDelete) -> dict[str, int | list[int]]:
+    async def batch_delete(*, db: 'AsyncSession', params: SysUserBatchDelete) -> dict[str, int | list[int]]:
         """批量删除用户
 
         处理逻辑：
-            1. 校验用户是否存在，不存在的自动跳过
-            2. 过滤掉超级管理员（不允许批量删除）
+            1. 校验用户是否存在, 不存在的自动跳过
+            2. 过滤掉超级管理员（不允许批量删除超级管理员）
             3. 对剩余有效用户执行批量删除
 
         Returns:

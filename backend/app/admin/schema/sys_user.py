@@ -1,16 +1,12 @@
-"""用户 Schema 定义
+"""用户 Schema 定义"""
 
-包含用户相关的所有 Schema：Base/Create/Update/Patch*/Detail/Info/ListItem/Simple/Option/Filter
-"""
-
-from datetime import datetime
 from typing import TYPE_CHECKING
 
 from fastapi import Query
 from pydantic import ConfigDict, EmailStr, Field, field_validator, model_serializer
 
 from backend.common.schema import SchemaBase
-from backend.utils.validator import IdsListInt, MobileStr, PasswordStr, StatusInt, UsernameStr
+from backend.utils.validator import IdsListInt, LocalDatetime, MobileStr, PasswordStr, StatusInt, UsernameStr
 
 if TYPE_CHECKING:
     from backend.app.admin.schema.sys_dept import SysDeptSimple
@@ -38,7 +34,7 @@ class SysUserCreate(SysUserBase):
     dept_id: int | None = Field(default=None, description='所属部门ID')
     role_ids: IdsListInt = Field(default_factory=list, description='角色ID列表')
     avatar: str | None = Field(default=None, max_length=500, description='头像URL')
-    birth_date: datetime | None = Field(default=None, description='出生日期')
+    birth_date: LocalDatetime | None = Field(default=None, description='出生日期')
     status: StatusInt = Field(default=1, description='账号状态(0停用 1正常)')
     is_multi_login: bool = Field(default=False, description='是否允许多端登录')
 
@@ -50,7 +46,7 @@ class SysUserUpdate(SysUserBase):
     dept_id: int | None = Field(default=None, description='所属部门ID')
     role_ids: IdsListInt = Field(default_factory=list, description='角色ID列表')
     avatar: str | None = Field(default=None, max_length=500, description='头像URL')
-    birth_date: datetime | None = Field(default=None, description='出生日期')
+    birth_date: LocalDatetime | None = Field(default=None, description='出生日期')
     status: StatusInt = Field(default=1, description='账号状态(0停用 1正常)')
     is_multi_login: bool = Field(default=False, description='是否允许多端登录')
     is_verified: bool = Field(default=False, description='是否实名认证')
@@ -98,12 +94,13 @@ class SysUserPatchProfile(SchemaBase):
     phone: MobileStr | None = Field(default=None, description='手机号')
     avatar: str | None = Field(default=None, max_length=500, description='头像URL')
     gender: int | None = Field(default=None, ge=0, le=3, description='性别(0女 1男 3其他)')
-    birth_date: datetime | None = Field(default=None, description='出生日期')
+    birth_date: LocalDatetime | None = Field(default=None, description='出生日期')
 
 
 class SysUserRoleMap(SchemaBase):
     """用户角色映射（多对多关系维护）"""
 
+    user_id: int = Field(description='用户ID')
     role_ids: IdsListInt = Field(description='角色ID列表')
 
 
@@ -130,8 +127,8 @@ class SysUserBatchDelete(SchemaBase):
 class SysUserBatchPatchStatus(SchemaBase):
     """用户批量状态修改"""
 
-    user_ids: list[int] = Field(min_length=1, description='用户ID列表')
-    status: int = Field(ge=0, le=1, description='账号状态(0停用 1正常)')
+    user_ids: IdsListInt = Field(min_length=1, description='用户ID列表')
+    status: StatusInt = Field(description='账号状态(0停用 1正常)')
 
 
 # ==================== 输出 Schema ====================
@@ -154,10 +151,10 @@ class SysUserListItem(SchemaBase):
     is_multi_login: bool | None = Field(default=None, description='是否允许多端登录')
     dept: SysDeptSimple | None = Field(default=None, description='所属部门')
     dept_id: int | None = Field(default=None, description='所属部门ID')
-    # 冗余字段 - 避免关联查询
+    # 冗余字段
     dept_name: str | None = Field(default=None, description='部门名称')
-    created_time: datetime = Field(description='创建时间')
-    last_login_time: datetime | None = Field(default=None, description='最后登录时间')
+    created_time: LocalDatetime = Field(description='创建时间')
+    last_login_time: LocalDatetime | None = Field(default=None, description='最后登录时间')
 
     @model_serializer(mode='wrap')
     def _serialize_model(self, serializer):
@@ -187,7 +184,6 @@ class SysUserInfo(SchemaBase):
     dept: SysDeptSimple | None = Field(default=None, description='所属部门')
     dept_id: int | None = Field(default=None, description='所属部门ID')
     dept_name: str | None = Field(default=None, description='所属部门名称')
-    created_time: datetime = Field(description='创建时间')
 
     @model_serializer(mode='wrap')
     def _serialize_model(self, serializer):
@@ -211,7 +207,7 @@ class SysUserDetail(SchemaBase):
     phone: str | None = Field(default=None, description='手机号')
     gender: int | None = Field(default=None, description='性别')
     avatar: str | None = Field(default=None, description='头像')
-    birth_date: datetime | None = Field(default=None, description='出生日期')
+    birth_date: LocalDatetime | None = Field(default=None, description='出生日期')
     dept: SysDeptSimple | None = Field(default=None, description='所属部门')
     dept_id: int | None = Field(default=None, description='所属部门ID')
     dept_name: str | None = Field(default=None, description='部门名称')
@@ -223,10 +219,10 @@ class SysUserDetail(SchemaBase):
     roles: list[SysRoleSimple] = Field(default_factory=list, description='角色列表')
     role_ids: list[int] = Field(default_factory=list, description='角色ID列表')
     remark: str | None = Field(default=None, description='备注')
-    last_login_time: datetime | None = Field(default=None, description='最后登录时间')
+    last_login_time: LocalDatetime | None = Field(default=None, description='最后登录时间')
     last_login_ip: str | None = Field(default=None, description='最后登录IP')
-    created_time: datetime = Field(description='创建时间')
-    updated_time: datetime | None = Field(default=None, description='更新时间')
+    created_time: LocalDatetime = Field(description='创建时间')
+    updated_time: LocalDatetime | None = Field(default=None, description='更新时间')
 
     @model_serializer(mode='wrap')
     def _serialize_model(self, serializer):
@@ -280,16 +276,7 @@ class SysUserFilter(SchemaBase):
     is_superuser: bool | None = Query(default=None, description='是否超级管理员')
     is_admin: bool | None = Query(default=None, description='是否后台管理员')
     is_multi_login: bool | None = Query(default=None, description='是否允许多端登录')
-    created_time_start: datetime | None = Query(default=None, description='创建时间起')
-    created_time_end: datetime | None = Query(default=None, description='创建时间止')
-    last_login_time_start: datetime | None = Query(default=None, description='最后登录时间起')
-    last_login_time_end: datetime | None = Query(default=None, description='最后登录时间止')
-
-
-class SysUserAdvancedFilter(SysUserFilter):
-    """用户高级查询条件"""
-
-    role_id: int | None = Query(default=None, description='角色ID')
-    keyword: str | None = Query(
-        default=None, max_length=50, description='关键词模糊查询(真实姓名/用户名/昵称/手机号/邮箱)'
-    )
+    created_time_start: LocalDatetime | None = Query(default=None, description='创建时间起')
+    created_time_end: LocalDatetime | None = Query(default=None, description='创建时间止')
+    last_login_time_start: LocalDatetime | None = Query(default=None, description='最后登录时间起')
+    last_login_time_end: LocalDatetime | None = Query(default=None, description='最后登录时间止')
