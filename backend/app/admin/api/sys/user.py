@@ -3,7 +3,6 @@ from typing import Annotated
 from fastapi import APIRouter, Query
 
 from backend.app.admin.schema.sys_user import (
-    SysUserAdvancedFilter,
     SysUserBatchDelete,
     SysUserBatchPatchStatus,
     SysUserCreate,
@@ -47,14 +46,6 @@ async def get_user_detail(db: CurrentSession, user_id: Annotated[int, Query(desc
 @router.get('/list', summary='获取用户列表', response_model=ResponseSchemaModel[list[SysUserListItem]])
 async def get_user_list(params: Annotated[SysUserFilter, Query()]):
     data = await sys_user_service.get_list(params=params)
-    return response_base.success(data=data)
-
-
-@router.get(
-    '/advanced-list', summary='获取用户列表(高级查询)', response_model=ResponseSchemaModel[list[SysUserListItem]]
-)
-async def get_user_advanced_list(params: Annotated[SysUserAdvancedFilter, Query()]):
-    data = await sys_user_service.get_advanced_list(params=params)
     return response_base.success(data=data)
 
 
