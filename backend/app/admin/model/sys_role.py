@@ -24,12 +24,13 @@ class SysRole(Base):
 
     data_scope: Mapped[int] = mapped_column(
         Integer,
-        server_default='0',
-        comment='数据范围(0全部, 1本部门及子部门, 2本部门, 3仅本人, 4自定义部门)',
+        default=4,
+        server_default='4',
+        comment='数据范围(0全部, 1本部门及子部门, 2本部门, 3自定义部门, 4仅本人)',
     )
 
-    status: Mapped[int] = mapped_column(Integer, server_default='1', comment='状态（0停用 1正常）')
-    remark: Mapped[str | None] = mapped_column(String(500), comment='备注')
+    status: Mapped[int] = mapped_column(Integer, default=1, server_default='1', comment='状态（0停用 1正常）')
+    remark: Mapped[str | None] = mapped_column(String(500), default=None, comment='备注')
 
     # 关联关系
     users: Mapped[List['SysUser']] = relationship(
