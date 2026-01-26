@@ -17,7 +17,7 @@ class SysOperationLog(DataClassBase):
     id: Mapped[id_key] = mapped_column(init=False)
     username: Mapped[str | None] = mapped_column(String(20), comment='操作用户')
 
-    moudle: Mapped[str] = mapped_column(String(255), comment='操作模块')
+    module: Mapped[str] = mapped_column(String(255), comment='操作模块')
     path: Mapped[str] = mapped_column(Text(), comment='请求路径')
     trace_id: Mapped[str] = mapped_column(String(length=128), comment='请求跟踪 ID')
     method: Mapped[str] = mapped_column(String(10), comment='请求方式')
