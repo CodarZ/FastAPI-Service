@@ -1,3 +1,4 @@
+from asyncio import create_task
 from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING
 
@@ -16,6 +17,7 @@ from backend.core.config import settings
 from backend.database.postgresql import create_tables
 from backend.database.redis import redis_client
 from backend.middleware.access import AccessMiddleware
+from backend.middleware.operation_log import OperationLogMiddleware
 from backend.middleware.state import StateMiddleware
 from backend.utils.route import ensure_unique_route_name, simplify_operation_id
 from backend.utils.serializers import MsgSpecJSONResponse
@@ -65,6 +67,9 @@ async def init(app: FastAPI) -> AsyncGenerator[None, None]:
         http_callback=http_callback_limit,
     )
 
+    # 创建操作日志任务
+    create_task(OperationLogMiddleware.task())
+
     yield
 
     # 关闭 Redis 连接
@@ -86,6 +91,8 @@ def register_router(app: FastAPI) -> None:
 
 def register_middleware(app: FastAPI) -> None:
     """注册中间件（执行顺序从下往上）"""
+
+    app.add_middleware(OperationLogMiddleware)
 
     app.add_middleware(StateMiddleware)
 

@@ -5,7 +5,6 @@ from uvicorn.protocols.http.h11_impl import STATUS_PHRASES
 
 from backend.common.exception.errors import ExceptionBase
 from backend.common.exception.message import USAGE_ERROR_MESSAGES, VALIDATION_ERROR_MESSAGES
-from backend.common.log import log
 from backend.common.request.context import ctx
 from backend.common.request.trace_id import get_request_trace_id
 from backend.common.response.base import response_base
@@ -52,7 +51,6 @@ def register_exception(app: FastAPI):
         """
 
         content = _extract_content(exc, StandardResponseStatus.HTTP_500)
-        log.error(f'PydanticUserError: {exc.code} - {exc.message}')
         return MsgSpecJSONResponse(content, StandardResponseStatus.HTTP_500.code)
 
     @app.exception_handler(AssertionError)
@@ -60,7 +58,6 @@ def register_exception(app: FastAPI):
         """断言异常"""
 
         content = _extract_content(exc, StandardResponseStatus.HTTP_500)
-        log.error(f'AssertionError: {str(exc)}')
         return MsgSpecJSONResponse(content, StandardResponseStatus.HTTP_500.code)
 
     @app.exception_handler(ValidationError)
@@ -79,9 +76,7 @@ def register_exception(app: FastAPI):
         - ... ...
         """
 
-        trace_id = get_request_trace_id()
-        content = {'code': exc.code, 'msg': exc.msg, 'data': exc.data, 'trace_id': trace_id}
-
+        content = _extract_content(exc, StandardResponseStatus.HTTP_500)
         return MsgSpecJSONResponse(content, exc.code, background=exc.background)
 
     @app.exception_handler(Exception)
@@ -89,7 +84,6 @@ def register_exception(app: FastAPI):
         """全局其他未知异常"""
 
         content = _extract_content(exc, StandardResponseStatus.HTTP_500)
-        log.exception(f'未知异常: {type(exc).__name__}: {str(exc)}')
         return MsgSpecJSONResponse(content, StandardResponseStatus.HTTP_500.code)
 
 
@@ -119,25 +113,27 @@ def _extract_content(exc: Exception, status: StandardResponseStatus):
     ctx_name = '__request_unknown_exception__'
     code = status.code
 
-    if settings.ENVIRONMENT == 'development':
-        # 1. HTTPException
+    # ExceptionBase - 自定义异常（不区分环境，始终返回完整信息）
+    if isinstance(exc, ExceptionBase):
+        content = {'code': exc.code, 'msg': exc.msg, 'data': exc.data}
+        ctx_name = '__request_custom_exception__'
+    # 开发环境 - 返回详细错误信息
+    elif settings.ENVIRONMENT == 'development':
         if isinstance(exc, HTTPException):
             code = exc.status_code
             msg = exc.detail
             ctx_name = '__request_http_exception__'
-        # 2. PydanticUserError
         elif isinstance(exc, PydanticUserError):
             msg = USAGE_ERROR_MESSAGES.get(exc.code) if exc.code else exc.message or 'Pydantic User Error'
             ctx_name = '__request_pydantic_user_error__'
-        # 3. AssertionError
         elif isinstance(exc, AssertionError):
             msg = str(' | ').join(map(str, exc.args)) or exc.__doc__ or status.msg
             ctx_name = '__request_assertion_error__'
-        # 4. 其他异常
         else:
             msg = str(exc)
 
         content = {'code': code, 'msg': msg, 'data': None}
+    # 生产环境 - 返回通用错误信息（隐藏细节）
     else:
         res = response_base.fail(res=status)
         content = res.model_dump()
