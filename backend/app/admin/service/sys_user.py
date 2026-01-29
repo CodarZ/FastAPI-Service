@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from backend.app.admin.crud import sys_user_crud
+from backend.app.admin.crud import sys_dept_crud, sys_role_crud, sys_user_crud
 from backend.app.admin.schema.sys_user import (
     SysUserBatchDelete,
     SysUserBatchPatchStatus,
@@ -108,8 +108,18 @@ class SysUserService:
             if existing_email:
                 raise errors.ConflictError(msg='邮箱已存在')
 
-        # TODO: 校验部门是否存在
-        # TODO: 校验角色是否存在
+        # 校验部门是否存在（如果提供了部门ID）
+        if params.dept_id is not None:
+            dept = await sys_dept_crud.get(db, params.dept_id)
+            if not dept:
+                raise errors.NotFoundError(msg='所选部门不存在')
+
+        # 校验角色是否存在（如果提供了角色ID列表）
+        if params.role_ids:
+            existing_role_ids = await sys_role_crud.get_existing_ids(db, params.role_ids)
+            missing_role_ids = set(params.role_ids) - set(existing_role_ids)
+            if missing_role_ids:
+                raise errors.NotFoundError(msg=f'以下角色不存在: {list(missing_role_ids)}')
 
         await sys_user_crud.create(db, params)
 
@@ -139,14 +149,18 @@ class SysUserService:
             if existing_email:
                 raise errors.ConflictError(msg='邮箱已存在')
 
-        # # 校验邮箱是否重复（如果提供了邮箱且与当前不同）
-        # if params.email and params.email != user.email:
-        #     existing_email = await sys_user_crud.get_by_column(db, 'email', params.email)
-        #     if existing_email:
-        #         raise errors.ConflictError(msg='邮箱已存在')
+        # 校验部门是否存在（如果提供了部门ID）
+        if params.dept_id is not None:
+            dept = await sys_dept_crud.get(db, params.dept_id)
+            if not dept:
+                raise errors.NotFoundError(msg='所选部门不存在')
 
-        # TODO: 校验部门是否存在
-        # TODO: 校验角色是否存在
+        # 校验角色是否存在（如果提供了角色ID列表）
+        if params.role_ids:
+            existing_role_ids = await sys_role_crud.get_existing_ids(db, params.role_ids)
+            missing_role_ids = set(params.role_ids) - set(existing_role_ids)
+            if missing_role_ids:
+                raise errors.NotFoundError(msg=f'以下角色不存在: {list(missing_role_ids)}')
 
         return await sys_user_crud.update(db, pk, params)
 
@@ -166,17 +180,17 @@ class SysUserService:
         """更新用户个人资料"""
         await SysUserService._get_user_or_404(db, pk)
 
-        # # 校验手机号是否重复（如果提供了手机号）
-        # if params.phone:
-        #     existing = await sys_user_crud.get_by_column(db, 'phone', params.phone)
-        #     if existing and existing.id != pk:
-        #         raise errors.ConflictError(msg='手机号已存在')
+        # 校验手机号是否重复（如果提供了手机号）
+        if params.phone:
+            existing = await sys_user_crud.get_by_column(db, 'phone', params.phone)
+            if existing and existing.id != pk:
+                raise errors.ConflictError(msg='手机号已存在')
 
-        # # 校验邮箱是否重复（如果提供了邮箱）
-        # if params.email:
-        #     existing = await sys_user_crud.get_by_column(db, 'email', params.email)
-        #     if existing and existing.id != pk:
-        #         raise errors.ConflictError(msg='邮箱已存在')
+        # 校验邮箱是否重复（如果提供了邮箱）
+        if params.email:
+            existing = await sys_user_crud.get_by_column(db, 'email', params.email)
+            if existing and existing.id != pk:
+                raise errors.ConflictError(msg='邮箱已存在')
 
         return await sys_user_crud.update_profile(db, pk, params)
 
@@ -185,12 +199,13 @@ class SysUserService:
         """修改用户密码（需要旧密码验证）"""
         user = await SysUserService._get_user_or_404(db, pk)
 
-        # 验证旧密码
-        if params.old_password:
-            if not user.password:
-                raise errors.RequestError(msg='用户未设置密码')
-            if not verify_password(params.old_password, user.password):
-                raise errors.AuthorizationError(msg='旧密码错误')
+        # 验证旧密码（必须提供）
+        if not params.old_password:
+            raise errors.RequestError(msg='请输入旧密码')
+        if not user.password:
+            raise errors.RequestError(msg='用户未设置密码，请联系管理员重置')
+        if not verify_password(params.old_password, user.password):
+            raise errors.AuthorizationError(msg='旧密码错误')
 
         return await sys_user_crud.update_password(db, pk, params.new_password)
 

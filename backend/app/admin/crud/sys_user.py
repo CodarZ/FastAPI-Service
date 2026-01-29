@@ -67,6 +67,12 @@ class CRUDSysUser:
         result = await db.execute(stmt)
         return list(result.scalars().all())
 
+    async def has_users_in_dept(self, db: 'AsyncSession', dept_id: int) -> bool:
+        """检查部门下是否有用户"""
+        stmt = select(SysUser.id).where(SysUser.dept_id == dept_id).limit(1)
+        result = await db.execute(stmt)
+        return result.scalar_one_or_none() is not None
+
     async def get_list_select(self, params: 'SysUserFilter') -> Select[tuple[SysUser]]:
         """获取用户列表的 Select 语句"""
         conditions: list = []
