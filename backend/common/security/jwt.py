@@ -36,7 +36,7 @@ def jwt_decode(token: str) -> TokenPayload:
         if not user_id or not session_uuid or not expire_time:
             raise errors.TokenError(msg='Token 缺失必要信息')
 
-        expire_time = timezone.format_datetime(timezone.to_timezone(expire_time))
+        expire_time = timezone.to_timezone(expire_time)
     except ExpiredSignatureError as e:
         raise errors.TokenError(msg='Token 已过期') from e
     except JWTError as e:
@@ -64,14 +64,14 @@ async def jwt_authentication(token: str):
 async def create_access_token(user_id: int, multi_login: bool, **kwargs) -> AccessToken:
     """创建 Access Token"""
 
-    expire_time = timezone.now() + timedelta(settings.TOKEN_EXPIRE_SECONDS)
+    expire_time = timezone.now() + timedelta(seconds=settings.TOKEN_EXPIRE_SECONDS)
 
     session_uuid = str(uuid4())
 
     access_token = jwt_encode({
         'user_id': str(user_id),
         'session_uuid': session_uuid,
-        'expire_time': timezone.to_timezone(expire_time).timestamp(),
+        'expire_time': expire_time.timestamp(),
     })
 
     if not multi_login:
@@ -97,16 +97,16 @@ async def create_access_token(user_id: int, multi_login: bool, **kwargs) -> Acce
 async def create_refresh_token(session_uuid: str, user_id: int, *, multi_login: bool) -> RefreshToken:
     """创建 Refresh Token"""
 
-    expire_time = timezone.now() + timedelta(settings.TOKEN_REFRESH_EXPIRE_SECONDS)
+    expire_time = timezone.now() + timedelta(seconds=settings.TOKEN_REFRESH_EXPIRE_SECONDS)
 
     refresh_token = jwt_encode({
         'user_id': str(user_id),
         'session_uuid': session_uuid,
-        'expire_time': timezone.to_timezone(expire_time).timestamp(),
+        'expire_time': expire_time.timestamp(),
     })
 
     if not multi_login:
-        await redis_client.delete_prefix(f'{settings.TOKEN_REDIS_PREFIX}:{user_id}')
+        await redis_client.delete_prefix(f'{settings.TOKEN_REFRESH_REDIS_PREFIX}:{user_id}')
 
     await redis_client.setex(
         f'{settings.TOKEN_REFRESH_REDIS_PREFIX}:{user_id}:{session_uuid}',
