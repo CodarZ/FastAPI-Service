@@ -39,7 +39,7 @@ class RequestError(ExceptionBase):
     def __init__(
         self,
         *,
-        msg: str = StandardResponseStatus.HTTP_400.msg,
+        msg: str | None = StandardResponseStatus.HTTP_400.msg,
         data: Any = None,
         background: BackgroundTask | None = None,
     ):
@@ -54,7 +54,7 @@ class AuthorizationError(ExceptionBase):
     def __init__(
         self,
         *,
-        msg: str = StandardResponseStatus.HTTP_401.msg,
+        msg: str | None = StandardResponseStatus.HTTP_401.msg,
         data: Any = None,
         background: BackgroundTask | None = None,
     ):
@@ -69,7 +69,7 @@ class ForbiddenError(ExceptionBase):
     def __init__(
         self,
         *,
-        msg: str = StandardResponseStatus.HTTP_403.msg,
+        msg: str | None = StandardResponseStatus.HTTP_403.msg,
         data: Any = None,
         background: BackgroundTask | None = None,
     ):
@@ -84,7 +84,7 @@ class NotFoundError(ExceptionBase):
     def __init__(
         self,
         *,
-        msg: str = StandardResponseStatus.HTTP_404.msg,
+        msg: str | None = StandardResponseStatus.HTTP_404.msg,
         data: Any = None,
         background: BackgroundTask | None = None,
     ):
@@ -99,7 +99,7 @@ class ConflictError(ExceptionBase):
     def __init__(
         self,
         *,
-        msg: str = StandardResponseStatus.HTTP_409.msg,
+        msg: str | None = StandardResponseStatus.HTTP_409.msg,
         data: Any = None,
         background: BackgroundTask | None = None,
     ):
@@ -114,7 +114,7 @@ class ServerError(ExceptionBase):
     def __init__(
         self,
         *,
-        msg: str = StandardResponseStatus.HTTP_500.msg,
+        msg: str | None = StandardResponseStatus.HTTP_500.msg,
         data: Any = None,
         background: BackgroundTask | None = None,
     ):
@@ -129,7 +129,7 @@ class GatewayError(ExceptionBase):
     def __init__(
         self,
         *,
-        msg: str = StandardResponseStatus.HTTP_502.msg,
+        msg: str | None = StandardResponseStatus.HTTP_502.msg,
         data: Any = None,
         background: BackgroundTask | None = None,
     ):

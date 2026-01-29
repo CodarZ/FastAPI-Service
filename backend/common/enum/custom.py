@@ -2,7 +2,7 @@ from backend.common.enum.base import IntEnum, StrEnum
 
 
 class LoginLogStatusEnum(StrEnum):
-    """登陆状态"""
+    """登录状态"""
 
     FAIL = 'FAIL'
     SUCCESS = 'SUCCESS'
