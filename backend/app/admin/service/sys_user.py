@@ -41,6 +41,31 @@ class SysUserService:
         return SysUserInfo.model_validate(user)
 
     @staticmethod
+    async def get_current_user(*, db: 'AsyncSession', user_id: int) -> SysUserDetail:
+        """获取当前用户详细信息
+
+        用于验证当前登录用户的状态, 包括：
+        - 用户是否存在
+        - 用户是否被禁用
+        - 用户所属部门是否被禁用
+        - 用户所属角色是否全部被锁定
+        """
+        user = await SysUserService._get_user_or_404(db, user_id)
+
+        if not user.status:
+            raise errors.TokenError(msg='用户已被禁用, 请联系系统管理员')
+
+        if user.dept_id and user.dept and not user.dept.status:
+            raise errors.TokenError(msg='用户所属部门已被禁用, 请联系系统管理员')
+
+        if user.roles:
+            role_status = [role.status for role in user.roles]
+            if all(status == 0 for status in role_status):
+                raise errors.AuthorizationError(msg='用户所属角色已被锁定, 请联系系统管理员')
+
+        return SysUserDetail.model_validate(user)
+
+    @staticmethod
     async def get_user_info_by_username(*, db: 'AsyncSession', username: str) -> SysUserInfo:
         """根据用户名获取用户信息"""
         user = await sys_user_crud.get_by_column(db, column='username', value=username)
@@ -71,17 +96,17 @@ class SysUserService:
         if await sys_user_crud.get_by_column(db, 'username', params.username):
             raise errors.ConflictError(msg='用户名已存在')
 
-        # # 校验手机号是否重复（如果提供了手机号）
-        # if params.phone:
-        #     existing_phone = await sys_user_crud.get_by_column(db, 'phone', params.phone)
-        #     if existing_phone:
-        #         raise errors.ConflictError(msg='手机号已存在')
+        # 校验手机号是否重复（如果提供了手机号）
+        if params.phone:
+            existing_phone = await sys_user_crud.get_by_column(db, 'phone', params.phone)
+            if existing_phone:
+                raise errors.ConflictError(msg='手机号已存在')
 
-        # # 校验邮箱是否重复（如果提供了邮箱）
-        # if params.email:
-        #     existing_email = await sys_user_crud.get_by_column(db, 'email', params.email)
-        #     if existing_email:
-        #         raise errors.ConflictError(msg='邮箱已存在')
+        # 校验邮箱是否重复（如果提供了邮箱）
+        if params.email:
+            existing_email = await sys_user_crud.get_by_column(db, 'email', params.email)
+            if existing_email:
+                raise errors.ConflictError(msg='邮箱已存在')
 
         # TODO: 校验部门是否存在
         # TODO: 校验角色是否存在
@@ -102,11 +127,17 @@ class SysUserService:
             if existing_user:
                 raise errors.ConflictError(msg='用户名已存在')
 
-        # # 校验手机号是否重复（如果提供了手机号且与当前不同）
-        # if params.phone and params.phone != user.phone:
-        #     existing_phone = await sys_user_crud.get_by_column(db, 'phone', params.phone)
-        #     if existing_phone:
-        #         raise errors.ConflictError(msg='手机号已存在')
+        # 校验手机号是否重复（如果提供了手机号且与当前不同）
+        if params.phone and params.phone != user.phone:
+            existing_phone = await sys_user_crud.get_by_column(db, 'phone', params.phone)
+            if existing_phone:
+                raise errors.ConflictError(msg='手机号已存在')
+
+        # 校验邮箱是否重复（如果提供了邮箱且与当前不同）
+        if params.email and params.email != user.email:
+            existing_email = await sys_user_crud.get_by_column(db, 'email', params.email)
+            if existing_email:
+                raise errors.ConflictError(msg='邮箱已存在')
 
         # # 校验邮箱是否重复（如果提供了邮箱且与当前不同）
         # if params.email and params.email != user.email:

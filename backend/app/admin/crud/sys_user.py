@@ -39,10 +39,17 @@ class CRUDSysUser:
         return result.scalar_one_or_none()
 
     async def get_by_column(self, db: 'AsyncSession', column: str, value: str) -> SysUser | None:
-        """根据指定列名和值获取用户信息（预加载 dept 和 roles）"""
+        """根据指定列名和值获取用户信息（预加载 dept 和 roles）
+
+        注意：
+        - 如果存在多条记录，只返回第一条
+        """
         column_attr = getattr(SysUser, column)
         stmt = (
-            select(SysUser).where(column_attr == value).options(selectinload(SysUser.dept), selectinload(SysUser.roles))
+            select(SysUser)
+            .where(column_attr == value)
+            .options(selectinload(SysUser.dept), selectinload(SysUser.roles))
+            .limit(1)
         )
         result = await db.execute(stmt)
         return result.scalar_one_or_none()
