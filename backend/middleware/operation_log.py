@@ -77,7 +77,11 @@ class OperationLogMiddleware(BaseHTTPMiddleware):
             route = request.scope.get('route')
             summary = route.summary or '' if route else ''
 
-            # TODO JWT 认证中间件 的 user 信息
+            try:
+                # 来源于 JWT 中间件
+                username = request.user.username
+            except AttributeError:
+                username = None
 
             # 日志记录
             log.debug(f'接口摘要：{summary}')
@@ -89,7 +93,7 @@ class OperationLogMiddleware(BaseHTTPMiddleware):
 
             operation_log = SysOperationLogCreate(
                 trace_id=get_request_trace_id(),
-                username=None,
+                username=username,
                 module=summary,
                 path=path,
                 method=method,
