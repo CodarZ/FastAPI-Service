@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from fastapi import FastAPI
 from fastapi_limiter import FastAPILimiter
+from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette_context.middleware import ContextMiddleware
 from starlette_context.plugins import RequestIdPlugin
 
@@ -17,6 +18,7 @@ from backend.core.config import settings
 from backend.database.postgresql import create_tables
 from backend.database.redis import redis_client
 from backend.middleware.access import AccessMiddleware
+from backend.middleware.jwt import JWTAuthMiddleware
 from backend.middleware.operation_log import OperationLogMiddleware
 from backend.middleware.state import StateMiddleware
 from backend.utils.route import ensure_unique_route_name, simplify_operation_id
@@ -36,6 +38,12 @@ def register_app():
         docs_url=settings.FASTAPI_DOCS_URL,
         default_response_class=MsgSpecJSONResponse,
         lifespan=init,
+        swagger_ui_parameters={
+            'defaultModelsExpandDepth': -1,
+            'docExpansion': 'none',
+            'persistAuthorization': True,
+            'displayRequestDuration': True,
+        },
     )
     register_logger()
 
@@ -95,6 +103,13 @@ def register_middleware(app: FastAPI) -> None:
     app.add_middleware(OperationLogMiddleware)
 
     app.add_middleware(StateMiddleware)
+
+    # JWT
+    app.add_middleware(
+        middleware_class=AuthenticationMiddleware,
+        backend=JWTAuthMiddleware(),
+        on_error=JWTAuthMiddleware.auth_exception_handler,
+    )
 
     app.add_middleware(AccessMiddleware)
 

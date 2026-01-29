@@ -1,5 +1,10 @@
 import dataclasses
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from datetime import datetime
+
 
 @dataclasses.dataclass
 class IpInfo:
@@ -32,3 +37,35 @@ class UserAgentInfo:
     browser_version: str | None = None  # 浏览器版本（如 91.0.4472.124）
     device: str | None = None  # 设备类型（如 Mobile, Tablet, Desktop）
     device_model: str | None = None  # 具体的设备型号（如 iPhone 12, Galaxy S21）
+
+
+# ======================== Access Token 数据类 ========================
+@dataclasses.dataclass
+class AccessToken:
+    access_token: str
+    expire_time: 'datetime'
+    session_uuid: str
+
+
+@dataclasses.dataclass
+class RefreshToken:
+    refresh_token: str
+    expire_time: 'datetime'
+
+
+@dataclasses.dataclass
+class TokenPayload:
+    user_id: int
+    session_uuid: str
+    expire_time: 'datetime'
+
+
+@dataclasses.dataclass
+class NewToken:
+    """新访问令牌"""
+
+    access_token: str
+    access_expire_time: 'datetime'
+    refresh_token: str
+    refresh_expire_time: 'datetime'
+    session_uuid: str
