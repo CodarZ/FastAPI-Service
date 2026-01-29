@@ -26,14 +26,15 @@ class LoginRequest(SchemaBase):
     password: str = Field(description='密码')
 
 
-class SwaggerLoginRequest(SchemaBase):
-    """登录请求(用于 Swagger UI)"""
-
-    username: str = Field(description='用户名')
-    password: str = Field(description='密码')
-
-
 class LoginResponse(AccessTokenBase):
     """登录响应"""
 
+    user: SysUserDetail = Field(description='用户信息')
+
+
+class SwaggerLoginResponse(SchemaBase):
+    """Swagger 认证令牌"""
+
+    access_token: str = Field(description='访问令牌')
+    token_type: str = Field('Bearer', description='令牌类型')
     user: SysUserDetail = Field(description='用户信息')
