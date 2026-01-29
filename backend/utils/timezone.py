@@ -6,6 +6,13 @@ from backend.core.config import settings
 
 
 class TimeZone:
+    def to_utc(self, dt):
+        """将 datetime 对象转换为 UTC 时区 datetime 对象"""
+        from datetime import timezone as dt_timezone
+
+        aware_dt = self.to_timezone(dt)
+        return aware_dt.astimezone(dt_timezone.utc)
+
     """时区工具类，根据配置项做统一转换/格式化。"""
 
     def __init__(self) -> None:
