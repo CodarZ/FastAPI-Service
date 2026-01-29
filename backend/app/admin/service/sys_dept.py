@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Any
 
-from backend.app.admin.crud import sys_dept_crud
+from backend.app.admin.crud import sys_dept_crud, sys_user_crud
 from backend.app.admin.schema.sys_dept import (
     SysDeptBatchDelete,
     SysDeptBatchPatchStatus,
@@ -238,7 +238,9 @@ class SysDeptService:
         if dept.children:
             raise errors.RequestError(msg='该部门下存在子部门, 请先删除子部门')
 
-        # TODO: 检查该部门下是否有用户
+        # 检查该部门下是否有用户
+        if await sys_user_crud.has_users_in_dept(db, pk):
+            raise errors.RequestError(msg='该部门下存在用户, 请先移除用户')
 
         return await sys_dept_crud.delete(db, pk=pk)
 
