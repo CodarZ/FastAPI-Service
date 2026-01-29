@@ -2,7 +2,7 @@
 
 from typing import TYPE_CHECKING
 
-from backend.app.admin.crud import sys_role_crud
+from backend.app.admin.crud import sys_dept_crud, sys_menu_crud, sys_role_crud
 from backend.app.admin.schema.sys_role import (
     SysRoleBatchDelete,
     SysRoleBatchPatchStatus,
@@ -99,7 +99,12 @@ class SysRoleService:
         if await sys_role_crud.get_by_column(db, 'code', params.code):
             raise errors.ConflictError(msg='权限字符串已存在')
 
-        # TODO: 校验菜单是否存在
+        # 校验菜单是否存在（如果提供了菜单ID列表）
+        if params.menu_ids:
+            existing_menu_ids = await sys_menu_crud.get_existing_ids(db, params.menu_ids)
+            missing_menu_ids = set(params.menu_ids) - set(existing_menu_ids)
+            if missing_menu_ids:
+                raise errors.NotFoundError(msg=f'以下菜单不存在: {list(missing_menu_ids)}')
 
         await sys_role_crud.create(db, params)
 
@@ -123,7 +128,12 @@ class SysRoleService:
             if existing_role:
                 raise errors.ConflictError(msg='权限字符串已存在')
 
-        # TODO: 校验菜单是否存在
+        # 校验菜单是否存在（如果提供了菜单ID列表）
+        if params.menu_ids:
+            existing_menu_ids = await sys_menu_crud.get_existing_ids(db, params.menu_ids)
+            missing_menu_ids = set(params.menu_ids) - set(existing_menu_ids)
+            if missing_menu_ids:
+                raise errors.NotFoundError(msg=f'以下菜单不存在: {list(missing_menu_ids)}')
 
         return await sys_role_crud.update(db, pk, params)
 
@@ -142,7 +152,12 @@ class SysRoleService:
         if params.data_scope == 3 and not params.dept_ids:
             raise errors.RequestError(msg='自定义数据权限时, 部门列表不能为空')
 
-        # TODO: 校验部门是否存在
+        # 校验部门是否存在（如果提供了部门ID列表）
+        if params.dept_ids:
+            existing_dept_ids = await sys_dept_crud.get_existing_ids(db, params.dept_ids)
+            missing_dept_ids = set(params.dept_ids) - set(existing_dept_ids)
+            if missing_dept_ids:
+                raise errors.NotFoundError(msg=f'以下部门不存在: {list(missing_dept_ids)}')
 
         return await sys_role_crud.update_data_scope(db, pk, params.data_scope, params.dept_ids)
 
@@ -151,7 +166,12 @@ class SysRoleService:
         """更新角色菜单映射（多对多关系维护）"""
         await SysRoleService._get_role_or_404(db, params.role_id)
 
-        # TODO: 校验菜单是否存在
+        # 校验菜单是否存在（如果提供了菜单ID列表）
+        if params.menu_ids:
+            existing_menu_ids = await sys_menu_crud.get_existing_ids(db, params.menu_ids)
+            missing_menu_ids = set(params.menu_ids) - set(existing_menu_ids)
+            if missing_menu_ids:
+                raise errors.NotFoundError(msg=f'以下菜单不存在: {list(missing_menu_ids)}')
 
         return await sys_role_crud.update_role_menus(db, params.role_id, params.menu_ids)
 
@@ -160,7 +180,12 @@ class SysRoleService:
         """更新角色部门映射（多对多关系维护, 用于自定义的数据权限）"""
         await SysRoleService._get_role_or_404(db, params.role_id)
 
-        # TODO: 校验部门是否存在
+        # 校验部门是否存在（如果提供了部门ID列表）
+        if params.dept_ids:
+            existing_dept_ids = await sys_dept_crud.get_existing_ids(db, params.dept_ids)
+            missing_dept_ids = set(params.dept_ids) - set(existing_dept_ids)
+            if missing_dept_ids:
+                raise errors.NotFoundError(msg=f'以下部门不存在: {list(missing_dept_ids)}')
 
         return await sys_role_crud.update_role_depts(db, params.role_id, params.dept_ids)
 
