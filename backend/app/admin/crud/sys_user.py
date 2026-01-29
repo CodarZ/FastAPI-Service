@@ -9,6 +9,7 @@ from sqlalchemy.orm import selectinload
 
 from backend.app.admin.model import SysDept, SysRole, SysUser
 from backend.common.security.password import get_hashed_password
+from backend.utils.timezone import timezone
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -205,6 +206,14 @@ class CRUDSysUser:
         salt = bcrypt.gensalt()
         hashed_password = get_hashed_password(new_password, salt)
         stmt = update(SysUser).where(SysUser.id == pk).values(password=hashed_password, salt=salt)
+        result = await db.execute(stmt)
+        result = cast('CursorResult[Any]', result)
+        return result.rowcount
+
+    async def update_login_time(self, db: 'AsyncSession', pk: int) -> int:
+        """更新用户最后登录时间"""
+
+        stmt = update(SysUser).where(SysUser.id == pk).values(last_login_time=timezone.now())
         result = await db.execute(stmt)
         result = cast('CursorResult[Any]', result)
         return result.rowcount

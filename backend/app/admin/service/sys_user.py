@@ -288,5 +288,10 @@ class SysUserService:
             'skipped_superuser': superuser_ids,
         }
 
+    @staticmethod
+    async def update_login_time(*, db: 'AsyncSession', user_id: int) -> int:
+        """更新用户最后登录时间"""
+        return await sys_user_crud.update_login_time(db, user_id)
+
 
 sys_user_service = SysUserService()
