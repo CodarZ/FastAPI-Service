@@ -9,5 +9,5 @@ from backend.common.security.jwt import DependsJWTAuth
 router = RBACRouter()
 
 router.include_router(auth_router)
-router.include_router(sys_router)
+router.include_router(sys_router, dependencies=[DependsJWTAuth])
 router.include_router(log_router, dependencies=[DependsJWTAuth])
