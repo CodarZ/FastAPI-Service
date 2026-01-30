@@ -1,6 +1,6 @@
 [project]
 name = "fastapi-service"
-version = "0.18.2"
+version = "0.19.0"
 description = "FastAPI Service"
 readme = "README.md"
 requires-python = ">=3.14"
