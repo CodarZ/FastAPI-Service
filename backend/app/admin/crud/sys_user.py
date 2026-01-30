@@ -1,6 +1,6 @@
 """用户 CRUD"""
 
-from typing import TYPE_CHECKING, Any, List, cast
+from typing import TYPE_CHECKING, Any, List, Tuple, cast
 
 import bcrypt
 
@@ -66,6 +66,15 @@ class CRUDSysUser:
         stmt = select(SysUser.id).where(SysUser.id.in_(user_ids), SysUser.is_superuser)
         result = await db.execute(stmt)
         return list(result.scalars().all())
+
+    async def get_permissions(self, db: 'AsyncSession', user_id: int) -> Select[Tuple[SysUser]]:
+        """获取用户权限集合"""
+
+        return (
+            select(SysUser)
+            .options(selectinload(SysUser.roles).selectinload(SysRole.menus))
+            .where(SysUser.id == user_id)
+        )
 
     async def has_users_in_dept(self, db: 'AsyncSession', dept_id: int) -> bool:
         """检查部门下是否有用户"""

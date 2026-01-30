@@ -89,10 +89,10 @@ class SysMenuService:
 
     @staticmethod
     def _build_route_tree(menus: list['SysMenu'], parent_id: int | None = None) -> list[dict]:
-        """递归构建前端路由树（只包含目录、菜单、外链、嵌入式组件，排除按钮）"""
+        """递归构建前端路由树（只包含目录、菜单、外链、嵌入式组件, 排除按钮）"""
         tree = []
         for menu in menus:
-            # 只处理启用状态的菜单，排除按钮类型（type=2）
+            # 只处理启用状态的菜单, 排除按钮类型（type=2）
             if menu.parent_id == parent_id and menu.status == 1 and menu.type != 2:
                 children = SysMenuService._build_route_tree(menus, menu.id)
                 node = {
@@ -222,7 +222,7 @@ class SysMenuService:
     async def update(*, db: 'AsyncSession', pk: int, params: SysMenuUpdate) -> int:
         """更新菜单信息"""
         # 检查菜单是否存在
-        await SysMenuService._get_menu_or_404(db, pk)
+        menu = await SysMenuService._get_menu_or_404(db, pk)
 
         # 校验上级菜单是否存在
         if params.parent_id:
@@ -246,7 +246,18 @@ class SysMenuService:
         if params.permission and not await sys_menu_crud.check_permission_unique(db, params.permission, exclude_id=pk):
             raise errors.ConflictError(msg='权限标识已存在')
 
-        return await sys_menu_crud.update(db, pk, params)
+        # 检查权限标识是否发生变更
+        permission_changed = params.permission is not None and params.permission != menu.permission
+
+        result = await sys_menu_crud.update(db, pk, params)
+
+        # 权限标识变更时, 失效所有用户的权限缓存
+        if permission_changed:
+            from backend.common.security.permission import permission_service
+
+            await permission_service.invalidate_all_permissions()
+
+        return result
 
     @staticmethod
     async def patch_status(*, db: 'AsyncSession', pk: int, params: SysMenuPatchStatus) -> int:
@@ -300,13 +311,21 @@ class SysMenuService:
     @staticmethod
     async def delete(*, db: 'AsyncSession', pk: int) -> int:
         """删除菜单"""
-        await SysMenuService._get_menu_or_404(db, pk)
+        menu = await SysMenuService._get_menu_or_404(db, pk)
 
         # 检查是否有子菜单
         if await sys_menu_crud.check_has_children(db, pk):
-            raise errors.ForbiddenError(msg='该菜单存在子菜单，无法删除')
+            raise errors.ForbiddenError(msg='该菜单存在子菜单, 无法删除')
 
-        return await sys_menu_crud.delete(db, pk)
+        result = await sys_menu_crud.delete(db, pk)
+
+        # 如果删除的菜单有权限标识, 失效所有用户的权限缓存
+        if menu.permission:
+            from backend.common.security.permission import permission_service
+
+            await permission_service.invalidate_all_permissions()
+
+        return result
 
     @staticmethod
     async def batch_delete(*, db: 'AsyncSession', params: SysMenuBatchDelete) -> int:
@@ -319,7 +338,7 @@ class SysMenuService:
         # 检查每个菜单是否有子菜单
         for menu_id in params.menu_ids:
             if await sys_menu_crud.check_has_children(db, menu_id):
-                raise errors.ForbiddenError(msg=f'菜单 {menu_id} 存在子菜单，无法删除')
+                raise errors.ForbiddenError(msg=f'菜单 {menu_id} 存在子菜单, 无法删除')
 
         return await sys_menu_crud.batch_delete(db, params.menu_ids)
 

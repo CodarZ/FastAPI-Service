@@ -90,6 +90,25 @@ class SysUserService:
             return [SysUserListItem.model_validate(user) for user in users]
 
     @staticmethod
+    async def get_permissions(*, user_id: int) -> set[str]:
+        """获取用户权限列表"""
+        async with async_session.begin() as db:
+            permissions: set[str] = set()
+            stmt = await sys_user_crud.get_permissions(db, user_id)
+            result = await db.execute(stmt)
+            user = result.scalar_one_or_none()
+            if not user:
+                return permissions
+
+            for role in user.roles:
+                if role.status != 1:
+                    continue
+                for menu in role.menus:
+                    if menu.status == 1 and menu.permission:
+                        permissions.add(menu.permission)
+            return permissions
+
+    @staticmethod
     async def create(*, db: 'AsyncSession', params: SysUserCreate):
         """创建新用户"""
         # 校验用户名是否重复

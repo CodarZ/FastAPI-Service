@@ -5,8 +5,10 @@ from starlette.authentication import AuthCredentials, AuthenticationBackend, Aut
 
 from backend.common.exception.errors import TokenError
 from backend.common.log import log
+from backend.common.request.context import ctx
 from backend.common.response.code import StandardResponseStatus
 from backend.common.security.jwt import jwt_authentication
+from backend.common.security.permission import permission_service
 from backend.core.config import settings
 from backend.utils.serializers import MsgSpecJSONResponse
 
@@ -99,6 +101,11 @@ class JWTAuthMiddleware(AuthenticationBackend):
         try:
             user_detail = await jwt_authentication(token)
             user = _UserInfo(user_detail)
+
+            # 预加载用户权限到 ctx，供后续 RBAC 校验使用
+            permissions = await permission_service.get_user_permissions(user_detail.id)
+            ctx.permissions = permissions
+
         except TokenError as exc:
             raise _AuthenticationError(code=exc.code, msg=exc.detail, headers=exc.headers) from exc
 

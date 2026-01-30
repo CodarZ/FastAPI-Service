@@ -85,6 +85,14 @@ class DataRuleExpressionEnum(IntEnum):
     NOT_IN = 7  # not in
 
 
+class RBACLogical(StrEnum):
+    """RBAC 逻辑操作符"""
+
+    AND = 'AND'  # 用户必须拥有所有指定权限
+    OR = 'OR'  # 用户拥有任意一个指定权限即可
+    NOT = 'NOT'  # 用户不能拥有指定权限（黑名单场景）
+
+
 class MethodEnum(StrEnum):
     """请求方法"""
 

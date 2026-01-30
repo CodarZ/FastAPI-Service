@@ -1,7 +1,7 @@
 """角色服务类"""
 
 from typing import TYPE_CHECKING
-
+from backend.common.security.permission import permission_service
 from backend.app.admin.crud import sys_dept_crud, sys_menu_crud, sys_role_crud
 from backend.app.admin.schema.sys_role import (
     SysRoleBatchDelete,
@@ -135,7 +135,13 @@ class SysRoleService:
             if missing_menu_ids:
                 raise errors.NotFoundError(msg=f'以下菜单不存在: {list(missing_menu_ids)}')
 
-        return await sys_role_crud.update(db, pk, params)
+        result = await sys_role_crud.update(db, pk, params)
+
+        # 角色菜单变更时, 失效该角色所有用户的权限缓存
+        if params.menu_ids is not None:
+            await permission_service.invalidate_role_users_permissions(pk)
+
+        return result
 
     @staticmethod
     async def patch_status(*, db: 'AsyncSession', pk: int, params: SysRolePatchStatus) -> int:
@@ -173,7 +179,12 @@ class SysRoleService:
             if missing_menu_ids:
                 raise errors.NotFoundError(msg=f'以下菜单不存在: {list(missing_menu_ids)}')
 
-        return await sys_role_crud.update_role_menus(db, params.role_id, params.menu_ids)
+        result = await sys_role_crud.update_role_menus(db, params.role_id, params.menu_ids)
+
+        # 角色菜单变更时，失效该角色所有用户的权限缓存
+        await permission_service.invalidate_role_users_permissions(params.role_id)
+
+        return result
 
     @staticmethod
     async def update_role_depts(*, db: 'AsyncSession', params: SysRoleDeptMap) -> int:
@@ -298,7 +309,7 @@ class SysRoleService:
         # 校验角色是否存在
         await SysRoleService._get_role_or_404(db, pk)
 
-        # TODO: 检查该角色是否被用户使用（可选，根据业务需求）
+        # TODO: 检查该角色是否被用户使用（可选, 根据业务需求）
 
         return await sys_role_crud.delete(db, pk=pk)
 

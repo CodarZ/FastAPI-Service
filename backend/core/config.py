@@ -105,6 +105,16 @@ class Settings(BaseSettings):
         f'{FASTAPI_API_ROUTE_PREFIX}/auth/login',
     ]  # JWT / RBAC 路由白名单
 
+    # ============== RBAC 权限校验 ==============
+    RBAC_PERMISSION_REDIS_PREFIX: str = 'fs:rbac:permission'  # 用户权限缓存前缀
+    RBAC_PERMISSION_EXPIRE_SECONDS: int = 36000  # 权限缓存过期时间 10 小时
+    RBAC_WHITE_PATTERNS: list[str] = [
+        r'^/auth/userinfo$',
+        r'^/auth/logout$',
+        r'^/auth/refresh$',
+    ]  # RBAC 鉴权白名单 - 支持正则表达式匹配，这些路径跳过权限校验（仍需 JWT 认证）
+    RBAC_WHITE_PERMISSION: list[str] = []  # 权限标识白名单 - 特定权限标识跳过校验（菜单/按钮权限）
+
     # ============== Cookies ==============
     COOKIE_REFRESH_TOKEN_KEY: str = 'fs_refresh_token'  # cookie 中存放 refresh_token 的名字
     COOKIE_REFRESH_TOKEN_EXPIRE_SECONDS: int = TOKEN_REFRESH_EXPIRE_SECONDS
