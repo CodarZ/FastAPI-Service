@@ -19,6 +19,7 @@ from backend.app.admin.schema.sys_user import (
 from backend.app.admin.service import sys_user_service
 from backend.common.response.base import ResponseSchemaModel, response_base
 from backend.common.response.code import ResponseStatus
+from backend.common.security.rbac import DependsRBAC
 from backend.database.postgresql import CurrentSession, CurrentSessionTransaction
 
 router = APIRouter()
@@ -31,25 +32,55 @@ async def create_user(db: CurrentSessionTransaction, params: SysUserCreate):
     return response_base.success(res=ResponseStatus(200, '用户创建成功'))
 
 
-@router.get('/info', summary='获取用户信息', response_model=ResponseSchemaModel[SysUserInfo])
+@router.get(
+    '/info',
+    summary='获取用户信息',
+    response_model=ResponseSchemaModel[SysUserInfo],
+    dependencies=[DependsRBAC('sys:user:info')],
+)
 async def get_user_info(db: CurrentSession, user_id: Annotated[int, Query(description='用户 ID')]):
     data = await sys_user_service.get_user_info(db=db, pk=user_id)
     return response_base.success(data=data)
 
 
-@router.get('/detail', summary='获取用户详情', response_model=ResponseSchemaModel[SysUserDetail])
+@router.get(
+    '/detail',
+    summary='获取用户详情',
+    response_model=ResponseSchemaModel[SysUserDetail],
+    dependencies=[DependsRBAC('sys:user:detail')],
+)
 async def get_user_detail(db: CurrentSession, user_id: Annotated[int, Query(description='用户 ID')]):
     data = await sys_user_service.get_user_detail(db=db, pk=user_id)
     return response_base.success(data=data)
 
 
-@router.get('/list', summary='获取用户列表', response_model=ResponseSchemaModel[list[SysUserListItem]])
+@router.get(
+    '/permissions',
+    summary='获取用户权限列表',
+    response_model=ResponseSchemaModel[list[str]],
+    dependencies=[DependsRBAC('sys:user:permissions')],
+)
+async def get_user_permissions(user_id: Annotated[int, Query(description='用户 ID')]):
+    """获取指定用户的所有权限标识
+
+    返回用户通过角色关联获得的所有菜单权限标识列表
+    """
+    permissions = await sys_user_service.get_permissions(user_id=user_id)
+    return response_base.success(data=list(permissions))
+
+
+@router.get(
+    '/list',
+    summary='获取用户列表',
+    response_model=ResponseSchemaModel[list[SysUserListItem]],
+    dependencies=[DependsRBAC('sys:user:list')],
+)
 async def get_user_list(params: Annotated[SysUserFilter, Query()]):
     data = await sys_user_service.get_list(params=params)
     return response_base.success(data=data)
 
 
-@router.put('/update', summary='更新用户信息')
+@router.put('/update', summary='更新用户信息', dependencies=[DependsRBAC('sys:user:update')])
 async def update_user(db: CurrentSessionTransaction, params: SysUserUpdate):
     count = await sys_user_service.update(db=db, pk=params.id, params=params)
     if count == 0:
@@ -57,7 +88,7 @@ async def update_user(db: CurrentSessionTransaction, params: SysUserUpdate):
     return response_base.success(res=ResponseStatus(200, '用户信息更新成功'))
 
 
-@router.patch('/update/status', summary='更新用户状态')
+@router.patch('/update/status', summary='更新用户状态', dependencies=[DependsRBAC('sys:user:update')])
 async def patch_user_status(db: CurrentSessionTransaction, params: SysUserPatchStatus):
     count = await sys_user_service.patch_status(db=db, pk=params.id, params=params)
     if count == 0:
@@ -65,7 +96,7 @@ async def patch_user_status(db: CurrentSessionTransaction, params: SysUserPatchS
     return response_base.success(res=ResponseStatus(200, '用户状态更新成功'))
 
 
-@router.patch('/update/profile', summary='更新用户资料')
+@router.patch('/update/profile', summary='更新用户资料', dependencies=[DependsRBAC('sys:user:update')])
 async def patch_user_profile(db: CurrentSessionTransaction, params: SysUserPatchProfile):
     count = await sys_user_service.patch_profile(db=db, pk=params.id, params=params)
     if count == 0:
@@ -73,7 +104,7 @@ async def patch_user_profile(db: CurrentSessionTransaction, params: SysUserPatch
     return response_base.success(res=ResponseStatus(200, '用户资料更新成功'))
 
 
-@router.patch('/update/password', summary='修改用户密码')
+@router.patch('/update/password', summary='修改用户密码', dependencies=[DependsRBAC('sys:user:update')])
 async def patch_user_password(db: CurrentSessionTransaction, params: SysUserPatchPassword):
     """用户修改自己的密码
 
@@ -85,7 +116,7 @@ async def patch_user_password(db: CurrentSessionTransaction, params: SysUserPatc
     return response_base.success(res=ResponseStatus(200, '密码修改成功'))
 
 
-@router.patch('/reset/password', summary='重置用户密码')
+@router.patch('/reset/password', summary='重置用户密码', dependencies=[DependsRBAC('sys:user:reset')])
 async def reset_user_password(db: CurrentSessionTransaction, params: SysUserResetPassword):
     """管理员重置用户密码
 
@@ -97,7 +128,7 @@ async def reset_user_password(db: CurrentSessionTransaction, params: SysUserRese
     return response_base.success(res=ResponseStatus(200, '密码重置成功'))
 
 
-@router.delete('/delete', summary='删除用户')
+@router.delete('/delete', summary='删除用户', dependencies=[DependsRBAC('sys:user:delete')])
 async def delete_user(db: CurrentSessionTransaction, user_id: Annotated[int, Query(description='用户 ID')]):
     """删除单个用户
 
@@ -110,7 +141,7 @@ async def delete_user(db: CurrentSessionTransaction, user_id: Annotated[int, Que
     return response_base.success(res=ResponseStatus(200, '用户删除成功'))
 
 
-@router.delete('/batch/delete', summary='批量删除用户')
+@router.delete('/batch/delete', summary='批量删除用户', dependencies=[DependsRBAC('sys:user:delete')])
 async def batch_delete_user(db: CurrentSessionTransaction, params: SysUserBatchDelete):
     """批量删除用户
 
@@ -127,7 +158,7 @@ async def batch_delete_user(db: CurrentSessionTransaction, params: SysUserBatchD
     )
 
 
-@router.patch('/batch/update/status', summary='批量更新用户状态')
+@router.patch('/batch/update/status', summary='批量更新用户状态', dependencies=[DependsRBAC('sys:user:update')])
 async def batch_patch_user_status(db: CurrentSessionTransaction, params: SysUserBatchPatchStatus):
     """批量更新用户状态
 

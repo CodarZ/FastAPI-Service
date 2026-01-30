@@ -21,12 +21,18 @@ from backend.app.admin.schema.sys_login_log import (
 from backend.app.admin.service import sys_login_log_service
 from backend.common.response.base import ResponseSchemaModel, response_base
 from backend.common.response.code import ResponseStatus
+from backend.common.security.rbac import DependsRBAC
 from backend.database.postgresql import CurrentSession, CurrentSessionTransaction
 
 router = APIRouter()
 
 
-@router.get('/detail', summary='获取登录日志详情', response_model=ResponseSchemaModel[SysLoginLogDetail])
+@router.get(
+    '/detail',
+    summary='获取登录日志详情',
+    response_model=ResponseSchemaModel[SysLoginLogDetail],
+    dependencies=[DependsRBAC('log:login:detail')],
+)
 async def get_login_log_detail(db: CurrentSession, log_id: Annotated[int, Query(description='日志 ID')]):
     """获取登录日志详细信息
 
@@ -43,7 +49,12 @@ async def get_login_log_detail(db: CurrentSession, log_id: Annotated[int, Query(
     return response_base.success(data=data)
 
 
-@router.get('/list', summary='获取登录日志列表', response_model=ResponseSchemaModel[list[SysLoginLogListItem]])
+@router.get(
+    '/list',
+    summary='获取登录日志列表',
+    response_model=ResponseSchemaModel[list[SysLoginLogListItem]],
+    dependencies=[DependsRBAC('log:login:list')],
+)
 async def get_login_log_list(params: Annotated[SysLoginLogFilter, Query()]):
     """获取登录日志列表
 
@@ -66,7 +77,7 @@ async def get_login_log_list(params: Annotated[SysLoginLogFilter, Query()]):
     return response_base.success(data=data)
 
 
-@router.delete('/delete', summary='删除登录日志')
+@router.delete('/delete', summary='删除登录日志', dependencies=[DependsRBAC('log:login:delete')])
 async def delete_login_log(db: CurrentSessionTransaction, log_id: Annotated[int, Query(description='日志 ID')]):
     """删除单条登录日志"""
     count = await sys_login_log_service.delete(db=db, pk=log_id)
@@ -79,6 +90,7 @@ async def delete_login_log(db: CurrentSessionTransaction, log_id: Annotated[int,
     '/batch/delete',
     summary='批量删除登录日志',
     response_model=ResponseSchemaModel[SysLoginLogBatchDeleteResult],
+    dependencies=[DependsRBAC('log:login:delete')],
 )
 async def batch_delete_login_log(db: CurrentSessionTransaction, params: SysLoginLogBatchDelete):
     """批量删除登录日志
@@ -101,6 +113,7 @@ async def batch_delete_login_log(db: CurrentSessionTransaction, params: SysLogin
     '/clear',
     summary='清理登录日志',
     response_model=ResponseSchemaModel[SysLoginLogClearResult],
+    dependencies=[DependsRBAC('log:login:clear')],
 )
 async def clear_login_log(db: CurrentSessionTransaction, params: SysLoginLogClear):
     """批量清理登录日志
@@ -131,6 +144,7 @@ async def clear_login_log(db: CurrentSessionTransaction, params: SysLoginLogClea
     '/statistics',
     summary='获取登录日志统计',
     response_model=ResponseSchemaModel[SysLoginLogStatistics],
+    dependencies=[DependsRBAC('log:login:statistics')],
 )
 async def get_login_log_statistics(params: Annotated[SysLoginLogFilter, Query()]):
     """获取登录日志统计信息

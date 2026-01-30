@@ -23,19 +23,30 @@ from backend.app.admin.schema.sys_operation_log import (
 from backend.app.admin.service import sys_operation_log_service
 from backend.common.response.base import ResponseSchemaModel, response_base
 from backend.common.response.code import ResponseStatus
+from backend.common.security.rbac import DependsRBAC
 from backend.database.postgresql import CurrentSession, CurrentSessionTransaction
 
 router = APIRouter()
 
 
-@router.get('/detail', summary='获取操作日志详情', response_model=ResponseSchemaModel[SysOperationLogDetail])
+@router.get(
+    '/detail',
+    summary='获取操作日志详情',
+    response_model=ResponseSchemaModel[SysOperationLogDetail],
+    dependencies=[DependsRBAC('log:operation:detail')],
+)
 async def get_operation_log_detail(db: CurrentSession, log_id: Annotated[int, Query(description='日志 ID')]):
     """获取操作日志详细信息"""
     data = await sys_operation_log_service.get_log_detail(db=db, pk=log_id)
     return response_base.success(data=data)
 
 
-@router.get('/detail/trace', summary='根据跟踪ID获取日志', response_model=ResponseSchemaModel[SysOperationLogDetail])
+@router.get(
+    '/detail/trace',
+    summary='根据跟踪ID获取日志',
+    response_model=ResponseSchemaModel[SysOperationLogDetail],
+    dependencies=[DependsRBAC('log:operation:detail')],
+)
 async def get_operation_log_by_trace_id(db: CurrentSession, trace_id: Annotated[str, Query(description='跟踪 ID')]):
     """根据跟踪ID获取操作日志详情
 
@@ -45,7 +56,12 @@ async def get_operation_log_by_trace_id(db: CurrentSession, trace_id: Annotated[
     return response_base.success(data=data)
 
 
-@router.get('/list', summary='获取操作日志列表', response_model=ResponseSchemaModel[list[SysOperationLogListItem]])
+@router.get(
+    '/list',
+    summary='获取操作日志列表',
+    response_model=ResponseSchemaModel[list[SysOperationLogListItem]],
+    dependencies=[DependsRBAC('log:operation:list')],
+)
 async def get_operation_log_list(params: Annotated[SysOperationLogFilter, Query()]):
     """获取操作日志列表
 
@@ -60,7 +76,7 @@ async def get_operation_log_list(params: Annotated[SysOperationLogFilter, Query(
     return response_base.success(data=data)
 
 
-@router.delete('/delete', summary='删除操作日志')
+@router.delete('/delete', summary='删除操作日志', dependencies=[DependsRBAC('log:operation:delete')])
 async def delete_operation_log(db: CurrentSessionTransaction, log_id: Annotated[int, Query(description='日志 ID')]):
     """删除单条操作日志"""
     count = await sys_operation_log_service.delete(db=db, pk=log_id)
@@ -69,7 +85,7 @@ async def delete_operation_log(db: CurrentSessionTransaction, log_id: Annotated[
     return response_base.success(res=ResponseStatus(200, '日志删除成功'))
 
 
-@router.delete('/batch/delete', summary='批量删除操作日志')
+@router.delete('/batch/delete', summary='批量删除操作日志', dependencies=[DependsRBAC('log:operation:delete')])
 async def batch_delete_operation_log(db: CurrentSessionTransaction, params: SysOperationLogBatchDelete):
     """批量删除操作日志
 
@@ -84,7 +100,7 @@ async def batch_delete_operation_log(db: CurrentSessionTransaction, params: SysO
     )
 
 
-@router.delete('/clear', summary='清理操作日志')
+@router.delete('/clear', summary='清理操作日志', dependencies=[DependsRBAC('log:operation:clear')])
 async def clear_operation_log(db: CurrentSessionTransaction, params: SysOperationLogClear):
     """批量清理操作日志
 
@@ -107,7 +123,12 @@ async def clear_operation_log(db: CurrentSessionTransaction, params: SysOperatio
     )
 
 
-@router.get('/statistics', summary='获取操作日志统计', response_model=ResponseSchemaModel[SysOperationLogStatistics])
+@router.get(
+    '/statistics',
+    summary='获取操作日志统计',
+    response_model=ResponseSchemaModel[SysOperationLogStatistics],
+    dependencies=[DependsRBAC('log:operation:statistics')],
+)
 async def get_operation_log_statistics(params: Annotated[SysOperationLogFilter, Query()]):
     """获取操作日志统计信息
 
@@ -122,7 +143,12 @@ async def get_operation_log_statistics(params: Annotated[SysOperationLogFilter, 
     return response_base.success(data=data)
 
 
-@router.get('/trend', summary='获取操作日志趋势', response_model=ResponseSchemaModel[list[SysOperationLogTrend]])
+@router.get(
+    '/trend',
+    summary='获取操作日志趋势',
+    response_model=ResponseSchemaModel[list[SysOperationLogTrend]],
+    dependencies=[DependsRBAC('log:operation:trend')],
+)
 async def get_operation_log_trend(params: Annotated[SysOperationLogTrendQuery, Query()]):
     """获取操作日志趋势（按 `operated_time` 日期统计）
 
@@ -141,6 +167,7 @@ async def get_operation_log_trend(params: Annotated[SysOperationLogTrendQuery, Q
     '/module/statistics',
     summary='获取模块调用统计',
     response_model=ResponseSchemaModel[list[SysOperationLogModuleStats]],
+    dependencies=[DependsRBAC('log:operation:module')],
 )
 async def get_operation_log_module_stats(params: Annotated[SysOperationLogModuleStatsQuery, Query()]):
     """获取操作日志模块统计
