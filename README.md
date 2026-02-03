@@ -137,8 +137,11 @@ uv tree
 # 查看过时的依赖
 uv pip list --outdated
 
-# 检查依赖的安全漏洞（需要额外工具）
+# 检查依赖的安全漏洞
 uv run pip-audit
+
+# 自动修复
+uv run pip-audit --fix
 ```
 
 #### 完整升级流程（推荐）
@@ -156,10 +159,13 @@ cp uv.lock uv.lock.backup
 uv lock --upgrade
 uv sync
 
-# 步骤 4: 运行测试确保兼容性
+# 步骤 4: 检查安全漏洞
+uv run pip-audit
+
+# 步骤 5: 运行测试确保兼容性
 uv run pytest
 
-# 步骤 5: 运行代码检查
+# 步骤 6: 运行代码检查
 uv run pre-commit run --all-files
 
 # 步骤 6: 如果测试失败，回滚
