@@ -15,6 +15,7 @@ from backend.common.request.limit import http_callback_limit
 from backend.common.response.code import StandardResponseStatus
 from backend.common.schema import auto_rebuild_all_schemas
 from backend.core.config import settings
+from backend.database.init_data import init_database_data
 from backend.database.postgresql import create_tables
 from backend.database.redis import redis_client
 from backend.middleware.access import AccessMiddleware
@@ -64,6 +65,9 @@ async def init(app: FastAPI) -> AsyncGenerator[None, None]:
 
     # 创建数据库表
     await create_tables()
+
+    # 初始化数据库数据（创建初始超级管理员等）
+    await init_database_data()
 
     # 连接 Redis
     await redis_client.open()

@@ -164,6 +164,13 @@ class Settings(BaseSettings):
     OPERATION_LOG_QUEUE_BATCH_CONSUME_SIZE: int = 100
     OPERATION_LOG_QUEUE_TIMEOUT: int = 60
 
+    # ============== 初始超级管理员 ==============
+    INIT_SUPERUSER_USERNAME: str = 'superadmin'
+    INIT_SUPERUSER_PASSWORD: str = '123456'
+    INIT_SUPERUSER_NICKNAME: str = '超级管理员'
+    INIT_SUPERUSER_EMAIL: str | None = None
+    INIT_SUPERUSER_PHONE: str | None = None
+
     @model_validator(mode='before')
     @classmethod
     def validator_api_url(cls, values):
