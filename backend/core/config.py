@@ -152,6 +152,7 @@ class Settings(BaseSettings):
         FASTAPI_DOCS_URL,
         FASTAPI_OPENAPI_URL,
         FASTAPI_API_ROUTE_PREFIX,
+        '/monitor/health',
     ]  # 请求路径不记录日志
     OPERATION_LOG_ENCRYPT_KEY_INCLUDE: list[str] = [
         'password',
