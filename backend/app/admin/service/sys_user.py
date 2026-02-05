@@ -16,6 +16,7 @@ from backend.app.admin.schema.sys_user import (
     SysUserUpdate,
 )
 from backend.common.exception import errors
+from backend.common.pagination import PageList, paging_data
 from backend.common.security.password import verify_password
 from backend.database.postgresql import async_session
 
@@ -80,14 +81,25 @@ class SysUserService:
         return SysUserDetail.model_validate(user)
 
     @staticmethod
-    async def get_list(*, params: SysUserFilter) -> list[SysUserListItem]:
+    async def get_list(*, params: SysUserFilter) -> PageList[SysUserListItem]:
         """获取用户列表（基础过滤）"""
         async with async_session.begin() as db:
             stmt = await sys_user_crud.get_list_select(params)
-            result = await db.scalars(stmt)
-            users = result.all()
+
+            page_data = await paging_data(db, stmt)
+
             # 在 session 内完成序列化, 避免 DetachedInstanceError
-            return [SysUserListItem.model_validate(user) for user in users]
+            serialized_items = [SysUserListItem.model_validate(item) for item in page_data['items']]
+
+            # 构建 PageList 对象
+            return PageList(
+                items=serialized_items,
+                page=page_data['page'],
+                size=page_data['size'],
+                total=page_data['total'],
+                total_pages=page_data['total_pages'],
+                links=page_data['links'],
+            )
 
     @staticmethod
     async def get_permissions(*, user_id: int) -> set[str]:

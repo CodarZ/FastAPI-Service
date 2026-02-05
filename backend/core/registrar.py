@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from fastapi import FastAPI
 from fastapi_limiter import FastAPILimiter
+from fastapi_pagination import add_pagination
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette_context.middleware import ContextMiddleware
 from starlette_context.plugins import RequestIdPlugin
@@ -53,6 +54,8 @@ def register_app():
     register_middleware(app)
 
     register_router(app)
+
+    register_page(app)
 
     register_exception(app)
 
@@ -137,3 +140,8 @@ def register_logger() -> None:
     setup_logging()
 
     set_custom_logfile()
+
+
+def register_page(app: FastAPI) -> None:
+    """注册分页查询"""
+    add_pagination(app)

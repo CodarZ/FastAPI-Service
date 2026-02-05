@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 
 from backend.app.admin.schema.sys_user import (
     SysUserBatchDelete,
@@ -17,6 +17,7 @@ from backend.app.admin.schema.sys_user import (
     SysUserUpdate,
 )
 from backend.app.admin.service import sys_user_service
+from backend.common.pagination import DependsPagination, PageList
 from backend.common.response.base import ResponseSchemaModel, response_base
 from backend.common.response.code import ResponseStatus
 from backend.common.security.rbac import DependsRBAC
@@ -72,10 +73,11 @@ async def get_user_permissions(user_id: Annotated[int, Query(description='用户
 @router.get(
     '/list',
     summary='获取用户列表',
-    response_model=ResponseSchemaModel[list[SysUserListItem]],
-    dependencies=[DependsRBAC('sys:user:list')],
+    response_model=ResponseSchemaModel[PageList[SysUserListItem]],
+    dependencies=[DependsRBAC('sys:user:list'), DependsPagination],
 )
-async def get_user_list(params: Annotated[SysUserFilter, Query()]):
+async def get_user_list(params: Annotated[SysUserFilter, Depends()]):
+
     data = await sys_user_service.get_list(params=params)
     return response_base.success(data=data)
 

@@ -67,6 +67,7 @@ skip-magic-trailing-comma = false
 "**/alembic/versions/*.py" = ["E501", "F401", "I001"]
 "**/api/**/*.py" = ["TC"]
 "**/model/*.py" = ["TC003"]
+"**/pagination.py" = ["TC003"]
 "**/schema/*.py" = ["TC001", "TC002", "TC003", "I001"]
 "**/service/*.py" = ["TC001", "TC002", "TC003", "I001"]
 "**/router.py" = ["TC001", "TC002", "TC003", "I001"]
