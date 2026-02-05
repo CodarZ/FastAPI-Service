@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from fastapi import Query
 from pydantic import ConfigDict, EmailStr, Field, field_validator, model_serializer
 
-from backend.common.schema import SchemaBase
+from backend.common.schema import PageFilterBase, SchemaBase
 from backend.utils.validator import IdsListInt, LocalDatetime, MobileStr, PasswordStr, StatusInt, UsernameStr
 
 if TYPE_CHECKING:
@@ -262,7 +262,7 @@ class SysUserOption(SchemaBase):
 
 
 # ==================== 查询 Schema ====================
-class SysUserFilter(SchemaBase):
+class SysUserFilter(PageFilterBase):
     """用户查询条件"""
 
     username: str | None = Query(default=None, max_length=20, description='用户名(模糊)')

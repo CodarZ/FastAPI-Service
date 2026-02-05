@@ -3,6 +3,7 @@ import pkgutil
 
 from typing import TYPE_CHECKING
 
+from fastapi import Query
 from pydantic import BaseModel, ConfigDict
 
 from backend.common.log import log
@@ -32,6 +33,28 @@ class SchemaBase(BaseModel):
         extra='forbid',
         str_strip_whitespace=True,
     )
+
+
+class PageFilterBase(BaseModel):
+    """查询过滤器的基类
+
+    用于路由层的查询参数模型，与分页参数配合使用
+    统一配置：
+    - use_enum_values: 自动将枚举转为其值
+    - extra='forbid': 禁止传入的未定义的额外字段
+    - str_strip_whitespace: 自动去除字符串首尾空白
+    - arbitrary_types_allowed: 允许任意类型，确保 Query() 等能正常工作
+    """
+
+    model_config = ConfigDict(
+        use_enum_values=True,
+        extra='forbid',
+        str_strip_whitespace=True,
+        arbitrary_types_allowed=True,
+    )
+
+    page: int = Query(default=1, ge=1, description='页码, 从 1 开始')
+    size: int = Query(default=20, ge=1, le=100, description='每页数量, 默认 20, 最大 100')
 
 
 def auto_rebuild_all_schemas() -> None:

@@ -1,5 +1,8 @@
 from typing import TYPE_CHECKING
 
+from fastapi_pagination import Page, Params
+from fastapi_pagination.ext.sqlalchemy import paginate
+
 from backend.app.admin.crud import sys_dept_crud, sys_role_crud, sys_user_crud
 from backend.app.admin.schema.sys_user import (
     SysUserBatchDelete,
@@ -16,7 +19,6 @@ from backend.app.admin.schema.sys_user import (
     SysUserUpdate,
 )
 from backend.common.exception import errors
-from backend.common.pagination import PageList, paging_data
 from backend.common.security.password import verify_password
 from backend.database.postgresql import async_session
 
@@ -81,25 +83,11 @@ class SysUserService:
         return SysUserDetail.model_validate(user)
 
     @staticmethod
-    async def get_list(*, params: SysUserFilter) -> PageList[SysUserListItem]:
+    async def get_list(*, db: 'AsyncSession', params: SysUserFilter) -> Page[SysUserListItem]:
         """获取用户列表（基础过滤）"""
-        async with async_session.begin() as db:
-            stmt = await sys_user_crud.get_list_select(params)
-
-            page_data = await paging_data(db, stmt)
-
-            # 在 session 内完成序列化, 避免 DetachedInstanceError
-            serialized_items = [SysUserListItem.model_validate(item) for item in page_data['items']]
-
-            # 构建 PageList 对象
-            return PageList(
-                items=serialized_items,
-                page=page_data['page'],
-                size=page_data['size'],
-                total=page_data['total'],
-                total_pages=page_data['total_pages'],
-                links=page_data['links'],
-            )
+        stmt = await sys_user_crud.get_list_select(params)
+        pagination_params = Params(page=params.page, size=params.size)
+        return await paginate(db, stmt, params=pagination_params)
 
     @staticmethod
     async def get_permissions(*, user_id: int) -> set[str]:
