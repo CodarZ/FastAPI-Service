@@ -70,7 +70,7 @@ colorama==0.4.6
     #   pytest
     #   uvicorn
 commitizen==4.13.0
-cryptography==46.0.4
+cryptography==46.0.5
     # via fastapi-service
 cyclonedx-python-lib==11.6.0
     # via pip-audit
@@ -173,7 +173,7 @@ packaging==26.0
     #   pip-audit
     #   pip-requirements-parser
     #   pytest
-pillow==12.1.0
+pillow==12.1.1
     # via fast-captcha
 pip==26.0
     # via pip-api
