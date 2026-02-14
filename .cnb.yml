@@ -1,9 +1,0 @@
-master:
-  push:
-    - services:
-        - docker
-      stages:
-        - name: 构建镜像
-          script: docker buildx build -f deploy/Dockerfile -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:latest .
-        - name: 推送镜像
-          script: docker push ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:latest
