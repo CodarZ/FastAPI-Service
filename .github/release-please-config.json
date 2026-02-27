@@ -1,0 +1,32 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "include-v-in-tag": true,
+  "changelog-path": "CHANGELOG.md",
+  "plugins": ["sentence-case"],
+  "packages": {
+    "backend": {
+      "release-type": "python",
+      "extra-files": ["backend/__init__.py"],
+      "generate-release-notes": true,
+      "draft": true,
+      "prerelease": true,
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true,
+      "changelog-sections": [
+        { "type": "feat", "section": "✨ 新功能" },
+        { "type": "fix", "section": "🐛 问题修复" },
+        { "type": "perf", "section": "⚡ 性能优化" },
+        { "type": "security", "section": "🔒 安全修复" },
+        { "type": "deps", "section": "📦 依赖更新" },
+        { "type": "docs", "section": "📝 文档" },
+        { "type": "refactor", "section": "♻️ 重构" },
+        { "type": "build", "section": "🏗️ 构建" },
+        { "type": "ci", "section": "👷 CI/CD" },
+        { "type": "chore", "section": "🛠 其他" },
+        { "type": "test", "section": "✅ 测试", "hidden": true },
+        { "type": "style", "section": "🎨 格式化", "hidden": true },
+        { "type": "revert", "section": "⏪ 回滚", "hidden": true }
+      ]
+    }
+  }
+}
