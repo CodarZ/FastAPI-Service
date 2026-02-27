@@ -1,0 +1,108 @@
+{
+  // explorer
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+
+  // workbench
+  "workbench.startupEditor": "welcomePage",
+  "workbench.editor.autoLockGroups": {
+    "mainThreadWebview-simpleBrowser.view": false
+  },
+
+  // terminal
+  "terminal.integrated.fontSize": 16,
+  "terminal.integrated.fontWeight": "normal",
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "terminal.integrated.fontFamily": "'FiraCode Nerd Font Mono', Consolas, 'Courier New', monospace, 'Droid Sans Mono'",
+
+  // editor
+  "editor.tabSize": 2,
+  "editor.hover.sticky": true,
+  "editor.linkedEditing": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+  "editor.formatOnSave": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.autoClosingBrackets": "always",
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+  "editor.fontFamily": "'FiraCode Nerd Font', Consolas, 'Courier New', monospace",
+  "editor.unicodeHighlight.allowedCharacters": {
+    "：": true,
+    "（": true,
+    "）": true,
+    "。": true,
+    "，": true
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.fixAll.ruff": "explicit"
+  },
+
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    }
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+
+  // files
+  "files.simpleDialog.enable": true,
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+  "files.insertFinalNewline": true,
+  "files.associations": {
+    "*.json": "jsonc",
+    "*rc": "jsonc",
+    ".*ignore": "ignore",
+    ".env*": "dotenv"
+  },
+  "files.exclude": {
+    "**/*cache": true,
+    "**/*.egg-info": true,
+    "**/.{venv,svn,hg,DS_Store}": true,
+    "**/{venv,Thumbs.db,__pycache__}": true
+  },
+
+  "search.exclude": {
+    "**/*cache": true,
+    "**/*.egg-info": true,
+    "**/.{venv,svn,hg,DS_Store}": true,
+    "**/{venv,Thumbs.db,__pycache__}": true
+  },
+
+  // prettier
+  "prettier.enable": true,
+  "prettier.printWidth": 120,
+  "prettier.singleQuote": true,
+  "prettier.endOfLine": "lf",
+
+  // better toml
+  "evenBetterToml.completion.maxKeys": 5,
+  "evenBetterToml.formatter.columnWidth": 120,
+  "evenBetterToml.formatter.allowedBlankLines": 1,
+  "evenBetterToml.formatter.compactArrays": true,
+  "evenBetterToml.formatter.arrayAutoExpand": true,
+  "evenBetterToml.formatter.trailingNewline": true,
+  "evenBetterToml.formatter.arrayAutoCollapse": false,
+  "evenBetterToml.formatter.compactInlineTables": true,
+
+  // python
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.typeCheckingMode": "standard",
+  "python.analysis.inlayHints.pytestParameters": true,
+  "python.analysis.inlayHints.functionReturnTypes": true,
+  "python.analysis.inlayHints.callArgumentNames": "partial",
+
+  // git
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true
+}

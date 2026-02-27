@@ -1,0 +1,61 @@
+# Python相关
+*.py[cod]
+*.pyo
+*.so
+__pycache__/
+.pytest_cache/
+
+# Python 打包/构建产物
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# 虚拟环境
+venv/
+.venv/
+
+# IDE/编辑器
+.idea/
+*.swp
+.vscode/**
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+
+# 日志文件
+log
+!backend/**/*/log
+*.log
+
+# alembic
+# alembic/versions/
+
+# 测试和覆盖率
+.coverage
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# 本地,临时文件
+*.bak
+*.tmp
+*.temp
+*.local
+*.discard
+temp/
+
+# ruff
+.ruff_cache/
+
+# pytest
+.pytest_cache/
+
+# MacOS
+._*
+.DS_Store
+_MACOSX
