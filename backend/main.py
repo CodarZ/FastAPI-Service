@@ -1,8 +1,3 @@
-from fastapi import FastAPI
+from backend.core.registrar import register_app
 
-app = FastAPI()
-
-
-@app.get("/")
-async def root():
-    return {"code": 200, "data": "Hello World", "message": "success"}
+app = register_app()
