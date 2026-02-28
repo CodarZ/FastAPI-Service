@@ -1,0 +1,60 @@
+
+[tool.commitizen]
+name = "cz_customize"
+
+[tool.commitizen.customize]
+message_template = "{{change_type}}{% if scope %}({{scope}}){% endif %}: {{subject}}{% if body %}\n\n{{body}}{% endif %}{% if footer %}\n\n{{footer}}{% endif %}"
+schema = """
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+"""
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "change_type"
+message = "请选择本次提交的类型:"
+choices = [
+  {value = "feat", name = "✨  feat:       新功能"},
+  {value = "fix", name = "🐛  fix:        问题修复"},
+  {value = "perf", name = "⚡️  perf:       性能优化        (SQL优化、缓存优化、响应速度)"},
+  {value = "build", name = "🏗️   build:      构建            (Docker、部署脚本)"},
+  {value = "ci", name = "👷  ci:         CI/CD           (GitHub Actions、自动化流程)"},
+  {value = "test", name = "✅  test:       测试"},
+  {value = "style", name = "🎨  style:      格式化          (Ruff 排版调整)"},
+  {value = "docs", name = "📝  docs:       文档"},
+  {value = "refactor", name = "♻️   refactor:   重构"},
+  {value = "revert", name = "⏪  revert:     回滚"},
+  {value = "security", name = "🔒  security:   安全修复        (漏洞修复、权限控制)"},
+  {value = "deps", name = "📦  deps:       依赖"},
+  {value = "chore", name = "🛠   chore:      其他            (依赖更新、配置调整)"},
+]
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "scope"
+message = "本次提交的影响范围 (可选, 使用英文):\n"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "subject"
+message = "简短描述本次变更 (必填):\n"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "body"
+multiline = true
+message = "提供更详细的提交描述 (可选): 变更的具体内容和原因, 技术实现细节, 影响范围说明, 相关的业务背景\n"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "footer"
+multiline = true
+message = """
+页脚信息 (可选):
+  - 关联 Issue:       Closes #123, Fixes #456, Resolves #789
+  - 破坏性变更 (触发 major 版本升级):       BREAKING CHANGE: 描述
+
+"""
