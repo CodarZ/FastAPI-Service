@@ -4,12 +4,11 @@
   "changelog-path": "CHANGELOG.md",
   "plugins": ["sentence-case"],
   "packages": {
-    "backend": {
+    ".": {
       "release-type": "python",
       "extra-files": ["backend/__init__.py"],
-      "generate-release-notes": true,
-      "draft": true,
       "prerelease": true,
+      "generate-release-notes": true,
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": true,
       "changelog-sections": [
