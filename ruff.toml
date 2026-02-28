@@ -10,6 +10,7 @@ select = [
   "B",     # flake8-bugbear (发现潜在的 Bug)
   "BLE",   # 禁止写 except Exception: pass
   "C4",    # flake8-comprehensions (优化字典/列表推导式)
+  "D",     # pydocstyle (文档字符串规范检查)
   "DTZ",   # 禁止使用 datetime.now()，强制要求必须携带时区（如 datetime.now(UTC)）
   "E",     # pycodestyle errors (代码风格错误)
   "F",     # pyflakes (基础逻辑错误，如未使用的导入)
@@ -30,6 +31,14 @@ select = [
   "W",     # pycodestyle warnings (代码风格警告)
 ]
 ignore = [
+  "D100",
+  "D101",
+  "D102",
+  "D103",
+  "D104",
+  "D105",
+  "D106",
+  "D107",
   "T201",   # print 允许在调试/脚本中使用
   "RUF001",
   "RUF002",

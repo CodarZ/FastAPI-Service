@@ -15,8 +15,7 @@ __all__ = ['settings']
 
 
 def _get_env_file():
-    """获取 env 环境变量文件"""
-
+    """获取 env 环境变量文件."""
     env_dir = Path(ENV_DIR)
     env = os.getenv('ENVIRONMENT', 'development')
 
@@ -29,7 +28,7 @@ def _get_env_file():
 
 
 class Settings(BaseSettings):
-    """系统变量配置"""
+    """系统变量配置."""
 
     ENVIRONMENT: Literal['development', 'test', 'production'] = 'development'
 
@@ -60,8 +59,7 @@ class Settings(BaseSettings):
 
     @property
     def PostgreSQL_URL(self):
-        """PostgreSQL 数据库连接URL"""
-
+        """PostgreSQL 数据库连接URL."""
         database = self.DB_DATABASE if self.ENVIRONMENT == 'production' else f'{self.DB_DATABASE}_test'
 
         return URL.create(
@@ -181,8 +179,7 @@ class Settings(BaseSettings):
     @model_validator(mode='before')
     @classmethod
     def validator_api_url(cls, values):
-        """生产环境禁止访问 API 文档和 OpenAPI JSON"""
-
+        """生产环境禁止访问 API 文档和 OpenAPI JSON."""
         if values.get('ENVIRONMENT') == 'production':
             values['FASTAPI_DOCS_URL'] = None
             values['FASTAPI_OPENAPI_URL'] = None
