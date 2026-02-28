@@ -1,0 +1,71 @@
+preview = true
+line-length = 120
+show-fixes = true
+unsafe-fixes = true
+target-version = "py314"
+
+[lint]
+select = [
+  "ASYNC", # flake8-async (异步代码检查)
+  "B",     # flake8-bugbear (发现潜在的 Bug)
+  "BLE",   # 禁止写 except Exception: pass
+  "C4",    # flake8-comprehensions (优化字典/列表推导式)
+  "DTZ",   # 禁止使用 datetime.now()，强制要求必须携带时区（如 datetime.now(UTC)）
+  "E",     # pycodestyle errors (代码风格错误)
+  "F",     # pyflakes (基础逻辑错误，如未使用的导入)
+  "FAST",  # FastAPI 专用规则 (检测路由和依赖的最佳实践)
+  "FURB",  # Refurb 提示使用更新、更优雅的 Python 现代写法
+  "I",     # isort (自动排序 import)
+  "PERF",  # Perflint 性能反模式检测 (配合 3.14 极佳)
+  "PT",    # flake8-pytest-style 现代后端必写测试，强制 pytest 最佳实践
+  "PTH",   # flake8-use-pathlib（推荐使用 pathlib）
+  "RET",   # flake8-return（return 语句优化）
+  "RUF",   # Ruff 专属高级规则
+  "S310",  # bandit (安全检查，禁止使用 eval/exec 等危险函数)
+  "SIM",   # flake8-simplify (简化冗余代码)
+  "TC",    # flake8-type-checking (规范 TYPE_CHECKING 导入)
+  "TID",   # tidy-imports 禁用复杂的相对导入 (防止随着项目变大，import 结构崩溃)
+  "TRY",   # 规范 try/except 块的写法，防止异常丢失堆栈信息。
+  "UP",    # pyupgrade (自动将旧语法升级到 Python 3.10+ 新语法)
+  "W",     # pycodestyle warnings (代码风格警告)
+]
+ignore = [
+  "T201",   # print 允许在调试/脚本中使用
+  "RUF001",
+  "RUF002",
+  "RUF003",
+  "RUF006",
+  "RUF012",
+  "RUF067",
+  "TRY003",
+  "TRY301",
+  "TRY400",
+]
+
+[lint.isort]
+order-by-type = true
+case-sensitive = true
+lines-between-types = 1
+combine-as-imports = true
+known-first-party = ["backend"]
+known-third-party = ["fastapi", "starlette", "pydantic", "sqlalchemy"]
+
+[lint.pydocstyle]
+convention = "google"
+
+[lint.per-file-ignores]
+"**/model/*.py" = ["TC003"]
+"tests/**/*" = ["B011", "F841", "E402", "S101", "INP001", "TID252"]
+
+[lint.flake8-pytest-style]
+mark-parentheses = false
+parametrize-names-type = "list"
+parametrize-values-row-type = "list"
+parametrize-values-type = "tuple"
+
+[format]
+preview = true
+quote-style = "single"
+indent-style = "space"
+docstring-code-format = true
+skip-magic-trailing-comma = false
