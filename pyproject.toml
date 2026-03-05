@@ -10,26 +10,26 @@ dependencies = [
   "asgiref>=3.11.1",
   "asyncpg>=0.31.0",
   "cryptography>=46.0.5",
-  "fastapi==0.134.0",
+  "fastapi==0.135.1",
   "fastapi-pagination>=0.15.10",
-  "granian[reload]>=2.7.1",
+  "granian[reload]>=2.7.2",
   "loguru>=0.7.3",
   "msgspec>=0.20.0",
   "pwdlib[bcrypt]>=0.3.0",
   "pydantic>=2.12.5",
-  "pydantic-settings>=2.12.0",
+  "pydantic-settings>=2.13.1",
   "pyrate-limiter>=4.0.2",
   "python-jose>=3.5.0",
-  "redis[hiredis]>=7.1.1",
+  "redis[hiredis]>=7.2.1",
   "rtoml>=0.13.0",
-  "sqlalchemy[asyncio]>=2.0.46",
-  "starlette-context>=0.4.0",
+  "sqlalchemy[asyncio]>=2.0.48",
+  "starlette-context>=0.5.1",
   "user-agents>=2.2.0",
 ]
 
 [dependency-groups]
 dev = ["pytest>=9.0.2"]
-lint = ["commitizen>=4.13.9", "prek>=0.3.2", "ruff>=0.15.4"]
+lint = ["commitizen>=4.13.9", "prek>=0.3.4", "ruff>=0.15.4"]
 
 [tool.uv]
 package = false
