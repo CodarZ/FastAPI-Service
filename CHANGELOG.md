@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.1.0...v1.2.0) (2026-03-05)
+
+
+### ✨ 新功能
+
+* **common/log:** 新增基于 loguru 的自定义日志系统并集成中间件 ([8218a91](https://github.com/CodarZ/FastAPI-Service/commit/8218a91958c038ff2b20de524b699913ca9fa309))
+* **common/request:** 新增请求上下文信息 ([bfceeac](https://github.com/CodarZ/FastAPI-Service/commit/bfceeac559f5190daee8983ab250e648725d7cfd))
+
+
+### 📦 依赖更新
+
+* 升级依赖 ([cab75e6](https://github.com/CodarZ/FastAPI-Service/commit/cab75e6c3dc19c2bff82620a093c4f906c64d757))
+
 ## [1.1.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.0.0...v1.1.0) (2026-02-28)
 
 
