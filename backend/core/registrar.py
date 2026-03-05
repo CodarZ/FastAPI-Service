@@ -1,11 +1,14 @@
 from fastapi import FastAPI
+from starlette_context.middleware import ContextMiddleware
+from starlette_context.plugins import RequestIdPlugin
 
+from backend.common.log import register_logger
 from backend.core.config import settings
 
 
 def register_app() -> FastAPI:
 
-    return FastAPI(
+    app = FastAPI(
         title=settings.FASTAPI_TITLE,
         version=settings.FASTAPI_VERSION,
         description=settings.FASTAPI_DESCRIPTION,
@@ -17,4 +20,21 @@ def register_app() -> FastAPI:
             'displayRequestDuration': True,
             'defaultModelsExpandDepth': -1,
         },
+    )
+
+    # 日志
+    register_logger()
+
+    # 中间件
+    register_middleware(app)
+
+    return app
+
+
+def register_middleware(app: FastAPI):
+    """注册全局中间件."""
+    # --- 请求上下文中间件 ---
+    app.add_middleware(
+        ContextMiddleware,
+        plugins=[RequestIdPlugin(validate=True)],
     )
