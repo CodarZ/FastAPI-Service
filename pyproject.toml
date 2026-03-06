@@ -19,6 +19,7 @@ dependencies = [
   "pydantic>=2.12.5",
   "pydantic-settings>=2.13.1",
   "pyrate-limiter>=4.0.2",
+  "python-dateutil>=2.9.0.post0",
   "python-jose>=3.5.0",
   "redis[hiredis]>=7.2.1",
   "rtoml>=0.13.0",
