@@ -155,27 +155,27 @@ class Settings(BaseSettings):
     LOG_ACCESS_FILENAME: str = 'fs_access.log'
     LOG_ERROR_FILENAME: str = 'fs_error.log'
 
-    # ============================ 操作日志 ============================
-    OPERATION_LOG_SECRET_KEY: str  # 密钥, 可使用 os.urandom(32).hex() 生成一个随机的密钥
+    # ============================ 请求日志 ============================
+    REQUEST_LOG_SECRET_KEY: str  # 密钥, 可使用 os.urandom(32).hex() 生成一个随机的密钥
 
-    # OPERATION_LOG_WHITE_PATH_PATTERNS: list[str] = []  # 请求路径 - 正则表达式匹配
-    OPERATION_LOG_WHITE_PATH: list[str] = [
+    # REQUEST_LOG_WHITE_PATH_PATTERNS: list[str] = []  # 请求路径 - 正则表达式匹配
+    REQUEST_LOG_WHITE_PATH: list[str] = [
         '/favicon.ico',
         FASTAPI_DOCS_URL,
         FASTAPI_OPENAPI_URL,
         '/monitor/health',
     ]  # 请求路径不记录日志
 
-    OPERATION_LOG_ENCRYPT_KEY: list[str] = [
+    REQUEST_LOG_ENCRYPT_KEY: list[str] = [
         'password',
         'old_password',
         'new_password',
         'confirm_password',
     ]  # 默认需要脱敏处理的字段
 
-    OPERATION_LOG_QUEUE_MAXSIZE: int = 100000  # 队列的最大长度
-    OPERATION_LOG_QUEUE_BATCH_SIZE: int = 100  # 每次批量写入数据库的日志数量
-    OPERATION_LOG_QUEUE_TIMEOUT: int = 60  # 队列等待操作的时间，单位：秒
+    REQUEST_LOG_QUEUE_MAXSIZE: int = 100000  # 队列的最大长度
+    REQUEST_LOG_QUEUE_BATCH_SIZE: int = 100  # 每次批量写入数据库的日志数量
+    REQUEST_LOG_QUEUE_TIMEOUT: int = 60  # 队列等待操作的时间，单位：秒
 
     @model_validator(mode='before')
     @classmethod
