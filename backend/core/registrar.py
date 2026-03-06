@@ -4,7 +4,7 @@ from starlette_context.plugins import RequestIdPlugin
 
 from backend.common.log import register_logger
 from backend.core.config import settings
-from backend.middleware import AccessMiddleware, StateMiddleware
+from backend.middleware import AccessMiddleware, RequestLogMiddleware, StateMiddleware
 
 
 def register_app() -> FastAPI:
@@ -34,6 +34,9 @@ def register_app() -> FastAPI:
 
 def register_middleware(app: FastAPI):
     """注册全局中间件（执行顺序从下往上）."""
+    # --- 请求日志中间件 ---
+    app.add_middleware(RequestLogMiddleware)
+
     # --- 请求状态信息中间件 ---
     app.add_middleware(StateMiddleware)
 
