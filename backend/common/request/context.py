@@ -5,6 +5,8 @@ from starlette_context import context
 if TYPE_CHECKING:
     from datetime import datetime
 
+    from backend.common.dataclasses import UserAgentInfo
+
 
 class RequestContextData(TypedDict, total=False):
     """自定义请求上下文数据结构."""
@@ -19,11 +21,7 @@ class RequestContextData(TypedDict, total=False):
     region: str | None
     city: str | None
 
-    # --------  UA  --------
-    user_agent: str
-    os: str | None
-    browser: str | None
-    device: str | None
+    ua: UserAgentInfo  # 解析后的 User-Agent 信息
 
 
 ctx = cast('RequestContextData', context)
