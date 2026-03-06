@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.3.0...v1.4.0) (2026-03-06)
+
+
+### ✨ 新功能
+
+* **middleware:** 新增请求访问信息中间件 `AccessMiddleware` ([2c6b627](https://github.com/CodarZ/FastAPI-Service/commit/2c6b627af687f1279735f337004587ee426c471a))
+* **utils/timezone:** 增加时区处理工具类 ([3a73652](https://github.com/CodarZ/FastAPI-Service/commit/3a73652c16add47a1892b9bf279060dbf864097a))
+
+
+### 📦 依赖更新
+
+* 新增依赖 python-dateutil ([72818da](https://github.com/CodarZ/FastAPI-Service/commit/72818da9d584793eff4b41576c41219570edbb97))
+
 ## [1.3.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.2.0...v1.3.0) (2026-03-06)
 
 
