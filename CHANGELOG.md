@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.2.0...v1.3.0) (2026-03-06)
+
+
+### ✨ 新功能
+
+* **common/request:** 新增 User-Agent 解析 ([042ad51](https://github.com/CodarZ/FastAPI-Service/commit/042ad517978aaf08e010aa9946c24348d72532eb))
+* **middleware:** 新增请求状态信息中间件 `StateMiddleware` ([faf0d4e](https://github.com/CodarZ/FastAPI-Service/commit/faf0d4eb5c722002ecd6a8f59db796a0737df94c))
+
+
+### ♻️ 重构
+
+* **common/request:** 提取 UserAgentInfo 数据类重构 User-Agent 上下文 ([93c2fd5](https://github.com/CodarZ/FastAPI-Service/commit/93c2fd5496c5db581537623d47bc785a964fe282))
+
 ## [1.2.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.1.0...v1.2.0) (2026-03-05)
 
 
