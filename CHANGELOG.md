@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.5.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.4.0...v1.5.0) (2026-03-06)
+
+
+### ✨ 新功能
+
+* **middleware:** 新增请求日志中间件 ([3d86ec0](https://github.com/CodarZ/FastAPI-Service/commit/3d86ec01cc39976682c6a54821dbd3965b618ffb))
+
+
+### 🐛 问题修复
+
+* **common/request:** 修复类型约束 ([13c6316](https://github.com/CodarZ/FastAPI-Service/commit/13c63164922060efae48416856b2b99c6766bc3b))
+
+
+### ♻️ 重构
+
+* **core/config:** 将”操作日志”相关配置重命名为“请求日志”，以保持功能与语意一致性。 ([9f4625a](https://github.com/CodarZ/FastAPI-Service/commit/9f4625a80fafc1548dbb5bcf45d9b6511ffb63df))
+
+
+### 🛠 其他
+
+* 修复 release-please 识别并自动替换版本号 ([0a9ea4b](https://github.com/CodarZ/FastAPI-Service/commit/0a9ea4b5b62d4240ef5c8bc0800b309cc8008260))
+
 ## [1.4.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.3.0...v1.4.0) (2026-03-06)
 
 
