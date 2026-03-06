@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from backend.common.dataclasses import UserAgentInfo
 
 
-class RequestContextData(TypedDict, total=False):
+class RequestContextData(TypedDict):
     """自定义请求上下文数据结构."""
 
     # --------  性能  --------
