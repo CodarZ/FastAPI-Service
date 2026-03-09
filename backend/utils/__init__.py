@@ -1,3 +1,3 @@
-from backend.utils.timezone import timezone
+from .timezone import timezone
 
 __all__ = ['timezone']
