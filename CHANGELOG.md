@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.5.0...v1.6.0) (2026-03-09)
+
+
+### ✨ 新功能
+
+* **common/enum:** 新增基础枚举基类与业务相关自定义枚举 ([be3851b](https://github.com/CodarZ/FastAPI-Service/commit/be3851beb583155a8f6b935e40bc7c1c8e2344ef))
+* **common/response:** 新增全局统一响应处理模块 ([41db808](https://github.com/CodarZ/FastAPI-Service/commit/41db808af70f0d0983b4fc5f10c4894a60e9d693))
+
+
+### ♻️ 重构
+
+* 优化 __init__.py 中包内模块的导入方式为相对导入 ([7f5c6e7](https://github.com/CodarZ/FastAPI-Service/commit/7f5c6e7dd7a67ba9aa700ec1c51f6959c6e903a4))
+
 ## [1.5.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.4.0...v1.5.0) (2026-03-06)
 
 
