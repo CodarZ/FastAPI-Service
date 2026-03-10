@@ -14,14 +14,13 @@ dependencies = [
   "fastapi-pagination>=0.15.10",
   "granian[reload]>=2.7.2",
   "loguru>=0.7.3",
-  "msgspec>=0.20.0",
   "pwdlib[bcrypt]>=0.3.0",
   "pydantic>=2.12.5",
   "pydantic-settings>=2.13.1",
   "pyrate-limiter>=4.0.2",
   "python-dateutil>=2.9.0.post0",
   "python-jose>=3.5.0",
-  "redis[hiredis]>=7.2.1",
+  "redis[hiredis]>=7.3.0",
   "rtoml>=0.13.0",
   "sqlalchemy[asyncio]>=2.0.48",
   "starlette-context>=0.5.1",
@@ -30,7 +29,7 @@ dependencies = [
 
 [dependency-groups]
 dev = ["pytest>=9.0.2"]
-lint = ["commitizen>=4.13.9", "prek>=0.3.4", "ruff>=0.15.4"]
+lint = ["commitizen>=4.13.9", "prek>=0.3.5", "ruff>=0.15.5"]
 
 [tool.uv]
 package = false
