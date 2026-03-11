@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.7.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.6.0...v1.7.0) (2026-03-11)
+
+
+### ✨ 新功能
+
+* **common/exception:** 新增全局异常处理 ([89ea3cd](https://github.com/CodarZ/FastAPI-Service/commit/89ea3cd905aa74788d164d84e6f109025fa34d6e))
+* **middleware:** 新增 CORS 跨域中间件 ([d295d6e](https://github.com/CodarZ/FastAPI-Service/commit/d295d6e0067af97c8413687e418bcf2cc8771460))
+
+
+### 📦 依赖更新
+
+* 更新项目依赖 ([3440f24](https://github.com/CodarZ/FastAPI-Service/commit/3440f2448430a11f79ee20d8328462c9b7b06b1e))
+
 ## [1.6.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.5.0...v1.6.0) (2026-03-09)
 
 
