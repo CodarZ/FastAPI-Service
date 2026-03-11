@@ -23,5 +23,12 @@ class RequestContextData(TypedDict):
 
     ua: UserAgentInfo  # 解析后的 User-Agent 信息
 
+    # --------  异常信息  --------
+    __request_http_exception__: dict | None  # HTTP 异常
+    __request_custom_exception__: dict | None  # 自定义异常（业务）
+    __request_assertion_error__: dict | None  # 断言异常
+    __request_validation_exception__: dict | None  # 请求/数据验证异常
+    __request_unknown_exception__: dict | None  # 未知异常
+
 
 ctx = cast('RequestContextData', context)

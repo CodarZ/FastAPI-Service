@@ -3,6 +3,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette_context.middleware import ContextMiddleware
 from starlette_context.plugins import RequestIdPlugin
 
+from backend.common.exception import register_exception
 from backend.common.log import register_logger
 from backend.core.config import settings
 from backend.middleware import AccessMiddleware, RequestLogMiddleware, StateMiddleware
@@ -26,6 +27,9 @@ def register_app() -> FastAPI:
 
     # 日志
     register_logger()
+
+    # 异常处理器
+    register_exception(app)
 
     # 中间件
     register_middleware(app)
