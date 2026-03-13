@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette_context.middleware import ContextMiddleware
@@ -6,6 +8,7 @@ from starlette_context.plugins import RequestIdPlugin
 from backend.common.exception import register_exception
 from backend.common.log import register_logger
 from backend.core.config import settings
+from backend.database import redis_client
 from backend.middleware import AccessMiddleware, RequestLogMiddleware, StateMiddleware
 
 
@@ -17,6 +20,7 @@ def register_app() -> FastAPI:
         description=settings.FASTAPI_DESCRIPTION,
         openapi_url=settings.FASTAPI_OPENAPI_URL,
         docs_url=settings.FASTAPI_DOCS_URL,
+        lifespan=lifespan,
         swagger_ui_parameters={
             'docExpansion': 'none',
             'persistAuthorization': True,
@@ -35,6 +39,18 @@ def register_app() -> FastAPI:
     register_middleware(app)
 
     return app
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """应用生命周期管理器."""
+    # 连接 Redis
+    await redis_client.open()
+
+    yield
+
+    # 关闭 Redis 连接
+    await redis_client.aclose()
 
 
 def register_middleware(app: FastAPI):
