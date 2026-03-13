@@ -41,7 +41,7 @@ class RedisClient(Redis):
     async def open(self) -> None:
         """建立 Redis 连接，并验证连通性."""
         try:
-            self.ping()
+            await self.ping()  # type: ignore[awaitable-error]
             logger.info('✅ Redis 连接成功 [{}:{}]', settings.REDIS_HOST, settings.REDIS_PORT)
         except RedisError as e:
             logger.error('❌ Redis 连接失败: {}', e)
