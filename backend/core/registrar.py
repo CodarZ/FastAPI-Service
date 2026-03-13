@@ -8,7 +8,7 @@ from starlette_context.plugins import RequestIdPlugin
 from backend.common.exception import register_exception
 from backend.common.log import register_logger
 from backend.core.config import settings
-from backend.database import redis_client
+from backend.database import create_tables, redis_client
 from backend.middleware import AccessMiddleware, RequestLogMiddleware, StateMiddleware
 
 
@@ -44,6 +44,9 @@ def register_app() -> FastAPI:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """应用生命周期管理器."""
+    # 创建数据库表
+    await create_tables()
+
     # 连接 Redis
     await redis_client.open()
 

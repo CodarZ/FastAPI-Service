@@ -57,6 +57,14 @@ class Settings(BaseSettings):
     DB_ECHO_POOL: bool | Literal['debug'] = False  # 是否在日志中输出数据库连接池的调试信息
     DB_CHARSET: str = 'utf8mb4'
 
+    # 数据库连接池配置
+    DB_POOL_SIZE: int = 5  # 连接池数量
+    DB_MAX_OVERFLOW: int = 10  # 连接池超载时，还能额外创建的最多连接数
+    DB_POOL_TIMEOUT: int = 30  # 从连接池中获取连接的超时时间（单位：秒）
+    DB_POOL_RECYCLE: int = -1  # 连接的生命周期（秒），超过时间会被回收，-1 表示不主动回收
+    DB_POOL_PRE_PING: bool = False  # 每次拿连接前是否“悲观”地 ping 一下数据库检查连通性
+    DB_POOL_USE_LIFO: bool = False  # 是否使用 LIFO（后进先出）策略获取连接
+
     @property
     def PostgreSQL_URL(self):
         """PostgreSQL 数据库连接URL."""
