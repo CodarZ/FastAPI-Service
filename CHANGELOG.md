@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.8.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.7.0...v1.8.0) (2026-03-13)
+
+
+### ✨ 新功能
+
+* **common/model:** 新增 ORM 基础模型，通用 Mixins和业务抽象基类 ([d80b9ac](https://github.com/CodarZ/FastAPI-Service/commit/d80b9acfa734b22f902f00de07c77aa529beda86))
+* **database:** 新增 Redis 并集成至应用生命周期管理 ([6347dd9](https://github.com/CodarZ/FastAPI-Service/commit/6347dd9bbd9a8aa1801828398281e5306228f99f))
+* **database:** 新增异步 PostgreSQL 核心逻辑实现与连接池配置 ([f9461a8](https://github.com/CodarZ/FastAPI-Service/commit/f9461a8e57b51efa7bcfe4e292937f0e6e2a16fb))
+
+
+### 🐛 问题修复
+
+* **database/redis:** 修复 Redis 连接验证时未等待 ping 协程的问题 ([6fc3afd](https://github.com/CodarZ/FastAPI-Service/commit/6fc3afdd54d871624005e95d8d20eb2e3008ac33))
+
 ## [1.7.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.6.0...v1.7.0) (2026-03-11)
 
 
