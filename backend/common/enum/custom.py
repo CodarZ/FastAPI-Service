@@ -2,7 +2,11 @@ from backend.common.enum.base import IntEnum, StrEnum
 
 
 class StatusEnum(IntEnum):
-    """状态类型."""
+    """状态类型.
+
+    + `DISABLE`: 0 - 停用/禁用
+    + `ENABLE`: 1 - 启用/正常
+    """
 
     DISABLE = 0
     ENABLE = 1
