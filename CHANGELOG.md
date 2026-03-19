@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.9.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.8.0...v1.9.0) (2026-03-19)
+
+
+### ✨ 新功能
+
+* **common/schema:** 新增统一 Schema 基类 ([4b5b2a7](https://github.com/CodarZ/FastAPI-Service/commit/4b5b2a7e214053be2f600c54d2e88e14a40278b6))
+* **utils:** 新增一些业务型正则表达式 ([f1c82d1](https://github.com/CodarZ/FastAPI-Service/commit/f1c82d10ed3a7beaf1670ff85460dd75b3353cf3))
+* 新增自定义 Pydantic 类型 ([aad1bec](https://github.com/CodarZ/FastAPI-Service/commit/aad1bec24099cbfd0bd4dab4062f9721b63c4a82))
+
+
+### 🐛 问题修复
+
+* 修复时区问题：项目中使用 DATETIME_TIMEZONE 配置时区 ([0a1a948](https://github.com/CodarZ/FastAPI-Service/commit/0a1a94803d9beaa3809e59bdc88e80f28f14592c))
+
+
+### 📝 文档
+
+* 补充 StatusEnum 注释 ([6f61d99](https://github.com/CodarZ/FastAPI-Service/commit/6f61d99215bf64c7255a5c95b6db275996d85797))
+
+
+### 🏗️ 构建
+
+* **deps:** Bump pyasn1 in the uv group across 1 directory ([#19](https://github.com/CodarZ/FastAPI-Service/issues/19)) ([368cb0c](https://github.com/CodarZ/FastAPI-Service/commit/368cb0c7844daf2b20b44d1e116bf728a50dbaae))
+
 ## [1.8.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.7.0...v1.8.0) (2026-03-13)
 
 
