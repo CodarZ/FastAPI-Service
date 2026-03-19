@@ -1,3 +1,3 @@
-from .timezone import timezone
+from . import regex
 
-__all__ = ['timezone']
+__all__ = ['regex']

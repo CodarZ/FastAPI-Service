@@ -1,12 +1,11 @@
-from datetime import datetime
+from datetime import UTC, datetime
+from functools import partial
 from typing import Annotated
 
 from pydantic.alias_generators import to_snake
 from sqlalchemy import BigInteger, DateTime
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, MappedAsDataclass, declared_attr, mapped_column
-
-from backend.utils import timezone
 
 # 通用 Mapped 类型主键
 id_key = Annotated[
@@ -35,7 +34,7 @@ class DateTimeMixin(MappedAsDataclass):
     """日期时间 `Mixin` 数据类.
 
     时间处理方式：
-        - 使用应用层生成的带时区时间戳（`timezone.now()`）
+        - 使用应用层生成的带时区时间戳（`datetime.now(tz=UTC)`）
         - DateTime(timezone=True) 映射为 PostgreSQL TIMESTAMPTZ
         - 数据库自动转换为 UTC 存储, 读取时根据连接时区返回
     """
@@ -43,7 +42,7 @@ class DateTimeMixin(MappedAsDataclass):
     created_time: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         init=False,
-        default_factory=timezone.now,
+        default_factory=partial(datetime.now, tz=UTC),
         sort_order=991,
         comment='创建时间',
     )
@@ -51,7 +50,7 @@ class DateTimeMixin(MappedAsDataclass):
         DateTime(timezone=True),
         init=False,
         default=None,
-        onupdate=timezone.now,
+        onupdate=partial(datetime.now, tz=UTC),
         sort_order=992,
         comment='更新时间',
     )

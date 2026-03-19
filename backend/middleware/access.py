@@ -1,12 +1,12 @@
 import time
 
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 from loguru import logger
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 
 from backend.common.request.context import ctx
-from backend.utils import timezone
 
 if TYPE_CHECKING:
     from fastapi import Request, Response
@@ -26,6 +26,6 @@ class AccessMiddleware(BaseHTTPMiddleware):
             logger.debug(f'[Debug] --> 请求开始 | {url}')
 
         ctx['perf_time'] = time.perf_counter()
-        ctx['start_time'] = timezone.now()
+        ctx['start_time'] = datetime.now(tz=UTC)
 
         return await call_next(request)

@@ -32,7 +32,7 @@ def _create_async_db_engine() -> AsyncEngine:
                 'command_timeout': 60,  # 查询超时时间（秒），防止慢查询阻塞连接
                 'server_settings': {
                     'jit': 'off',  # 关闭 JIT 编译，避免短查询的编译开销
-                    'timezone': settings.DATETIME_TIMEZONE,  # 统一会话时区，TIMESTAMPTZ 读出即为目标时区
+                    'timezone': 'UTC',  # TIMESTAMPTZ 读出为 UTC 时间，应用层统一转换
                     'application_name': settings.FASTAPI_TITLE,
                 },
             },

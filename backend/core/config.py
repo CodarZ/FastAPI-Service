@@ -43,8 +43,7 @@ class Settings(BaseSettings):
     FASTAPI_OPENAPI_URL: str | None = f'{FASTAPI_ROUTE_PREFIX}/openapi'
 
     # ============================ DateTime ============================
-    DATETIME_TIMEZONE: str = 'Asia/Shanghai'
-    DATETIME_FORMAT: str = '%Y-%m-%d %H:%M:%S'
+    DATETIME_FORMAT: str = '%Y-%m-%dT%H:%M:%S%z'  # ISO 8601 格式
 
     # ============================ 数据库 PostgreSQL ============================
     DB_HOST: str
