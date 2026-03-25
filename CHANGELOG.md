@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.9.1](https://github.com/CodarZ/FastAPI-Service/compare/v1.9.0...v1.9.1) (2026-03-25)
+
+
+### 📦 依赖更新
+
+* 更新项目依赖 ([ed3c4d1](https://github.com/CodarZ/FastAPI-Service/commit/ed3c4d1f5ec25534a8a1f3b976ed05ac39493f74))
+
+
+### ♻️ 重构
+
+* 项目统一 UTC 时区处理 ([4bcf1c7](https://github.com/CodarZ/FastAPI-Service/commit/4bcf1c79589b85f4f6864daace952114b7d9abfc))
+
 ## [1.9.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.8.0...v1.9.0) (2026-03-19)
 
 
