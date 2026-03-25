@@ -22,7 +22,7 @@ repos:
 
   # Ruff: Python 代码检查与格式化
   - repo: git@github.com:astral-sh/ruff-pre-commit.git
-    rev: v0.15.5
+    rev: v0.15.7
     hooks:
       - id: ruff-check
         args: ['--config', 'ruff.toml', '--fix', '--unsafe-fixes']
