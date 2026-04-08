@@ -166,7 +166,7 @@ class Settings(BaseSettings):
     REQUEST_LOG_SECRET_KEY: str  # 密钥, 可使用 os.urandom(32).hex() 生成一个随机的密钥
 
     # REQUEST_LOG_WHITE_PATH_PATTERNS: list[str] = []  # 请求路径 - 正则表达式匹配
-    REQUEST_LOG_WHITE_PATH: list[str] = [
+    REQUEST_LOG_WHITE_PATH: list[str | None] = [
         '/favicon.ico',
         FASTAPI_DOCS_URL,
         FASTAPI_OPENAPI_URL,
