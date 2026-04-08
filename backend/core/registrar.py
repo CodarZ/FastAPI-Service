@@ -5,11 +5,13 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette_context.middleware import ContextMiddleware
 from starlette_context.plugins import RequestIdPlugin
 
+from backend.app.router import router
 from backend.common.exception import register_exception
 from backend.common.log import register_logger
 from backend.core.config import settings
 from backend.database import create_tables, redis_client
 from backend.middleware import AccessMiddleware, RequestLogMiddleware, StateMiddleware
+from backend.utils import ensure_unique_route_name, simplify_operation_id
 
 
 def register_app() -> FastAPI:
@@ -32,11 +34,14 @@ def register_app() -> FastAPI:
     # 日志
     register_logger()
 
-    # 异常处理器
-    register_exception(app)
-
     # 中间件
     register_middleware(app)
+
+    # 路由
+    register_router(app)
+
+    # 异常处理器
+    register_exception(app)
 
     return app
 
@@ -83,3 +88,12 @@ def register_middleware(app: FastAPI):
             allow_headers=['*'],
             expose_headers=settings.CORS_EXPOSE_HEADERS,
         )
+
+
+def register_router(app: FastAPI) -> None:
+    """注册路由."""
+    app.include_router(router)
+
+    # Extra
+    ensure_unique_route_name(app)
+    simplify_operation_id(app)
