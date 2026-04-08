@@ -1,13 +1,16 @@
+import uuid
+
 from datetime import UTC, datetime
 from functools import partial
 from typing import Annotated
 
 from pydantic.alias_generators import to_snake
 from sqlalchemy import BigInteger, DateTime
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, MappedAsDataclass, declared_attr, mapped_column
 
-# 通用 Mapped 类型主键
+# 通用 Mapped 类型主键, 内部主键 ID (用于外键关联，性能更好)
 id_key = Annotated[
     int,
     mapped_column(
@@ -19,6 +22,19 @@ id_key = Annotated[
         init=False,
         sort_order=-999,
         comment='主键 ID',
+    ),
+]
+
+# 业务主键 UUID (用于对外暴露，安全性更好)
+uuid_key = Annotated[
+    uuid.UUID,
+    mapped_column(
+        UUID(as_uuid=True),
+        unique=True,
+        index=True,
+        default=uuid.uuid4,
+        sort_order=-998,
+        comment='业务唯一标识 UUID',
     ),
 ]
 
@@ -69,14 +85,12 @@ class MappedBase(AsyncAttrs, DeclarativeBase):
     type_annotation_map = {datetime: DateTime(timezone=True)}
 
     @declared_attr.directive
-    @classmethod
-    def __tablename__(cls) -> str:
+    def __tablename__(cls) -> str:  # type: ignore[override]
         """自动生成蛇形命名数据库表名（PascalCase → snake_case）."""
         return to_snake(cls.__name__)
 
     @declared_attr.directive
-    @classmethod
-    def __table_args__(cls) -> dict[str, str]:
+    def __table_args__(cls) -> dict[str, str]:  # type: ignore[override]
         """自动设置表配置项.
 
         - 将模型 docstring 设置为数据库表注释
