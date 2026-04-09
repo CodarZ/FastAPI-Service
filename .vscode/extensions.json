@@ -2,9 +2,10 @@
   "recommendations": [
     "ms-python.python",
     "ms-python.debugpy",
-    "ms-python.vscode-pylance",
-
     "charliermarsh.ruff",
-    "tamasfe.even-better-toml"
+    "tamasfe.even-better-toml",
+    "meta.pyrefly",
+    "fastapilabs.fastapi-vscode",
+    "redhat.vscode-yaml"
   ]
 }
