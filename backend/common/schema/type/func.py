@@ -9,18 +9,10 @@ import re
 
 from typing import TYPE_CHECKING
 
-from backend.common.enum import StatusEnum
 from backend.utils import regex as patterns
 
 if TYPE_CHECKING:
     from pydantic import SerializationInfo
-
-
-def status_validator(value: StatusEnum) -> StatusEnum:
-    """验证状态值的逻辑关系."""
-    if value not in StatusEnum:
-        raise ValueError('无效的状态值')
-    return value
 
 
 def cn_mobile_validator(value: str | None) -> str | None:
@@ -54,3 +46,12 @@ def mobile_serialize(v: str | None, info: SerializationInfo) -> str | None:
     if not v or (info.context or {}).get('show_full_mobile'):
         return v
     return f'{v[:3]}****{v[-4:]}'
+
+
+def ids_validator(value: list[int]) -> list[int]:
+    """验证 ID 列表：去重并过滤非正整数的无效值."""
+    if not value:
+        return []
+
+    # 去重并过滤非正整数
+    return list({v for v in value if isinstance(v, int) and v > 0})

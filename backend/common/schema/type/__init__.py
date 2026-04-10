@@ -7,11 +7,7 @@ from typing import Annotated
 
 from pydantic import AfterValidator, Field, PlainSerializer, WithJsonSchema
 
-from backend.common.enum import StatusEnum
-
 from . import func
-
-StatusInt = Annotated[StatusEnum, AfterValidator(func.status_validator), Field(description='状态值：0-停用，1-正常')]
 
 CNMobileStr = Annotated[
     str,
@@ -27,3 +23,7 @@ CNMobileStr = Annotated[
 若需明文，请使用：`UserModel.model_dump(mode='json', context={'show_full_mobile': True})`
 
 """
+
+
+IdsListInt = Annotated[list[int], AfterValidator(func.ids_validator), Field(description='ID 列表')]
+"""ID 列表（自动去重并过滤无效值）"""
