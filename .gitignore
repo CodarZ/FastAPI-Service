@@ -21,6 +21,7 @@ venv/
 *.swp
 .vscode/**
 !.vscode/settings.json
+!.vscode/mcp.json
 !.vscode/extensions.json
 !.vscode/launch.json
 

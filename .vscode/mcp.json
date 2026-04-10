@@ -1,0 +1,39 @@
+{
+  "servers": {
+    "filesystem": {
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-filesystem", "${workspaceFolder}"]
+    },
+    "time": {
+      "command": "uvx",
+      "args": ["mcp-server-time"]
+    },
+    "git": {
+      "command": "uvx",
+      "args": ["mcp-server-git"]
+    },
+    "fetch": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
+    },
+    "context7": {
+      "command": "bunx",
+      "args": ["@upstash/context7-mcp", "--api-key", "${env:CONTEXT7_API_KEY}"]
+    },
+    "exa": {
+      "command": "bunx",
+      "args": ["exa-mcp-server"],
+      "env": {
+        "EXA_API_KEY": "${env:EXA_API_KEY}"
+      }
+    },
+    "sequential-thinking": {
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "memory": {
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-memory"]
+    }
+  }
+}
