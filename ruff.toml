@@ -3,6 +3,7 @@ line-length = 120
 show-fixes = true
 unsafe-fixes = true
 target-version = "py314"
+exclude = [".agents/skills/**"]
 
 [lint]
 select = [
@@ -50,6 +51,9 @@ ignore = [
   "TRY301",
   "TRY400",
 ]
+
+[lint.flake8-type-checking]
+runtime-evaluated-base-classes = ["pydantic.BaseModel", "backend.common.schema.SchemaBase"]
 
 [lint.isort]
 order-by-type = true
