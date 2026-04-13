@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.10.0](https://github.com/CodarZ/FastAPI-Service/compare/v1.9.1...v1.10.0) (2026-04-10)
+
+
+### ✨ 新功能
+
+* **.agents/skills:** 新增 skill （planning with file ） ([1b9dedf](https://github.com/CodarZ/FastAPI-Service/commit/1b9dedfb975685851d9c31a97eb6d4cce56e7138))
+* **.agents/skills:** 新增创建 model 和 schema 的 skills ([c78dd8c](https://github.com/CodarZ/FastAPI-Service/commit/c78dd8c0d3beb8c9734cf4aeadb929e58ec5d6f9))
+* **.vscode:** 新增 mcp 配置 ([50c82c5](https://github.com/CodarZ/FastAPI-Service/commit/50c82c5b51496a596792407ffcec286fd3c1121c))
+* **app/admin/model:** 新增基于 RBAC 的 sqlalchemy orm models ([3f9a892](https://github.com/CodarZ/FastAPI-Service/commit/3f9a892cdccdd76bbb3e7d7f3577fd1d58567286))
+* **app/admin/schema:** 新增 schema （ 使用 skill 生成 ） ([5759328](https://github.com/CodarZ/FastAPI-Service/commit/5759328af0c5b5f543bc3c938b0438e2f0d1a2c4))
+* **utils:** 新增路由名称唯一性检查和简化操作 ID 功能 ([2cafcbc](https://github.com/CodarZ/FastAPI-Service/commit/2cafcbc7b13822cfdc61a6ca7908f47111c971ec))
+* 新增 UUID 业务主键支持 ([776db5f](https://github.com/CodarZ/FastAPI-Service/commit/776db5fddca71aca1863e395f4b7280c1dd963c4))
+* 新增多个自定义枚举类型 ([36fa294](https://github.com/CodarZ/FastAPI-Service/commit/36fa294065ba5c0603f6f779913f29cecad7c1b9))
+* 新增路由注册 ([108221a](https://github.com/CodarZ/FastAPI-Service/commit/108221a42ec32183a759a21a4b964f56ab983c62))
+
+
+### 🐛 问题修复
+
+* **common/schema:** 更新 SchemaBase 配置，允许额外字段被忽略 ([e60b1bb](https://github.com/CodarZ/FastAPI-Service/commit/e60b1bb5dc5b33a7dccd8952200da00ccdc3d5c4))
+* **core/config:** 修复请求日志白名单路径类型 ([d54930b](https://github.com/CodarZ/FastAPI-Service/commit/d54930b2cdf1d99e5753c4d21582008b428cc672))
+* **ruff:** 修复类型问题 ([b1bbdaf](https://github.com/CodarZ/FastAPI-Service/commit/b1bbdaf2567820a7379e139f7fa578514bbac9c5))
+
+
+### 📦 依赖更新
+
+* 更新项目依赖 ([43c8ded](https://github.com/CodarZ/FastAPI-Service/commit/43c8dedbf2ab6e1768d8fa3de35ba1ce5c7d90b5))
+
+
+### 🛠 其他
+
+* **.vscode:** 更新推荐的 VSCode 扩展 ([d5a0fa9](https://github.com/CodarZ/FastAPI-Service/commit/d5a0fa9517504fdc41f465a3c247c3e83d7fc99e))
+
 ## [1.9.1](https://github.com/CodarZ/FastAPI-Service/compare/v1.9.0...v1.9.1) (2026-03-25)
 
 
