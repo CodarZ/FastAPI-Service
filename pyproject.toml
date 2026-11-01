@@ -1,0 +1,56 @@
+[project]
+name = "fastapi-service"
+version = "0.0.1"
+description = "基于 FastAPI 的高性能现代化异步后端服务模版"
+readme = "README.md"
+license = "MIT"
+authors = [{name = "CodarZ", email = "codarzdev@gmail.com"}]
+requires-python = ">=3.14"
+dependencies = [
+  "asyncpg>=0.32.0",
+  "celery>=5.6.3",
+  "cryptography>=50.0.2",
+  "fastapi[standard-no-fastapi-cloud-cli]>=0.162.0",
+  "flower>=2.2.0",
+  "loguru>=0.7.3",
+  "msgspec>=0.22.0",
+  "pwdlib[argon2]>=0.3.1",
+  "py-ip2region>=3.0.6",
+  "pydantic>=2.14.2",
+  "pydantic-settings>=2.16.2",
+  "pyjwt>=2.15.1",
+  "redis[hiredis]>=8.1.0",
+  "sqlalchemy[asyncio]>=2.1.6",
+  "user-agents>=2.2.0",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=9.2.0",
+  "pytest-asyncio>=1.4.1",
+  "pytest-cov>=7.1.0",
+  "pytest-mock>=3.17.0",
+]
+lint = [
+  "commitizen>=4.19.3",
+  "prek>=0.5.9",
+  "ruff>=0.17.3",
+]
+
+[tool.fastapi]
+entrypoint = "backend.main:app"
+
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.uv]
+package = false
+python-downloads = "manual"
+default-groups = ["dev", "lint"]
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[[tool.uv.index]]
+name = "aliyun"
+url = "https://mirrors.aliyun.com/pypi/simple"
